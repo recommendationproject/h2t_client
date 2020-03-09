@@ -4,7 +4,12 @@ import MyLoadingComponent from "../../components/LoadingComponent";
 
 
 const HomePage = Loadable({
-  loader: () => import("../../pages/admin/HomePage"),
+  loader: () => import("../../pages/public/HomePage"),
+  loading: MyLoadingComponent
+});
+
+const CategoryPage = Loadable({
+  loader: () => import("../../pages/public/CategoryPage"),
   loading: MyLoadingComponent
 });
 
@@ -14,7 +19,14 @@ const routes = {
     exact: true,
     component: HomePage,
     private: true,
-    layout: 'PartnerLayout'
+    layout: 'HomeLayout'
+  },
+  CategoryPage: {
+    path: '/category',
+    exact: true,
+    component: CategoryPage,
+    private: true,
+    layout: 'PublicLayout'
   },
   // LoginPage: {
   //   path: '/partner/login',
