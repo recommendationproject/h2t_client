@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Partner = props => {
+const AdminLayout = props => {
   const { children } = props;
 
   const classes = useStyles();
@@ -66,8 +66,8 @@ const Partner = props => {
   );
 };
 
-Partner.propTypes = {
+AdminLayout.propTypes = {
   children: PropTypes.node
 };
 
-export default Partner;
+export default AdminLayout;

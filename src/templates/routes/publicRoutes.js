@@ -3,19 +3,19 @@ import MyLoadingComponent from "../../components/LoadingComponent";
 
 
 
-// const SignUpPage = Loadable({
-//   loader: () => import("../../pages/partner/SignUp"),
-//   loading: MyLoadingComponent
-// });
+const HomePage = Loadable({
+  loader: () => import("../../pages/admin/HomePage"),
+  loading: MyLoadingComponent
+});
 
 const routes = {
-  // AccountPage: {
-  //   path: '/partner/account',
-  //   exact: true,
-  //   component: AccountPage,
-  //   private: true,
-  //   layout: 'PartnerLayout'
-  // },
+  HomePage: {
+    path: '/',
+    exact: true,
+    component: HomePage,
+    private: true,
+    layout: 'PartnerLayout'
+  },
   // LoginPage: {
   //   path: '/partner/login',
   //   exact: true,

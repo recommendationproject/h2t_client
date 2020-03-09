@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
-import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
+import Fastfood from '@material-ui/icons/Fastfood';
 
 import { Profile, SidebarNav } from './components';
 
@@ -40,23 +40,18 @@ const Sidebar = props => {
   const pages = [
     {
       title: 'Dashboard',
-      href: '/',
+      href: '/partner',
       icon: <DashboardIcon />
     },
     {
-      title: 'Users',
-      href: '/user',
-      icon: <PeopleIcon />
-    },{
-      title: 'Parter',
-      href: '/parter',
+      title: 'Account',
+      href: '/partner/account',
       icon: <PeopleIcon />
     },{
       title: 'Products',
-      href: '/product',
-      icon: <ShoppingBasketIcon />
-    }
-    
+      href: '/partner/product',
+      icon: <Fastfood />
+    }  
   ];
 
   return (

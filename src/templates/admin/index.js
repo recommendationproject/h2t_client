@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MainLayout from '../../layouts/Main';
+import AdminLayout from '../../layouts/AdminLayout';
 
 class index extends Component {
     render() {
@@ -8,9 +8,9 @@ class index extends Component {
         
         return (
             <div>
-                <MainLayout>
+                <AdminLayout>
                     <Component route={route} />
-                </MainLayout>
+                </AdminLayout>
             </div>
         );
     }

@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import _ from 'lodash';
 
 import AdminLayout from './admin';
-import PartnerLayout from './partner';
+import PublicLayout from './public';
 import adminRoutes from './routes/adminRoutes';
 import publicRoutes from './routes/publicRoutes';
 
@@ -33,7 +33,7 @@ class Template extends Component {
                             return (
                                 <Route
                                     key={key}
-                                    render={(route) => <PartnerLayout component={component} route={route} layout={layout}/>}
+                                    render={(route) => <PublicLayout component={component} route={route} layout={layout}/>}
                                     path={path}
                                     exact={exact}
                                 />

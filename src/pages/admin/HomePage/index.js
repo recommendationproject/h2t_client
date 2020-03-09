@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './main.css';
 import { connect } from 'react-redux';
 
@@ -16,26 +16,20 @@ import {
     LatestOrders
 } from './components';
 
-
-class Homepage extends Component {
-
-    componentDidMount() {
+const useStyles = makeStyles(theme => ({
+    root: {
+        padding: theme.spacing(4)
 
     }
+}));
 
-    useStyles = makeStyles(theme => ({
-        root: {
-            padding: theme.spacing(4)
-        }
-    }));
-   
-
-    render() {
+const Homepage = () => {
+    const classes = useStyles();
         
 
         return (
 
-            <div className={this.useStyles.root}>
+            <div className={classes.root}>
                 <Grid
                     container
                     spacing={4}
@@ -116,8 +110,6 @@ class Homepage extends Component {
             </div>
 
         );
-
-    }
 }
 
 
