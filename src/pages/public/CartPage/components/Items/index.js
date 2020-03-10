@@ -9,7 +9,7 @@ class Products extends Component {
     return (
       <div className="items-wrapper">
         <div className="items-title">
-          <h4>All Items</h4>
+          <h4>Category</h4>
         </div>
         <AllItems />
       </div>
