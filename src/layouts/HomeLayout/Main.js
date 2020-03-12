@@ -32,9 +32,9 @@ const Main = props => {
   const classes = useStyles();
 
   const [index, setIndex] = useState(0);
-  const incrementIndex = () => {
-    setIndex(index + 1);
-  }
+  // const incrementIndex = () => {
+  //   setIndex(index + 1);
+  // }
 
  
     // setInterval(incrementIndex, 3000);

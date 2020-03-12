@@ -19,7 +19,7 @@ const DetailPage = (props) => {
     console.log(props.route.match.params.id);
     const [data, setData] = useState([]);
     const [images, setImages] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
     
     useEffect(() => {
         const fetchData = async () => {
@@ -28,8 +28,8 @@ const DetailPage = (props) => {
             setImages(result.data.images);
           };
           fetchData();
-        setIsLoading(false);        
-    },[]);
+        // setIsLoading(false);        
+    },[props]);
     const classes = useStyles();
     // const images = [
     //     {
@@ -86,13 +86,4 @@ const DetailPage = (props) => {
     );
 }
 
-
-const mapStateToProps = (state) => {
-
-};
-
-const mapDispatchToProps = (dispatch, props) => {
-    return {
-    }
-}
 export default DetailPage;

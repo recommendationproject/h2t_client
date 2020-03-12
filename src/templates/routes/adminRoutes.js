@@ -12,7 +12,7 @@ import MyLoadingComponent from "../../components/LoadingComponent";
   });
   
   const LoginPage = Loadable({
-    loader: () => import("../../pages/admin/Login"),
+    loader: () => import("../../pages/admin/SignIn"),
     loading: MyLoadingComponent
   });
 

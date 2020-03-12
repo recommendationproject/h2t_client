@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Avatar, Typography } from '@material-ui/core';
-import callApiUnAuth from '../../../../../../utils/apis/apiUnAuth';
+// import callApiUnAuth from '../../../../../../utils/apis/apiUnAuth';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -32,12 +32,12 @@ const Profile = props => {
     CityName: 'Locate',
     PartnerImage: '/images/avatars/avatar_11.png',
   });
-  useEffect(() => {
-    const partner = JSON.parse(localStorage.getItem('regPartner'));
-    const fetchData = async () => callApiUnAuth(`partner/${partner.user.CustomerID}`, 'GET', {})
-      .then(res => setUser(res.data[0]));
-      fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const partner = JSON.parse(localStorage.getItem('regPartner'));
+  //   const fetchData = async () => callApiUnAuth(`partner/${partner.user.CustomerID}`, 'GET', {})
+  //     .then(res => setUser(res.data[0]));
+  //     fetchData();
+  // }, []);
 
   return (
     <div

@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux';
-import users from '../pages/admin/Login/reducers';
-
+import adminInfo from '../pages/admin/Account/reducers';
+import product from '../pages/admin/Product/reducers';
 const appReducers = combineReducers({
-    users
+    adminInfo,
+    product
 });
 
 export default appReducers;
