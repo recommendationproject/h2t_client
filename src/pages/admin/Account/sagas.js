@@ -9,11 +9,11 @@ import * as Types from './constants'
 //         .catch(error => error.response.data);
 // }
 
-// // function fetchCityApi() {
-// //     return callApiUnAuth(`city`, 'GET', {})
-// //         .then(res => res)
-// //         .catch(error => error.response.data);
-// // }
+function fetchCategoryApi() {
+    return callApiUnAuth(`allcategory`, 'GET', {})
+        .then(res => res)
+        .catch(error => error.response.data);
+}
 
 function signInApi(admin) {
     return callApiUnAuth(`employee/signin`, 'POST', admin)
@@ -27,9 +27,10 @@ function* signIn(action) {
     try {
         const { user } = action
         let token = yield call(signInApi, user)
-        // const city = yield call(fetchCityApi)
+        const category = yield call(fetchCategoryApi)
+        
         // if (msg.success === true) {            
-        yield put(actions.signInSuccess({ token: token.data }));
+        yield put(actions.signInSuccess({ token: token.data, category: category.data }));
         // } else {
         // yield put(actions.fetchPartnerFail(partner));
         // }

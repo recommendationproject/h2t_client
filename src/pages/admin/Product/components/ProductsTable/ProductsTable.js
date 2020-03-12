@@ -74,9 +74,7 @@ const UsersTable = () => {
       firstUpdate.current = false;
       return;
     }
-    setData(count.product.data);
-    console.log(count);
-    
+    setData(count.product.data);    
     setIsLoading(false);
   }, [count]);
 

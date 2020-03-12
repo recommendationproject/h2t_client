@@ -124,8 +124,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SignIn = props => {
-  const { history } = props;
-
+  const history = props.route.history;
+  console.log(props);
+  
   const classes = useStyles();
 
   const [formState, setFormState] = useState({
@@ -170,19 +171,19 @@ const SignIn = props => {
   const dispatch = useDispatch();
   const handleSignIn = event => {
     event.preventDefault();
-    dispatch(signIn(formState.values))
+    dispatch(signIn(formState.values))    
   };
   
   const firstUpdate = useRef(true);
-  const store = useSelector(state => state);
+  const store = useSelector(state => state).adminInfo;
   useEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false;
       return;
     }
-    localStorage.setItem("sessionadmin", JSON.stringify(store.getState().adminInfo));
+    localStorage.setItem("sessionadmin", JSON.stringify(store));    
     history.push('/admin');
-  }, [store, history]);
+  }, [store,, history]);
 
 
   const hasError = field =>
@@ -319,4 +320,4 @@ SignIn.propTypes = {
   history: PropTypes.object
 };
 
-export default withRouter(SignIn);
+export default SignIn;

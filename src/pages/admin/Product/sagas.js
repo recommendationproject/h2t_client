@@ -1,17 +1,16 @@
 import { put, call, takeLatest } from 'redux-saga/effects'
-import callApiUnAuth from '../../../utils/apis/apiUnAuth';
+import callApiUnAuth, {callApiUnauthWithHeader} from '../../../utils/apis/apiUnAuth';
 import * as actions from './actions'
 import * as Types from './constants'
 
-function fetchProductApi(partnerId) {
+function fetchProductApi() {
     return callApiUnAuth(`employee/product`, 'GET', [])
         .then(res => res)
         .catch(error => error.response.data);
 }
 
-
 function addProductApi(product) {
-    return callApiUnAuth(`partner/product`, 'POST', product)
+    return callApiUnauthWithHeader(`product`, 'POST', product)
         .then(res => res)
         .catch(error => error.response.data);
 }

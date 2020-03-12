@@ -1,11 +1,11 @@
-import React, { useState} from 'react';
-import {  useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useStore } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@material-ui/core';
 import { DropzoneArea } from 'material-ui-dropzone'
-import {addProduct} from '../../actions';
+import { addProduct } from '../../actions';
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   searchInput: {
     marginRight: theme.spacing(1)
   },
-  dialogContent:{
+  dialogContent: {
     overflowX: 'hidden',
     overflowY: 'hidden'
   }
@@ -48,12 +48,14 @@ const UsersToolbar = props => {
   };
 
   const [values, setValues] = useState({
-    PartnerID: 'partner0000000000001',
-    ItemName: '',
-    description: '',
-    ItemImage: ''
+    name: 'name',
+    price: '0',
+    description: 'description',
+    amount: '0',
+    category_id: 'category000000000002'
   });
-
+  const store = useStore();
+  const category = store.getState().adminInfo.category;
   const handleChange = event => {
     setValues({
       ...values,
@@ -64,14 +66,17 @@ const UsersToolbar = props => {
   const handleChangeFile = file => {
     setValues({
       ...values,
-      ItemImage:file[0].name
+      ItemImage: file[0].name
     })
   };
-  const handleAccept= ()=> {
+  const handleAccept = () => {
     console.log(values);
+    
     dispatch(addProduct(values));
   };
-  
+
+
+
   return (
     <div
       {...rest}
@@ -98,62 +103,129 @@ const UsersToolbar = props => {
         >
           <DialogTitle id="responsive-dialog-title">{"Thông tin sản phẩm"}</DialogTitle>
           <DialogContent className={classes.dialogContent}>
+            <Grid
+              container
+              spacing={3}
+            >
               <Grid
-                container
-                spacing={3}
+                item
+                md={12}
+                xs={12}
               >
-                <Grid
-                  item
-                  md={12}
-                  xs={12}
-                >
-                  <TextField
-                    fullWidth
-                    helperText=""
-                    label="Tên sản phẩm"
-                    margin="dense"
-                    name="ItemName"
-                    onChange={handleChange}
-                    required
-                    value={values.ItemName}
-                    variant="outlined"
-                  />
-                </Grid>
-
-                <Grid
-                  item
-                  md={12}
-                  xs={12}
-                >
-                  <TextField
-                    fullWidth
-                    helperText=""
-                    label="Mô tả"
-                    margin="dense"
-                    name="description"
-                    onChange={handleChange}
-                    required
-                    value={values.description}
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid
-                  item
-                  md={12}
-                  xs={12}
-                >
-                  <DropzoneArea
-                    onChange={handleChangeFile}
-                    acceptedFiles={['image/*']}
-                    filesLimit={1}
-                    dropzoneText={'Ảnh sản phẩm'}
-                    showPreviews={true}
-                    showPreviewsInDropzone={false}
-                    initialFiles={[]}
-                  />
-                </Grid>
-
+                <TextField
+                  fullWidth
+                  helperText=""
+                  label="Tên sản phẩm"
+                  margin="dense"
+                  name="name"
+                  onChange={handleChange}
+                  required
+                  value={values.name}
+                  variant="outlined"
+                />
               </Grid>
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <TextField
+                  fullWidth
+                  helperText=""
+                  label="Giá"
+                  margin="dense"
+                  name="price"
+                  onChange={handleChange}
+                  type="number"
+                  required
+                  value={values.price}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <TextField
+                  fullWidth
+                  helperText=""
+                  label="Số lượng"
+                  margin="dense"
+                  name="amount"
+                  onChange={handleChange}
+                  type="number"
+                  required
+                  value={values.amount}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <TextField
+                  fullWidth
+                  helperText=""
+                  label="Mô tả"
+                  margin="dense"
+                  name="description"
+                  onChange={handleChange}
+                  required
+                  value={values.description}
+                  variant="outlined"
+                  multiline={true}
+                  rows={4}
+                />
+              </Grid>
+
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <TextField
+                  fullWidth
+                  label="Loại sản phẩm"
+                  margin="dense"
+                  name="category_id"
+                  onChange={handleChange}
+                  required
+                  select
+                  // eslint-disable-next-line react/jsx-sort-props
+                  SelectProps={{ native: true }}
+                  value={values.category_id}
+                  variant="outlined"
+                >
+                  {category.map(option => (
+                    <option
+                      key={option.id}
+                      value={option.id}
+                    >
+                      {option.name +' - '+ option.gender}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <DropzoneArea
+                  onChange={handleChangeFile}
+                  acceptedFiles={['image/*']}
+                  filesLimit={1}
+                  dropzoneText={'Ảnh sản phẩm'}
+                  showPreviews={true}
+                  showPreviewsInDropzone={false}
+                  initialFiles={[]}
+                />
+              </Grid>
+
+            </Grid>
           </DialogContent>
           <DialogActions>
             <Button autoFocus onClick={handleClose} color="primary">

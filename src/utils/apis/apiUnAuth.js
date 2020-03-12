@@ -13,6 +13,7 @@ export function callApiUnauthWithHeader(endpoint, method = 'GET', header) {
   return axios({
     method: method,
     url: `${Config.API_URL}/${endpoint}`,
+    'Content-type': 'application/json; charset=utf-8',
     headers: header
   }).catch(err => {
   });
