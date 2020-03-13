@@ -23,7 +23,7 @@ const DetailPage = (props) => {
     
     useEffect(() => {
         const fetchData = async () => {
-            const result = await callApiUnauthWithHeader(`product`, 'GET',{id: props.route.match.params.id})            
+            const result = await callApiUnauthWithHeader(`product/detail`, 'GET',{id: props.route.match.params.id})            
             setData(result.data.product);
             setImages(result.data.images);
           };
@@ -78,7 +78,7 @@ const DetailPage = (props) => {
                     xl={4}
                     xs={4}
                 >
-                    {data.toString()}
+                    {data.product.toString()}
                 </Grid>
             </Grid>
         </div>

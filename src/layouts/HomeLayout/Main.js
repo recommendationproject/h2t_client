@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 
@@ -31,7 +31,7 @@ const Main = props => {
   const { children } = props;
   const classes = useStyles();
 
-  const [index, setIndex] = useState(0);
+  const index = 0;
   // const incrementIndex = () => {
   //   setIndex(index + 1);
   // }

@@ -49,7 +49,6 @@ const Profile = props => {
         className={classes.avatar}
         component={RouterLink}
         src={user.PartnerImage}
-        to="/settings"
       />
       <Typography
         className={classes.name}

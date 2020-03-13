@@ -1,34 +1,42 @@
 import { put, call, takeLatest } from 'redux-saga/effects'
-import callApiUnAuth, {callApiUnauthWithHeader} from '../../../utils/apis/apiUnAuth';
+import callApiUnAuth from '../../../utils/apis/apiUnAuth';
+import {imagesUpload} from '../../../utils/apis/apiAuth';
 import * as actions from './actions'
 import * as Types from './constants'
 
 function fetchProductApi() {
-    return callApiUnAuth(`employee/product`, 'GET', [])
+    return callApiUnAuth(`product/admin`, 'GET', [])
         .then(res => res)
         .catch(error => error.response.data);
 }
 
 function addProductApi(product) {
-    return callApiUnauthWithHeader(`product`, 'POST', product)
+    return callApiUnAuth(`product`, 'POST', product)
+        .then(res => res)
+        .catch(error => error.response.data);
+}
+
+function uploadImagesApi(img) {
+    return imagesUpload(img)
         .then(res => res)
         .catch(error => error.response.data);
 }
 
 function deleteProductApi(productId) {
-    return callApiUnAuth(`partner/product/${productId}`, 'DELETE', [])
+    return callApiUnAuth(`product/${productId}`, 'DELETE', [])
         .then(res => res)
         .catch(error => error.response.data);
 }
 
 function updateProductApi(product) {
-    return callApiUnAuth(`partner/product`, 'PUT', product)
+    return callApiUnAuth(`product`, 'PUT', product)
         .then(res => res)
         .catch(error => error.response.data);
 }
 
 function* fetchProduct() {
     try {
+      
         let product = yield call(fetchProductApi)   
         // if (msg.success === true) {            
         yield put(actions.fetchProductSuccess(product));
@@ -43,7 +51,15 @@ function* fetchProduct() {
 
 function* addProduct(action) {
     try {
-        const { product } = action
+        const { product } = action      
+        const imgLink = [];  
+
+        for (let index = 0; index < product.img.length; index++) {
+            let rs = yield call(uploadImagesApi, product.img[index])
+            imgLink.push(rs.data.data.link)
+        }
+        product.img = imgLink
+       
         yield call(addProductApi, product)
 
         // if (msg.success === true) {            
@@ -53,6 +69,7 @@ function* addProduct(action) {
         // }
 
     } catch (error) {
+        console.log(error);
         yield put(actions.addProductFail(error));
     }
 }
@@ -69,6 +86,8 @@ function* updateProduct(action) {
         // }
 
     } catch (error) {
+      
+        
         yield put(actions.updateProductFail(error));
     }
 }

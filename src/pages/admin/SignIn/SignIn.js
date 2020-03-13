@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import validate from 'validate.js';
 import { makeStyles } from '@material-ui/styles';
@@ -183,7 +182,7 @@ const SignIn = props => {
     }
     localStorage.setItem("sessionadmin", JSON.stringify(store));    
     history.push('/admin');
-  }, [store,, history]);
+  }, [store, history]);
 
 
   const hasError = field =>

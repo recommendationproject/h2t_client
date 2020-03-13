@@ -22,7 +22,7 @@ const Homepage = () => {
     
     useEffect(() => {
         const fetchData = async () => {
-            const result = await callApiUnauthWithHeader(``, 'GET')
+            const result = await callApiUnauthWithHeader(`product`, 'GET')
             setData(result.data);
           };
           fetchData();

@@ -29,3 +29,16 @@ export function callApiAuthWithBody(endpoint, method = 'GET', body) {
   }).catch(err => {
   });
 }
+
+export function imagesUpload(img) {
+  let formData = new FormData();
+  formData.append('image', img);
+  return axios({
+    method: 'POST',
+    url: `https://api.imgur.com/3/image`,
+    headers: { 'Authorization': `Bearer 691dd8ff949e07fd029571d0ce325ea44a504174` },
+    data: formData
+  }).catch(err => {
+    console.log(err.response);
+  });
+}

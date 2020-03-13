@@ -5,7 +5,9 @@ import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
+import PersonIcon from '@material-ui/icons/Person';
 import Fastfood from '@material-ui/icons/Fastfood';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import { Profile, SidebarNav } from './components';
 
@@ -46,12 +48,20 @@ const Sidebar = props => {
     {
       title: 'Account',
       href: '/admin/account',
-      icon: <PeopleIcon />
+      icon: <PersonIcon />
     },{
       title: 'Products',
       href: '/admin/product',
       icon: <Fastfood />
-    }  
+    } , {
+      title: 'Employee',
+      href: '/admin/employee',
+      icon: <PeopleIcon />
+    }, {
+      title: 'Sign Out',
+      href: '/admin/signout',
+      icon: <ExitToAppIcon />
+    }
   ];
 
   return (

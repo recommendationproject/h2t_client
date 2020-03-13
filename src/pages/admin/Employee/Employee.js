@@ -5,7 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import { ProductsTable, ProductsToolbar,SourceOfItems } from './components';
+import { EmployeesTable, EmployeesToolbar } from './components';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,7 +41,7 @@ function TabPanel(props) {
   );
 }
 
-const Product = () => {
+const Employee = () => {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -53,14 +53,14 @@ const Product = () => {
     <div className={classes.root}>
       <AppBar position="static">
         <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-          <Tab label="Sản phẩm" {...a11yProps(0)} />
+          <Tab label="Nhân viên" {...a11yProps(0)} />
           {/* <Tab label="Sản phẩm đang bán" {...a11yProps(1)} /> */}
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <ProductsToolbar />
+        <EmployeesToolbar />
       <div className={classes.content}>
-        <ProductsTable />
+        <EmployeesTable />
       </div>
       </TabPanel>
       {/* <TabPanel value={value} index={1}>
@@ -72,4 +72,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default Employee;

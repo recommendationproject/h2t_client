@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@material-ui/core';
 import { DropzoneArea } from 'material-ui-dropzone'
-import { addProduct } from '../../actions';
+import { addEmployee } from '../../actions';
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UsersToolbar = props => {
+const EmployeesToolbar = props => {
   const { className, ...rest } = props;
   const classes = useStyles();
   // const firstUpdate = useRef(true);
@@ -71,7 +71,7 @@ const UsersToolbar = props => {
     })
   };
   const handleAccept = () => {    
-    dispatch(addProduct(values));
+    dispatch(addEmployee(values));
   };
 
 
@@ -240,8 +240,8 @@ const UsersToolbar = props => {
   );
 };
 
-UsersToolbar.propTypes = {
+EmployeesToolbar.propTypes = {
   className: PropTypes.string
 };
 
-export default UsersToolbar;
+export default EmployeesToolbar;

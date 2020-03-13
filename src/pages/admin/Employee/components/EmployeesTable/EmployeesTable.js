@@ -21,7 +21,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextFi
 import { makeStyles } from '@material-ui/styles';
 import { DropzoneArea } from 'material-ui-dropzone'
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchProduct, deleteProduct, updateProduct } from '../../actions';
+import { fetchEmployee, deleteEmployee, updateEmployee } from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -49,15 +49,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UsersTable = () => {
+const EmployeesTable = () => {
   const classes = useStyles();
   const columns = [
-    { title: 'Avatar', field: 'images', render: rowData => <img src={rowData.images} alt={rowData.name} style={{ width: 40, height: 40, borderRadius: '50%' }} /> },
-    { title: 'Tên sản phẩm', field: 'name' },
-    { title: 'Giá', field: 'price' },
-    { title: 'Số lượng', field: 'amount' },
-    { title: 'Loại', field: 'cate_name' },
-    { title: 'Gtới tính', field: 'gender' },
+    // { title: 'Avatar', field: 'images', render: rowData => <img src={rowData.images} alt={rowData.name} style={{ width: 40, height: 40, borderRadius: '50%' }} /> },
+    { title: 'Tên', field: 'name' },
+    { title: 'Địa chỉ', field: 'address' },
+    { title: 'Số điện thoại', field: 'phone' },
+    { title: 'tên đăng nhập', field: 'username' },
+    // { title: 'Gtới tính', field: 'gender' },
   ];
   const [data, setData] = useState([]);
   const count = useSelector(state => state);
@@ -65,7 +65,7 @@ const UsersTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const firstUpdate = useRef(true);
   useEffect(() => {
-    dispatch(fetchProduct());
+    dispatch(fetchEmployee());
   }, [dispatch]);
 
   useEffect(() => {
@@ -73,22 +73,19 @@ const UsersTable = () => {
       firstUpdate.current = false;
       return;
     }
-    setData(count.product.data);        
+    setData(count.employee.data);
     setIsLoading(false);
   }, [count]);
 
   const handleDelete = (rowData) => {
-    dispatch(deleteProduct(rowData.ItemID));
+    dispatch(deleteEmployee(rowData.ItemID));
   }
- 
+
   const [values, setValues] = useState({
     id: '',
     name: '',
-    price:'',
-    amount:'',
-    description: '',
-    img: null,
-    status:''
+    address: '',
+    username: ''
   });
 
   const [open, setOpen] = useState(false);
@@ -116,7 +113,7 @@ const UsersTable = () => {
   };
   const handleAccept = () => {
     console.log(values);
-    dispatch(updateProduct(values));
+    dispatch(updateEmployee(values));
   };
 
   const tableIcons = {
@@ -145,7 +142,7 @@ const UsersTable = () => {
         <div>Loading ...</div>
       ) : (
           <div>
-            <MaterialTable  title="Sản Phẩm" columns={columns} data={data} icons={tableIcons}
+            <MaterialTable title="Nhân viên" columns={columns} data={data} icons={tableIcons}
               actions={[
                 {
                   icon: Edit,
@@ -281,4 +278,4 @@ const UsersTable = () => {
   );
 };
 
-export default UsersTable;
+export default EmployeesTable;
