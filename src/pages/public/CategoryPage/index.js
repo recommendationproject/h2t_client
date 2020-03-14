@@ -17,8 +17,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Homepage = () => {
-    const classes = useStyles();
-
+    const classes = useStyles();    
 
     return (
 

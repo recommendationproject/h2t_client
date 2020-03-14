@@ -78,7 +78,7 @@ const DetailPage = (props) => {
                     xl={4}
                     xs={4}
                 >
-                    {data.product.toString()}
+                    {/* {data.product.toString()} */}
                 </Grid>
             </Grid>
         </div>

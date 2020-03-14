@@ -44,7 +44,14 @@ const routes = {
     layout: 'HomeLayout'
   },
   CategoryPage: {
-    path: '/category',
+    path: '/category/:category',
+    exact: true,
+    component: CategoryPage,
+    private: true,
+    layout: 'PublicLayout'
+  },
+  TypePage: {
+    path: '/type/:type',
     exact: true,
     component: CategoryPage,
     private: true,
