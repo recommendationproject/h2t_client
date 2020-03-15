@@ -12,7 +12,7 @@ const Navbar = () => {
   // const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
-      const result = await callApiUnauthWithHeader(`allcategory`, 'GET')
+      const result = await callApiUnauthWithHeader(`categoryGroupByGender`, 'GET')
       setData(result.data);
     };
     fetchData();

@@ -1,89 +1,55 @@
 // Dependencies
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import {Menu, MenuItem, Button, ListItemText} from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { callApiUnauthWithHeader } from '../../../../utils/apis/apiUnAuth';
 // Internals
 import './index.css';
-const StyledMenu = withStyles({
-  paper: {
-    border: '1px solid #d3d4d5',
-  },
-})(props => (
-  <Menu
-    elevation={0}
-    getContentAnchorEl={null}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'center',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'center',
-    }}
-    {...props}
-  />
-));
-
-const StyledMenuItem = withStyles(theme => ({
-  root: {
-    '&:focus': {
-      backgroundColor: theme.palette.primary.main,
-      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-        color: theme.palette.common.white,
-      },
-    },
-  },
-}))(MenuItem);
 
 const Navbar = () => {
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
+  const [data, setData] = useState([]);
+  // const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await callApiUnauthWithHeader(`categoryGroupByGender`, 'GET')
+      setData(result.data);
+    };
+    fetchData();
+    // setIsLoading(false);
+  }, []);
 
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
-  };
+  var items = data.map((track, i) => {
+    var subItems = track.items.map((t, j) => {
+      return (<li key={j} className="menu-item"><NavLink to={"/category/" + t.id} >{t.name}</NavLink></li>)
+    });
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+    return (<li key={i} className="menu-item menu-main">
+      <NavLink to={"/type/" + track.group_eng} style={{ color: 'white' }}>{track.group}</NavLink>
+      <ol className="sub-menu">
+        {subItems}
+      </ol>
+    </li>)
+  });
 
   return (
     <nav className="navbar">
-    <div className="nav-links">
-      <ul>
-        <li><NavLink activeClassName="selected" className="nav-link" exact to="/">Trang chủ </NavLink></li>
-        <li>
-          {/* <NavLink activeClassName="selected" className="nav-link" to="/women">Nam</NavLink> */}
-          <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-        Nam
-      </Button>
-        </li>
-        <StyledMenu
-        id="customized-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <StyledMenuItem>
-          <ListItemText primary="Sent mail" />
-        </StyledMenuItem>
-        <StyledMenuItem>
-          <ListItemText primary="Drafts" />
-        </StyledMenuItem>
-        <StyledMenuItem>
-          <ListItemText primary="Inbox" />
-        </StyledMenuItem>
-      </StyledMenu>
-        <li><NavLink activeClassName="selected" className="nav-link" to="/men">Nữ</NavLink></li>
-      </ul>
-    </div>
-    <div className="shopping-cart">
-      <NavLink to="/cart" style={{ color: 'white' }}><ShoppingCartIcon /></NavLink>
-    </div>
-  </nav>
+      <div className="nav-links">
+        <nav className="menu">
+          <ol>
+            <li className="menu-item menu-main">
+              <NavLink to="/" style={{ color: 'white' }}>Trang chủ</NavLink>
+            </li>
+            {items}
+          </ol>
+        </nav>
+      </div>
+
+
+      <div className="shopping-cart">
+        <NavLink to="/cart" style={{ color: 'white' }}><ShoppingCartIcon /></NavLink>
+      </div>
+    </nav>
   )
   //    <nav role='menu'>
   //    <input id='link-top' type='checkbox' />
@@ -98,6 +64,6 @@ const Navbar = () => {
 
   //    </ul>
   //  </nav>
-  };
+};
 
 export default Navbar;

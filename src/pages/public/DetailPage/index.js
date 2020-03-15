@@ -3,7 +3,7 @@ import './main.css';
 
 import { makeStyles } from '@material-ui/styles';
 import { Grid } from '@material-ui/core';
-
+import Loading from 'react-fullscreen-loading';
 import ImageGallery from 'react-image-gallery';
 import "react-image-gallery/styles/css/image-gallery.css";
 import {callApiUnauthWithHeader} from '../../../utils/apis/apiUnAuth';
@@ -19,7 +19,7 @@ const DetailPage = (props) => {
     console.log(props.route.match.params.id);
     const [data, setData] = useState([]);
     const [images, setImages] = useState([]);
-    // const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     
     useEffect(() => {
         const fetchData = async () => {
@@ -28,33 +28,26 @@ const DetailPage = (props) => {
             setImages(result.data.images);
           };
           fetchData();
-        // setIsLoading(false);        
     },[props]);
+    console.log(data);
+    
+    useEffect(() => {
+        if(data.id){
+            setIsLoading(false);
+        }
+    },[data]);
     const classes = useStyles();
-    // const images = [
-    //     {
-    //       original: 'https://picsum.photos/id/1018/1000/600/',
-    //       thumbnail: 'https://picsum.photos/id/1018/250/150/',
-    //     },
-    //     {
-    //       original: 'https://picsum.photos/id/1015/1000/600/',
-    //       thumbnail: 'https://picsum.photos/id/1015/250/150/',
-    //     },
-    //     {
-    //       original: 'https://picsum.photos/id/1019/1000/600/',
-    //       thumbnail: 'https://picsum.photos/id/1019/250/150/',
-    //     },
-    //   ];
 
     return (
-
+        
         <div className={classes.root}>
+            {isLoading ? (
+            <Loading loading background="#2ecc71" loaderColor="#3498db" />
+          ) : (
             <Grid
                 container
                 spacing={1}
             >
-
-
                 <Grid
                     item
                     lg={8}
@@ -78,11 +71,12 @@ const DetailPage = (props) => {
                     xl={4}
                     xs={4}
                 >
-                    {/* {data.product.toString()} */}
+                    {data.toString()}
                 </Grid>
             </Grid>
+            )}
         </div>
-
+       
     );
 }
 

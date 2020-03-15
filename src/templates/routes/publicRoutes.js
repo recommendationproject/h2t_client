@@ -57,6 +57,20 @@ const routes = {
     private: true,
     layout: 'PublicLayout'
   },
+  NewPage: {
+    path: '/new',
+    exact: true,
+    component: CategoryPage,
+    private: true,
+    layout: 'PublicLayout'
+  },
+  SalePage: {
+    path: '/sale',
+    exact: true,
+    component: CategoryPage,
+    private: true,
+    layout: 'PublicLayout'
+  },
   DetailPage: {
     path: '/products/:id',
     exact: true,

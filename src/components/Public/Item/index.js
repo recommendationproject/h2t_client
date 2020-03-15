@@ -16,7 +16,7 @@ const Item = (props) => (
         </Link>
         <div className="price-add">
           <h5 id="product-price">${props.product.price}</h5>
-          <AddShoppingCartIcon />
+          <AddShoppingCartIcon className="addcart-icon"/>
         </div>
       </div>
 )

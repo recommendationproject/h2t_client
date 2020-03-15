@@ -4,7 +4,7 @@ import './main.css';
 import { makeStyles } from '@material-ui/styles';
 import { Grid } from '@material-ui/core';
 import  Item  from '../../../components/Public/Item';
-import LoadingOverlay from 'react-loading-overlay';
+import Loading from 'react-fullscreen-loading';
 import map from 'lodash/map';
 // import PRODUCTS from '../Data';
 import {callApiUnauthWithHeader} from '../../../utils/apis/apiUnAuth';
@@ -56,13 +56,7 @@ const Homepage = () => {
                     xl={8}
                     xs={8}
                 >{isLoading ? (
-                    <LoadingOverlay 
-                    active={isLoading}
-                    spinner
-                    text='Loading your content...'
-                    >
-                    <p>Some content or children or something.</p>
-                  </LoadingOverlay>
+                    <Loading loading background="#2ecc71" loaderColor="#3498db" />
                   ) : (
                     <div className="items-wrapper">
                         <div className="items-title">
