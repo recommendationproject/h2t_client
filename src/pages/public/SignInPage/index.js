@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import validate from 'validate.js';
 import './main.css';
 import { makeStyles } from '@material-ui/styles';
@@ -8,7 +8,8 @@ import {
     TextField,
     Typography
 } from '@material-ui/core';
-import callApiUnauth from '../../../utils/apis/apiUnAuth';
+import { useDispatch, useSelector } from 'react-redux';
+import { signIn } from '../Account/actions';
 const schema = {
     username: {
         presence: { allowEmpty: false, message: 'Tên đăng nhập không được để trống !' },
@@ -119,7 +120,8 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const SignUpPage = () => {
+const SignInPage = props => {
+    const history = props.route.history;
     const classes = useStyles();
     const [formState, setFormState] = useState({
         isValid: false,
@@ -156,13 +158,27 @@ const SignUpPage = () => {
             }
         }));
     };
-
+    const dispatch = useDispatch();
     const handleSignUp = async event => {
         event.preventDefault();
-        const result = await callApiUnauth(`signin`, 'POST', formState.values)
-        console.log(result);
-        
+        dispatch(signIn(formState.values)) 
     }
+
+    const firstUpdate = useRef(true);
+    const store = useSelector(state => state).userInfo;
+
+    useEffect(() => {
+      if (firstUpdate.current) {
+        firstUpdate.current = false;
+        return;
+      }
+      if (store.token.success===false) {
+          alert(store.token.msg);
+      }else{
+        localStorage.setItem("sessionuser", JSON.stringify(store));    
+        history.push('/');
+      }
+    }, [store, history]);
 
     const hasError = field =>
         formState.touched[field] && formState.errors[field] ? true : false;
@@ -241,4 +257,4 @@ const SignUpPage = () => {
 }
 
 
-export default SignUpPage;
+export default SignInPage;

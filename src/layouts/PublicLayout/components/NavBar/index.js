@@ -2,21 +2,22 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import PersonIcon from '@material-ui/icons/Person';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { callApiUnauthWithHeader } from '../../../../utils/apis/apiUnAuth';
-// Internals
 import './index.css';
+import { useStore } from 'react-redux';
 
 const Navbar = () => {
 
   const [data, setData] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
+  const store = useStore();
   useEffect(() => {
     const fetchData = async () => {
       const result = await callApiUnauthWithHeader(`categoryGroupByGender`, 'GET')
       setData(result.data);
     };
     fetchData();
-    // setIsLoading(false);
   }, []);
 
   var items = data.map((track, i) => {
@@ -47,23 +48,21 @@ const Navbar = () => {
 
 
       <div className="shopping-cart">
+        {store.getState().userInfo ? (
+          <div>
+            <PersonIcon style={{ color: 'white', marginRight: '10px', lineHeight: '3rem' }}></PersonIcon>
+            <ExitToAppIcon style={{ color: 'white', marginRight: '10px', lineHeight: '3rem' }}></ExitToAppIcon>
+          </div>
+         ) : (
+          
+          <div><NavLink to='/signup' style={{ color: 'white', marginRight: '10px', lineHeight: '3rem' }}>Đăng ký</NavLink>
+          <NavLink to='/signin' style={{ color: 'white', marginRight: '10px', lineHeight: '3rem' }}>Đăng nhập</NavLink></div>
+         )}
         <NavLink to="/cart" style={{ color: 'white' }}><ShoppingCartIcon /></NavLink>
       </div>
     </nav>
   )
-  //    <nav role='menu'>
-  //    <input id='link-top' type='checkbox' />
-  //    <p class='down' id='menu'>Menu</p>
-  //    <ul id='nav'>
-  //      <li role='none'>
-  //        <input id='link-shop' />
-  //        <label class='right' id='shop'>Shop</label>
-  //        <ul id='nest'>
-  //        </ul>
-  //      </li>
 
-  //    </ul>
-  //  </nav>
 };
 
 export default Navbar;

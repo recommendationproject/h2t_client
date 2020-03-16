@@ -40,6 +40,17 @@ const Template = () => {
         return 'Minimal'
     }
 
+    const comp2 = (component) => {
+        if ((localStorage.getItem("sessionuser") && ((new Date(JSON.parse(localStorage.getItem("sessionuser")).token.expires) - new Date()) >= 0)) && store.getState().userInfo) {
+            return component
+        }
+        if ((localStorage.getItem("sessionuser") && ((new Date(JSON.parse(localStorage.getItem("sessionuser")).token.expires) - new Date()) >= 0)) && store.getState().userInfo === null) {
+            dispatch(mlts(JSON.parse(localStorage.getItem("sessionuser"))))
+            return component
+        }
+        localStorage.removeItem("sessionuser")
+        return component
+    }
     return (
         <ThemeProvider theme={theme}>
             <BrowserRouter>
@@ -62,7 +73,7 @@ const Template = () => {
                         return (
                             <Route
                                 key={key}
-                                render={(route) => <PublicLayout component={component} route={route} layout={layout} />}
+                                render={(route) => <PublicLayout component={comp2(component)} route={route} layout={layout} />}
                                 path={path}
                                 exact={exact}
                             />
