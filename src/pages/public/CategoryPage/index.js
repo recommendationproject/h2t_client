@@ -113,17 +113,17 @@ const CategoryPage = (props) => {
                             xl={12}
                             xs={12}
                         >
-                            <div class="pagination-custom">
-                                <nav class="pagination-nav"><span class="pagination-text">Trang {page.currentPage}</span>
-                                    <div class="pagination-left">
+                            <div className="pagination-custom">
+                                <nav className="pagination-nav"><span className="pagination-text">Trang {page.currentPage}</span>
+                                    <div className="pagination-left">
                                         <NavLink to='' className="pagination-prev"></NavLink>
                                         {leftPageinationItems}
-                                        <span class="pagination-line"></span>
+                                        <span className="pagination-line"></span>
                                     </div>
-                                    <div class="pagination-right">
+                                    <div className="pagination-right">
                                         <NavLink to='' className="pagination-next"></NavLink>
                                         {rightPageinationItems}
-                                        <span class="pagination-line"></span>
+                                        <span className="pagination-line"></span>
                                     </div>
                                 </nav>
                             </div>

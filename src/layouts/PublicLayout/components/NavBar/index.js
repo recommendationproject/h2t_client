@@ -50,7 +50,7 @@ const Navbar = () => {
       <div className="shopping-cart">
         {store.getState().userInfo ? (
           <div>
-            <PersonIcon style={{ color: 'white', marginRight: '10px', lineHeight: '3rem' }}></PersonIcon>
+            <NavLink to='/acc' style={{ color: 'white', marginRight: '10px' }}><PersonIcon /></NavLink>
             <ExitToAppIcon style={{ color: 'white', marginRight: '10px', lineHeight: '3rem' }}></ExitToAppIcon>
           </div>
          ) : (

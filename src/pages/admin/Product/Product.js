@@ -5,7 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import { ProductsTable, ProductsToolbar } from './components';
+import { ProductsTable, ProductsToolbar, OrdersTable } from './components';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,20 +54,20 @@ const Product = () => {
       <AppBar position="static">
         <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
           <Tab label="Sản phẩm" {...a11yProps(0)} />
-          {/* <Tab label="Sản phẩm đang bán" {...a11yProps(1)} /> */}
+          <Tab label="Đơn hàng" {...a11yProps(1)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
         <ProductsToolbar />
-      <div className={classes.content}>
-        <ProductsTable />
-      </div>
+        <div className={classes.content}>
+          <ProductsTable />
+        </div>
       </TabPanel>
-      {/* <TabPanel value={value} index={1}>
-        <SourceOfItems />
-      </TabPanel> */}
+      <TabPanel value={value} index={1}>
+        <OrdersTable />
+      </TabPanel>
 
-      
+
     </div>
   );
 };

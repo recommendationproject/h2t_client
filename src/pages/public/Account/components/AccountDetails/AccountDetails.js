@@ -3,7 +3,6 @@ import { useStore, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { updatePartner } from '../../actions';
 import {
   Card,
   CardHeader,
@@ -35,19 +34,16 @@ const AccountDetails = props => {
 
   const [city, setCity] = useState([]);
 
-  const store = useStore().getState().partnerInfo;
+  const store = useStore().getState().userInfo;
   useEffect(() => {
     setValues({
-      PartnerID: store.token.user.PartnerID,
-      PartnerName: store.token.user.PartnerName,
-      PartnerAddress: store.token.user.PartnerAddress,
-      PartnerEmail: store.token.user.PartnerEmail,
-      PartnerPhone: store.token.user.PartnerPhone,
-      PartnerDescription: store.token.user.PartnerDescription,
-      CityName: store.token.user.CityName
+      PartnerID: store.token.user.id,
+      PartnerName: store.token.user.name,
+      PartnerUserName: store.token.user.username,
+      PartnerAddress: store.token.user.address,
+      PartnerEmail: store.token.user.email,
+      PartnerPhone: store.token.user.phone,
     })
-    setCity(store.city.data)
-    console.log(store.city.data);
     
   }, [store]);
 
@@ -65,7 +61,6 @@ const AccountDetails = props => {
         delete values.CityName;
       }
     });
-    dispatch(updatePartner(values));
   }
 
   return (

@@ -33,6 +33,10 @@ const SignInPage = Loadable({
   loader: () => import("../../pages/public/SignInPage"),
   loading: MyLoadingComponent
 });
+const AccountPage = Loadable({
+  loader: () => import("../../pages/public/Account"),
+  loading: MyLoadingComponent
+});
 
 
 const routes = {
@@ -92,6 +96,13 @@ const routes = {
     private: true,
     layout: 'PublicLayout'
   },
+  AccountPage: {
+    path: '/acc',
+    exact: true,
+    component: AccountPage,
+    private: true,
+    layout: 'PublicLayout'
+  },
   SignUpPage: {
     path: '/signup',
     exact: true,
@@ -106,28 +117,6 @@ const routes = {
     private: true,
     layout: 'PublicLayout'
   },
-  // LoginPage: {
-  //   path: '/partner/login',
-  //   exact: true,
-  //   component:
-  //     (localStorage.getItem("sessionpartner") && ((new Date(JSON.parse(localStorage.getItem("session")).expires) - new Date()) >= 0)
-  //       ? HomePage
-  //       : LoginPage
-  //     ),
-  //   private: false,
-  //   layout: 'LoginLayout'
-  // },
-  // SignUpPage: {
-  //   path: '/partner/sign-up',
-  //   exact: true,
-  //   component:
-  //     (localStorage.getItem("sessionpartner") && ((new Date(JSON.parse(localStorage.getItem("session")).expires) - new Date()) >= 0)
-  //       ? HomePage
-  //       : SignUpPage
-  //     ),
-  //   private: false,
-  //   layout: 'LoginLayout'
-  // }
 };
 
 export default routes;
