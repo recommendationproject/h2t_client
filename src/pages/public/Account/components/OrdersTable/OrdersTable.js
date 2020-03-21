@@ -61,7 +61,7 @@ const OrdersTable = () => {
     {
       title: '', field: 'order_id', render: rowData => {
 
-        if (rowData.israting === 0 && rowData.status === 5) {
+        if (rowData.israting === 0 && rowData.status_id === 5) {
           return (<Button variant="outlined" color="primary" onClick={() => handleEdit(rowData, rowData.israting)}>Đánh giá</Button>)
         }
       }

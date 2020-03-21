@@ -9,6 +9,7 @@ import {
     Typography
 } from '@material-ui/core';
 import callApiUnauth from '../../../utils/apis/apiUnAuth';
+import { useToasts } from 'react-toast-notifications';
 const schema = {
     name: {
         presence: { allowEmpty: false, message: 'Tên không được để trống !' },
@@ -23,6 +24,7 @@ const schema = {
         }
     },
     pass: {
+        presence: { allowEmpty: false, message: 'Mật khẩu không được để trống !' },
         length: {
             minimum:5,
             maximum: 20,
@@ -30,16 +32,19 @@ const schema = {
         }
     },
     pass2: {
+        presence: { allowEmpty: false, message: 'Mật khẩu không được để trống !' },
         equality: "pass"
     },
     email: {
+        presence: { allowEmpty: false, message: 'Email không được để trống !' },
         email: true
     },
     phone: {
+        presence: { allowEmpty: false, message: 'Số điện thoại không được để trống !' },
         length: {
             minimum:10,
             maximum: 11,
-            message: 'Độ dài SDT từ 10-11 !'
+            message: 'Số dt không hợp lệ!'
         }
     }
 };
@@ -138,8 +143,9 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const SignUpPage = () => {
+const SignUpPage = (props) => {
     const classes = useStyles();
+    const history = props.route.history;
     const [formState, setFormState] = useState({
         isValid: false,
         values: {},
@@ -175,12 +181,19 @@ const SignUpPage = () => {
             }
         }));
     };
-
+    const { addToast } = useToasts();
     const handleSignUp = async event => {
         event.preventDefault();
         const result = await callApiUnauth(`signup`, 'POST', formState.values)
         console.log(result);
-        
+        if (result.data.errors) {
+            result.data.errors.forEach(e => {
+                addToast(e.msg, { autoDismiss: true,appearance: 'error' })
+            });
+        }else{
+            addToast('Đăng ký thành công !', { autoDismiss: true,appearance: 'success' })
+            history.push('/signin');
+        }
     }
 
     const hasError = field =>
@@ -192,7 +205,6 @@ const SignUpPage = () => {
             <Grid
                 container
             >
-
                 <Grid
                     item
                     lg={12}

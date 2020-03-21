@@ -11,6 +11,7 @@ import MyLoadingComponent from "../components/LoadingComponent";
 import { useStore, useDispatch } from 'react-redux';
 import {mlts} from '../pages/admin/Account/actions'
 import { ThemeProvider } from '@material-ui/styles';
+import { ToastProvider } from 'react-toast-notifications'
 import theme from '../theme';
 const Template = () => {
 
@@ -53,6 +54,7 @@ const Template = () => {
     }
     return (
         <ThemeProvider theme={theme}>
+            <ToastProvider>
             <BrowserRouter>
                 <Switch>
 
@@ -81,6 +83,7 @@ const Template = () => {
                     })}
                 </Switch>
             </BrowserRouter>
+            </ToastProvider>
         </ThemeProvider>
     );
 }

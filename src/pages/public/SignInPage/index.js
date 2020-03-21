@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { signIn } from '../Account/actions';
+import { useToasts } from 'react-toast-notifications';
 const schema = {
     username: {
         presence: { allowEmpty: false, message: 'Tên đăng nhập không được để trống !' },
@@ -18,6 +19,7 @@ const schema = {
         }
     },
     password: {
+        presence: { allowEmpty: false, message: 'Mật khẩu không được để trống !' },
         length: {
             minimum:5,
             maximum: 20,
@@ -166,16 +168,17 @@ const SignInPage = props => {
 
     const firstUpdate = useRef(true);
     const store = useSelector(state => state).userInfo;
-
+    const { addToast } = useToasts();
     useEffect(() => {
       if (firstUpdate.current) {
         firstUpdate.current = false;
         return;
       }
       if (store.token.success===false) {
-          alert(store.token.msg);
+          addToast(store.token.msg, { autoDismiss: true, appearance: 'error' })
       }else{
         localStorage.setItem("sessionuser", JSON.stringify(store));    
+        addToast('Đăng nhập thành công !', { autoDismiss: true, appearance: 'success' })
         history.push('/');
       }
     }, [store, history]);

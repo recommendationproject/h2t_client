@@ -23,6 +23,7 @@ import {
 } from '@material-ui/icons';
 import { callApiUnauthWithHeader } from '../../../utils/apis/apiUnAuth';
 import { useStore } from 'react-redux';
+import { useToasts } from 'react-toast-notifications';
 const useStyles = makeStyles(theme => ({
     root: {
         padding: theme.spacing(4)
@@ -40,6 +41,7 @@ const CartPage = () => {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const store = useStore();
+    const { addToast } = useToasts();
     useEffect(() => {
         const fetchData = async (customer_id) => {
             const result = await callApiUnauthWithHeader(`cart`, 'GET', { customer_id: customer_id })
@@ -86,11 +88,11 @@ const CartPage = () => {
     const handleCheckout = async () => {
         if (store.getState().userInfo) {
              await callApiUnauthWithHeader(`checkout`, 'GET', { customer_id: store.getState().userInfo.token.user.id })
-            alert('Thanh toán thành công !');
+            addToast('Thanh toán thành công !', { autoDismiss: true, appearance: 'success' })
             
            
         } else {
-            alert('Bạn cần đăng nhập để thanh toán !');
+            addToast('Bạn cần đăng nhập để thanh toán !', { autoDismiss: true, appearance: 'info' })
         }
             
        

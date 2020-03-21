@@ -6,14 +6,16 @@ import './index.css';
 import { useStore } from 'react-redux';
 import callApiUnauth from '../../../utils/apis/apiUnAuth';
 import {Button} from '@material-ui/core';
+import { useToasts } from 'react-toast-notifications';
 const Item = (props) => {
   const store = useStore();
+  const { addToast } = useToasts();
   const addToCart = async () => {
     if(store.getState().userInfo){
       await callApiUnauth(`addCart`, 'POST', {product_id:props.product.id, customer_id: store.getState().userInfo.token.user.id, amount : 1});
-      alert('Thêm thành công');
+      addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
     }else{
-      alert('Bạn cần đăng nhập để thêm vào giỏ hàng');
+      addToast('Bạn cần đăng nhập để thêm vào giỏ hàng', { autoDismiss: true, appearance: 'success' })
     }
   }
   return (
