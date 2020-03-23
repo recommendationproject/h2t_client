@@ -7,6 +7,7 @@ import { useStore } from 'react-redux';
 import callApiUnauth from '../../../utils/apis/apiUnAuth';
 import {Button} from '@material-ui/core';
 import { useToasts } from 'react-toast-notifications';
+var CurrencyFormat = require('react-currency-format');
 const Item = (props) => {
   const store = useStore();
   const { addToast } = useToasts();
@@ -30,7 +31,7 @@ const Item = (props) => {
       </div>
       </Link>
       <div className="price-add">
-        <h5 id="product-price">${props.product.price}</h5>
+        <h5 id="product-price"><CurrencyFormat value={props.product.price} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{color: 'red'}}>{value}</div>} /></h5>
         {/* <AddShoppingCartIcon  className="addcart-icon" onClick={addToCart}/> */}
      <Button style={{display:'flex'}} onClick={addToCart}><AddShoppingCartIcon className="addcart-icon" /></Button>
       </div>

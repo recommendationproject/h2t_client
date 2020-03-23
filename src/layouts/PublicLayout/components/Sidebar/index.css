@@ -7,7 +7,7 @@
 }
 .drop-down{
     /* display: inline-block; */
-    position: relative;
+    /* position: relative; */
 }
 
 .drop-down__button{
@@ -47,7 +47,7 @@
 
 
 .drop-down__menu-box {
-    position: absolute;
+    /* position: absolute; */
     width: 100%;
     left: 0;
     background-color: #fff;
@@ -126,6 +126,7 @@ opacity: 0;
 visibility: visible;
 opacity: 1;
   margin-top: 15px;
+  margin-bottom: 30px;
 }
 
 .drop-down__item:before{

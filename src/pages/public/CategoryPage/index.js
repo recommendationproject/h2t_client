@@ -32,6 +32,8 @@ const CategoryPage = (props) => {
                 case '/type/:type':
                     type = 'type';
                     url = `category/${type}/${id}${search}`;
+                    console.log(url);
+                    
                     break;
                 case '/new':
                     type = 'new';
@@ -43,9 +45,11 @@ const CategoryPage = (props) => {
                     break;
                 default:
                     type = 'category';
-                    url = `category/${type}${search}`;
+                    url = `category/${type}/${id}${search}`;
                     break;
             } 
+            console.log(props.route.match.path);
+            
             const result = await callApiUnauthWithHeader(url, 'GET', {})
             setData(result.data.data);
             setPage({ currentPage: result.data.currentPage, totalPage: result.data.totalPage })
