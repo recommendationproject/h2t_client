@@ -173,7 +173,7 @@ const SignInPage = props => {
       if (firstUpdate.current) {
         firstUpdate.current = false;
         return;
-      }
+      }      
       if (store.token.success===false) {
           addToast(store.token.msg, { autoDismiss: true, appearance: 'error' })
       }else{

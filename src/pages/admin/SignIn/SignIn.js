@@ -13,6 +13,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useDispatch, useSelector } from 'react-redux';
 // import { signIn } from './actions';
 import { signIn } from '../Account/actions';
+import { useToasts } from 'react-toast-notifications';
+
 const schema = {
   username: {
     presence: { allowEmpty: false, message: 'không được để trống !' },
@@ -175,13 +177,20 @@ const SignIn = props => {
   
   const firstUpdate = useRef(true);
   const store = useSelector(state => state).adminInfo;
+  const { addToast } = useToasts();
   useEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false;
       return;
     }
+  
+    if (store.token.success===false) {
+      addToast(store.token.msg, { autoDismiss: true, appearance: 'error' })
+  }else{
     localStorage.setItem("sessionadmin", JSON.stringify(store));    
     history.push('/admin');
+    addToast('Đăng nhập thành công !', { autoDismiss: true, appearance: 'success' })
+  }
   }, [store, history]);
 
 
