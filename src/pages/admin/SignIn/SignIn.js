@@ -125,9 +125,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SignIn = props => {
-  const history = props.route.history;
-  console.log(props);
-  
+  const history = props.route.history;  
   const classes = useStyles();
 
   const [formState, setFormState] = useState({
@@ -183,7 +181,8 @@ const SignIn = props => {
       firstUpdate.current = false;
       return;
     }
-  
+    console.log(store);
+    
     if (store.token.success===false) {
       addToast(store.token.msg, { autoDismiss: true, appearance: 'error' })
   }else{
