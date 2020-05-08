@@ -22,7 +22,10 @@ import { makeStyles } from '@material-ui/styles';
 import { DropzoneArea } from 'material-ui-dropzone'
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProduct, deleteProduct, updateProduct } from '../../actions';
-
+import validate from 'validate.js';
+import { imagesUpload } from '../../../../../utils/apis/apiAuth';
+import { callApiUnauthWithHeader } from '../../../../../utils/apis/apiUnAuth';
+import async from 'async';
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -46,8 +49,28 @@ const useStyles = makeStyles(theme => ({
   dialogContent: {
     overflowX: 'hidden',
     overflowY: 'hidden'
+  },
+  resultEdit: {
+    overflowX: 'scroll',
+    overflowY: 'hidden',
+    whiteSpace: 'nowrap'
+  },
+  imgItem:{
+    display:'inline-block',
+    position:'relative',
+    margin:'2px'
   }
+
 }));
+
+const schema = {
+  name: {
+    presence: { allowEmpty: false, message: 'Tên sản phẩm không được để trống !' },
+  },
+  price: {
+    presence: { allowEmpty: false, message: 'Số lượng không được để trống !' },
+  },
+};
 
 const UsersTable = () => {
   const classes = useStyles();
@@ -63,6 +86,8 @@ const UsersTable = () => {
   const count = useSelector(state => state);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdate, setIsUpdating] = React.useState(false);
+
   const firstUpdate = useRef(true);
   useEffect(() => {
     dispatch(fetchProduct());
@@ -73,27 +98,67 @@ const UsersTable = () => {
       firstUpdate.current = false;
       return;
     }
-    setData(count.product.data);        
+    setData(count.product.data);
     setIsLoading(false);
   }, [count]);
 
   const handleDelete = (rowData) => {
     dispatch(deleteProduct(rowData.ItemID));
   }
- 
-  const [values, setValues] = useState({
-    id: '',
-    name: '',
-    price:'',
-    amount:'',
-    description: '',
-    img: null,
-    status:''
+
+  const [formState, setFormState] = useState({
+    isValid: false,
+    values: {
+      name: '',
+      price: '',
+      description: '',
+      category_id: 'category000000000002',
+      img: []
+    },
+    touched: {},
+    errors: {}
   });
 
+  useEffect(() => {
+    const errors = validate(formState.values, schema, { fullMessages: false });
+    setFormState(formState => ({
+      ...formState,
+      isValid: errors ? false : true,
+      errors: errors || {}
+    }));
+
+  }, [formState.values]);
+
+  const handleChange = event => {
+    event.persist();
+
+    setFormState(formState => ({
+      ...formState,
+      values: {
+        ...formState.values,
+        [event.target.name]:
+          event.target.type === 'checkbox'
+            ? event.target.checked
+            : event.target.value
+      },
+      touched: {
+        ...formState.touched,
+        [event.target.name]: true
+      }
+    }));
+  };
+
   const [open, setOpen] = useState(false);
-  const handleEdit = (rowData) => {
-    setValues(rowData)
+  const handleEdit = async (data) => {
+    const listImage = await callApiUnauthWithHeader(`product/img`, 'GET', { id: data.id })
+    let imgArr = listImage.data.map((value, key) => value.images);
+    setFormState(formState => ({
+      ...formState,
+      values: {
+        ...data,
+        img: imgArr
+      }
+    }));
     setOpen(true);
   }
 
@@ -101,23 +166,46 @@ const UsersTable = () => {
     setOpen(false);
   };
 
-  const handleChange = event => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value
-    });
-  };
+  const handleChangeFile = async file => {
+    let imgArr = formState.values.img;
+    async.forEachOf(file.target.files, async (value, key) => {
+      let rs = await imagesUpload(value);
+      imgArr.push(rs.data.data.link);
 
-  const handleChangeFile = file => {
-    setValues({
-      ...values,
-      img: file[0].name
-    })
+    }, async err => {
+      if (err) console.log(err);
+      setFormState(formState => ({
+        ...formState,
+        values: {
+          ...formState.values,
+          img: imgArr
+        }
+      }));
+    });
+
   };
   const handleAccept = () => {
-    console.log(values);
-    dispatch(updateProduct(values));
+    dispatch(updateProduct(formState.values));
   };
+
+  const handleDeleteImage = (img) => {   
+    let imgArr = formState.values.img;
+    imgArr.find((e, i) => {
+      if (e === img) {
+        imgArr.splice(i, 1);
+      }
+    }) 
+    setFormState(formState => ({
+      ...formState,
+      values: {
+        ...formState.values,
+        img: imgArr
+      }
+    }));
+  };
+
+  const hasError = field =>
+    formState.touched[field] && formState.errors[field] ? true : false;
 
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -145,7 +233,7 @@ const UsersTable = () => {
         <div>Loading ...</div>
       ) : (
           <div>
-            <MaterialTable  title="Sản Phẩm" columns={columns} data={data} icons={tableIcons}
+            <MaterialTable title="Sản Phẩm" columns={columns} data={data} icons={tableIcons}
               actions={[
                 {
                   icon: Edit,
@@ -185,13 +273,16 @@ const UsersTable = () => {
                   >
                     <TextField
                       fullWidth
-                      helperText=""
+                      error={hasError('name')}
+                      helperText={
+                        hasError('name') ? formState.errors.name[0] : null
+                      }
                       label="Tên sản phẩm"
                       margin="dense"
                       name="name"
                       onChange={handleChange}
                       required
-                      value={values.name}
+                      value={formState.values.name}
                       variant="outlined"
                     />
                   </Grid>
@@ -202,30 +293,16 @@ const UsersTable = () => {
                   >
                     <TextField
                       fullWidth
-                      helperText=""
+                      error={hasError('price')}
+                      helperText={
+                        hasError('price') ? formState.errors.price[0] : null
+                      }
                       label="Giá"
                       margin="dense"
                       name="price"
                       onChange={handleChange}
                       required
-                      value={values.price}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    md={12}
-                    xs={12}
-                  >
-                    <TextField
-                      fullWidth
-                      helperText=""
-                      label="Số lượng"
-                      margin="dense"
-                      name="amount"
-                      onChange={handleChange}
-                      required
-                      value={values.amount}
+                      value={formState.values.price}
                       variant="outlined"
                     />
                   </Grid>
@@ -242,7 +319,7 @@ const UsersTable = () => {
                       name="description"
                       onChange={handleChange}
                       required
-                      value={values.description}
+                      value={formState.values.description}
                       variant="outlined"
                     />
                   </Grid>
@@ -251,6 +328,21 @@ const UsersTable = () => {
                     md={12}
                     xs={12}
                   >
+                    <input
+                      accept="image/*"
+                      className={classes.input}
+                      style={{ display: 'none' }}
+                      id="raised-button-file"
+                      onChange={handleChangeFile}
+                      type="file"
+                      multiple
+                    // disabled={uploadEnable}
+                    />
+                    <label htmlFor="raised-button-file">
+                      <Button variant="contained" component="span" color="primary" className={classes.uploadButton} >
+                        Upload
+                    </Button>
+                    </label>
                     <DropzoneArea
                       onChange={handleChangeFile}
                       acceptedFiles={['image/*']}
@@ -259,8 +351,16 @@ const UsersTable = () => {
                       showPreviews={true}
                       showPreviewsInDropzone={false}
                       initialFiles={[]}
-                    />
-                    <img src={values.ItemImage} alt={values.ItemName} style={{ width: 40, borderRadius: '50%' }} />
+                    />  
+                    <div id='resultEdit' className={classes.resultEdit}>
+                      {formState.values.img.map((track, i) => {
+                        return (<div className={classes.imgItem} key={i}>
+                          <Button style={{ minWidth:'0px', padding:'0px' }} onClick={() => handleDeleteImage(track)}><DeleteOutline fontSize={'small'}/></Button>
+                          <img src={track} style={{ width: 70, height: 70, borderRadius: '50%' }}  />
+                        </div>)
+                      })}
+                    </div>
+
                   </Grid>
 
                 </Grid>
@@ -269,7 +369,7 @@ const UsersTable = () => {
                 <Button autoFocus onClick={handleClose} color="primary">
                   Huỷ
           </Button>
-                <Button onClick={handleAccept} color="primary" autoFocus>
+                <Button onClick={handleAccept} color="primary" autoFocus disabled={!formState.isValid || isUpdate}>
                   Xác nhận
           </Button>
               </DialogActions>

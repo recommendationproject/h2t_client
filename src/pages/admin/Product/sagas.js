@@ -1,6 +1,6 @@
 import { put, call, takeLatest } from 'redux-saga/effects'
 import callApiUnAuth from '../../../utils/apis/apiUnAuth';
-import {imagesUpload} from '../../../utils/apis/apiAuth';
+import { imagesUpload } from '../../../utils/apis/apiAuth';
 import * as actions from './actions'
 import * as Types from './constants'
 
@@ -36,8 +36,8 @@ function updateProductApi(product) {
 
 function* fetchProduct() {
     try {
-      
-        let product = yield call(fetchProductApi)   
+
+        let product = yield call(fetchProductApi)
         // if (msg.success === true) {            
         yield put(actions.fetchProductSuccess(product));
         // } else {
@@ -51,22 +51,22 @@ function* fetchProduct() {
 
 function* addProduct(action) {
     try {
-        const { product } = action      
-        const imgLink = [];  
+        const { product } = action
+        const imgLink = [];
 
         for (let index = 0; index < product.img.length; index++) {
             let rs = yield call(uploadImagesApi, product.img[index])
             imgLink.push(rs.data.data.link)
         }
         product.img = imgLink
-       
-        yield call(addProductApi, product)
 
-        // if (msg.success === true) {            
-        yield put(actions.addProductSuccess(product));
-        // } else {
-        // yield put(actions.fetchPartnerFail(partner));
-        // }
+        let rsAdd = yield call(addProductApi, product)
+
+        if (rsAdd.data.type === 'success') {
+            yield put(actions.addProductSuccess(rsAdd.data));
+        } else {
+            yield put(actions.addProductFail(rsAdd.data));
+        }
 
     } catch (error) {
         console.log(error);
@@ -77,17 +77,15 @@ function* addProduct(action) {
 function* updateProduct(action) {
     try {
         const { product } = action
-        yield call(updateProductApi, product)
+        let rs = yield call(updateProductApi, product)
 
-        // if (msg.success === true) {            
-        yield put(actions.updateProductSuccess(product));
-        // } else {
-        // yield put(actions.fetchPartnerFail(partner));
-        // }
+        if (rs.data.type === 'success') {
+            yield put(actions.updateProductSuccess(rs.data));
+        } else {
+            yield put(actions.updateProductFail(rs.data));
+        }
 
     } catch (error) {
-      
-        
         yield put(actions.updateProductFail(error));
     }
 }

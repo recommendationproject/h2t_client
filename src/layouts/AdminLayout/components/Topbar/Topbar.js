@@ -21,7 +21,7 @@ const Topbar = props => {
       {...rest}
       className={clsx(classes.root, className)}
       color="primary"
-      position="fixed"
+      // position="fixed"
     >
       <Toolbar>
         <RouterLink to="/">

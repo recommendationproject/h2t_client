@@ -3,3 +3,7 @@ export { default as ProductsToolbar } from './ProductsToolbar';
 export { default as SourceOfItems } from './SourceOfItems';
 export { default as OrdersTable } from './OrdersTable';
 export { default as RecommendTable } from './RecommendTable';
+export { default as DataWareHouseTable } from './DataWareHouseTable';
+export { default as DataWareHouseToolbar } from './DataWareHouseToolbar';
+export { default as SupplyTable } from './SupplyTable';
+export { default as SupplyToolbar } from './SupplyToolbar';

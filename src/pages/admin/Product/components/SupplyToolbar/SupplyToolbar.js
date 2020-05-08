@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch, useStore, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@material-ui/core';
-import { DropzoneArea } from 'material-ui-dropzone'
-import { addProduct } from '../../actions';
+import { addSupply } from '../SupplyTable/actions';
 import validate from 'validate.js';
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -35,22 +34,57 @@ const useStyles = makeStyles(theme => ({
 
 const schema = {
   name: {
-    presence: { allowEmpty: false, message: 'Tên sản phẩm không được để trống !' },
+    presence: { allowEmpty: false, message: 'Tên đối tác không được để trống !' },
+    length: {
+      maximum: 64
+    }
   },
-  price: {
-    presence: { allowEmpty: false, message: 'Số lượng không được để trống !' },
+  email: {
+    presence: { allowEmpty: false, message: 'Email không được để trống !' },
+    email: true
+  },
+  phone: {
+    presence: { allowEmpty: false, message: 'Số điện thoại không được để trống !' },
+    length: {
+      minimum: 10,
+      maximum: 11,
+      message: 'Số dt không hợp lệ!'
+    }
   },
 };
 
-const UsersToolbar = props => {
+const SupplyToolbar = props => {
   const { className, ...rest } = props;
   const classes = useStyles();
-  // const firstUpdate = useRef(true);
-  const firstUpdate = useRef(true);
+   const firstUpdate = useRef(true);
+
   const [open, setOpen] = React.useState(false);
   const [isAdd, setIsAdd] = React.useState(false);
 
+  const [formState, setFormState] = useState({
+    isValid: false,
+    values: {
+      name: 'name',
+      address: '',
+      phone: '',
+      email: '',
+    },
+    touched: {},
+    errors: {}
+  });
+
   const handleClickOpen = () => {
+    setFormState({
+      isValid: false,
+      values: {
+        name: 'name',
+        address: '',
+        phone: '',
+        email: '',
+      },
+      touched: {},
+      errors: {}
+    });
     setOpen(true);
   };
 
@@ -59,7 +93,7 @@ const UsersToolbar = props => {
   };
 
   const { count } = useSelector(state => ({
-    count: state.product.count
+    count: state.supply.count
   }));
 
   useEffect(() => {
@@ -68,21 +102,9 @@ const UsersToolbar = props => {
       return;
     }
     setIsAdd(false);
-  }, [count])
+  },[count])
 
-
-  const [formState, setFormState] = useState({
-    isValid: false,
-    values: {
-      name: '',
-      price: '',
-      description: '',
-      category_id: 'category000000000002',
-      img: null
-    },
-    touched: {},
-    errors: {}
-  });
+  
 
   useEffect(() => {
     const errors = validate(formState.values, schema, { fullMessages: false });
@@ -91,7 +113,7 @@ const UsersToolbar = props => {
       isValid: errors ? false : true,
       errors: errors || {}
     }));
-
+    
   }, [formState.values]);
 
   const handleChange = event => {
@@ -113,25 +135,15 @@ const UsersToolbar = props => {
     }));
   };
 
-  const store = useStore();
-  const category = store.getState().adminInfo.category;
-
   const dispatch = useDispatch();
-  const handleChangeFile = file => {
-    setFormState(formState => ({
-      ...formState,
-      values: {
-        ...formState.values,
-        img: file
-      }
-    }));
-  };
-  const handleAccept = () => {
-    dispatch(addProduct(formState.values));
+
+  const handleAccept = () => {    
+    setIsAdd(true);
+     dispatch(addSupply(formState.values));
   };
 
   const hasError = field =>
-    formState.touched[field] && formState.errors[field] ? true : false;
+  formState.touched[field] && formState.errors[field] ? true : false;
 
   return (
     <div
@@ -147,7 +159,7 @@ const UsersToolbar = props => {
           variant="contained"
           onClick={handleClickOpen}
         >
-          THÊM SẢN PHẨM
+          Thêm nhà cung cấp
         </Button>
         <Dialog
           fullWidth={true}
@@ -157,7 +169,7 @@ const UsersToolbar = props => {
           onClose={handleClose}
           aria-labelledby="responsive-dialog-title"
         >
-          <DialogTitle id="responsive-dialog-title">{"Thông tin sản phẩm"}</DialogTitle>
+          <DialogTitle id="responsive-dialog-title">{"Thông tin nhà cung cấp"}</DialogTitle>
           <DialogContent className={classes.dialogContent}>
             <Grid
               container
@@ -174,7 +186,7 @@ const UsersToolbar = props => {
                   helperText={
                     hasError('name') ? formState.errors.name[0] : null
                   }
-                  label="Tên sản phẩm"
+                  label="Tên nhà cung cấp"
                   margin="dense"
                   name="name"
                   onChange={handleChange}
@@ -190,17 +202,11 @@ const UsersToolbar = props => {
               >
                 <TextField
                   fullWidth
-                  error={hasError('price')}
-                  helperText={
-                    hasError('price') ? formState.errors.price[0] : null
-                  }
-                  label="Giá"
+                  label="Địa chỉ"
                   margin="dense"
-                  name="price"
+                  name="address"
                   onChange={handleChange}
-                  type="number"
-                  required
-                  value={formState.values.price}
+                  value={formState.values.address}
                   variant="outlined"
                 />
               </Grid>
@@ -211,67 +217,47 @@ const UsersToolbar = props => {
               >
                 <TextField
                   fullWidth
-                  helperText=""
-                  label="Mô tả"
+                  error={hasError('phone')}
+                  helperText={
+                    hasError('phone') ? formState.errors.phone[0] : null
+                  }
+                  label="Số điện thoại"
                   margin="dense"
-                  name="description"
+                  name="phone"
                   onChange={handleChange}
-                  value={formState.values.description}
+                  type="number"
+                  required
+                  value={formState.values.phone}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <TextField
+                  fullWidth
+                  error={hasError('email')}
+                  helperText={
+                    hasError('email') ? formState.errors.email[0] : null
+                  }
+                  label="Email"
+                  margin="dense"
+                  name="email"
+                  onChange={handleChange}
+                  required
+                  value={formState.values.email}
                   variant="outlined"
                   multiline={true}
                   rows={4}
                 />
               </Grid>
-
-              <Grid
-                item
-                md={12}
-                xs={12}
-              >
-                <TextField
-                  fullWidth
-                  label="Loại sản phẩm"
-                  margin="dense"
-                  name="category_id"
-                  onChange={handleChange}
-                  select
-                  // eslint-disable-next-line react/jsx-sort-props
-                  SelectProps={{ native: true }}
-                  value={formState.values.category_id}
-                  variant="outlined"
-                >
-                  {category.map(option => (
-                    <option
-                      key={option.id}
-                      value={option.id}
-                    >
-                      {option.name + ' - ' + option.gender}
-                    </option>
-                  ))}
-                </TextField>
-              </Grid>
-
-              <Grid
-                item
-                md={12}
-                xs={12}
-              >
-                <DropzoneArea
-                  onChange={handleChangeFile}
-                  acceptedFiles={['image/jpeg', 'image/png', 'image/bmp']}
-                  filesLimit={5}
-                  dropzoneText={'Ảnh sản phẩm'}
-                  showPreviews={true}
-                  showPreviewsInDropzone={false}
-                  initialFiles={[]}
-                />
-              </Grid>
-
             </Grid>
           </DialogContent>
           <DialogActions>
             <Button autoFocus onClick={handleClose} color="primary">
-              Huỷ
+              Đóng
           </Button>
             <Button onClick={handleAccept} color="primary" autoFocus disabled={!formState.isValid || isAdd}>
               Xác nhận
@@ -283,8 +269,8 @@ const UsersToolbar = props => {
   );
 };
 
-UsersToolbar.propTypes = {
+SupplyToolbar.propTypes = {
   className: PropTypes.string
 };
 
-export default UsersToolbar;
+export default SupplyToolbar;

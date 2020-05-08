@@ -54,7 +54,7 @@ const Template = () => {
     }
     return (
         <ThemeProvider theme={theme}>
-            <ToastProvider>
+            <ToastProvider  placement='bottom-center'>
             <BrowserRouter>
                 <Switch>
 
