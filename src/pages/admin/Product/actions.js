@@ -53,14 +53,14 @@ export const deleteProduct = (productId) => {
 
 export const deleteProductSuccess = (response) => {
     return {
-        type : Types.ADD_PRODUCT_SUCCESS,
+        type : Types.DELETE_PRODUCT_SUCCESS,
         response
     }
 }
 
 export const deleteProductFail = (response) => {
     return {
-        type : Types.ADD_PRODUCT_FAIL,
+        type : Types.DELETE_PRODUCT_FAIL,
         response
     }
 }

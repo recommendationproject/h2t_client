@@ -19,13 +19,14 @@ import {
 } from '@material-ui/icons';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { DropzoneArea } from 'material-ui-dropzone'
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProduct, deleteProduct, updateProduct } from '../../actions';
 import validate from 'validate.js';
 import { imagesUpload } from '../../../../../utils/apis/apiAuth';
 import { callApiUnauthWithHeader } from '../../../../../utils/apis/apiUnAuth';
 import async from 'async';
+import { useToasts } from 'react-toast-notifications';
+
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -82,8 +83,12 @@ const UsersTable = () => {
     { title: 'Loại', field: 'cate_name' },
     { title: 'Gtới tính', field: 'gender' },
   ];
-  const [data, setData] = useState([]);
-  const count = useSelector(state => state);
+  const { data,  msg, type, count } = useSelector(state => ({
+    data: state.product.lst,
+    msg: state.product.msg,
+    type: state.product.type,
+    count: state.product.count,
+  }));
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdate, setIsUpdating] = React.useState(false);
@@ -98,12 +103,25 @@ const UsersTable = () => {
       firstUpdate.current = false;
       return;
     }
-    setData(count.product.data);
     setIsLoading(false);
-  }, [count]);
+  }, [data]);
+
+  const { addToast } = useToasts();
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+    if (type === 'success' && type !== null) {
+      addToast(msg, { autoDismiss: true, appearance: type })
+    } else if (type !== 'success' && type !== '') {
+      addToast(msg, { autoDismiss: true, appearance: type })
+    }
+    setIsUpdating(false)
+  }, [msg, type, count]);
 
   const handleDelete = (rowData) => {
-    dispatch(deleteProduct(rowData.ItemID));
+    dispatch(deleteProduct(rowData.id));
   }
 
   const [formState, setFormState] = useState({
@@ -182,10 +200,10 @@ const UsersTable = () => {
         }
       }));
     });
-
   };
   const handleAccept = () => {
     dispatch(updateProduct(formState.values));
+    setIsUpdating(true)
   };
 
   const handleDeleteImage = (img) => {   
@@ -343,15 +361,6 @@ const UsersTable = () => {
                         Upload
                     </Button>
                     </label>
-                    <DropzoneArea
-                      onChange={handleChangeFile}
-                      acceptedFiles={['image/*']}
-                      filesLimit={1}
-                      dropzoneText={'Ảnh sản phẩm'}
-                      showPreviews={true}
-                      showPreviewsInDropzone={false}
-                      initialFiles={[]}
-                    />  
                     <div id='resultEdit' className={classes.resultEdit}>
                       {formState.values.img.map((track, i) => {
                         return (<div className={classes.imgItem} key={i}>

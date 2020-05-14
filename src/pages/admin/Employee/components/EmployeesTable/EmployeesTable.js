@@ -19,10 +19,13 @@ import {
 } from '@material-ui/icons';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { DropzoneArea } from 'material-ui-dropzone'
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchEmployee, deleteEmployee, updateEmployee } from '../../actions';
-
+import { callApiUnauthWithHeader } from '../../../../../utils/apis/apiUnAuth';
+import async from 'async';
+import { useToasts } from 'react-toast-notifications';
+import validate from 'validate.js';
+import { imagesUpload } from '../../../../../utils/apis/apiAuth';
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -49,6 +52,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const schema = {
+  name: {
+    presence: { allowEmpty: false, message: 'Tên sản phẩm không được để trống !' },
+  },
+  price: {
+    presence: { allowEmpty: false, message: 'Số lượng không được để trống !' },
+  },
+};
+
 const EmployeesTable = () => {
   const classes = useStyles();
   const columns = [
@@ -59,38 +71,105 @@ const EmployeesTable = () => {
     { title: 'tên đăng nhập', field: 'username' },
     // { title: 'Gtới tính', field: 'gender' },
   ];
-  const [data, setData] = useState([]);
-  const count = useSelector(state => state);
+
+
+
+  const { data, msg, type, count } = useSelector(state => ({
+    data: state.employee.lst,
+    msg: state.employee.msg,
+    type: state.employee.type,
+    count: state.employee.count,
+  }));
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
-  const firstUpdate = useRef(true);
+  const [isUpdate, setIsUpdating] = React.useState(false);
   useEffect(() => {
     dispatch(fetchEmployee());
   }, [dispatch]);
+  const firstUpdate = useRef(true);
 
   useEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false;
       return;
     }
-    setData(count.employee.data);
     setIsLoading(false);
-  }, [count]);
+    
+    
+  }, [data]);
+  console.log(data);
+  
+  const { addToast } = useToasts();
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+    if (type === 'success' && type !== null) {
+      addToast(msg, { autoDismiss: true, appearance: type })
+    } else if (type !== 'success' && type !== '') {
+      addToast(msg, { autoDismiss: true, appearance: type })
+    }
+    setIsUpdating(false)
+  }, [msg, type, count]);
 
   const handleDelete = (rowData) => {
-    dispatch(deleteEmployee(rowData.ItemID));
+    dispatch(deleteEmployee(rowData.id));
   }
 
-  const [values, setValues] = useState({
-    id: '',
-    name: '',
-    address: '',
-    username: ''
+  const [formState, setFormState] = useState({
+    isValid: false,
+    values: {
+      name: '',
+      price: '',
+      description: '',
+      category_id: 'category000000000002',
+      img: []
+    },
+    touched: {},
+    errors: {}
   });
 
+  useEffect(() => {
+    const errors = validate(formState.values, schema, { fullMessages: false });
+    setFormState(formState => ({
+      ...formState,
+      isValid: errors ? false : true,
+      errors: errors || {}
+    }));
+
+  }, [formState.values]);
+
+  const handleChange = event => {
+    event.persist();
+
+    setFormState(formState => ({
+      ...formState,
+      values: {
+        ...formState.values,
+        [event.target.name]:
+          event.target.type === 'checkbox'
+            ? event.target.checked
+            : event.target.value
+      },
+      touched: {
+        ...formState.touched,
+        [event.target.name]: true
+      }
+    }));
+  };
+
   const [open, setOpen] = useState(false);
-  const handleEdit = (rowData) => {
-    setValues(rowData)
+  const handleEdit = async (data) => {
+    const listImage = await callApiUnauthWithHeader(`product/img`, 'GET', { id: data.id })
+    let imgArr = listImage.data.map((value, key) => value.images);
+    setFormState(formState => ({
+      ...formState,
+      values: {
+        ...data,
+        img: imgArr
+      }
+    }));
     setOpen(true);
   }
 
@@ -98,23 +177,46 @@ const EmployeesTable = () => {
     setOpen(false);
   };
 
-  const handleChange = event => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value
+  const handleChangeFile = async file => {
+    let imgArr = formState.values.img;
+    async.forEachOf(file.target.files, async (value, key) => {
+      let rs = await imagesUpload(value);
+      imgArr.push(rs.data.data.link);
+
+    }, async err => {
+      if (err) console.log(err);
+      setFormState(formState => ({
+        ...formState,
+        values: {
+          ...formState.values,
+          img: imgArr
+        }
+      }));
     });
   };
-
-  const handleChangeFile = file => {
-    setValues({
-      ...values,
-      img: file[0].name
-    })
-  };
   const handleAccept = () => {
-    console.log(values);
-    dispatch(updateEmployee(values));
+    dispatch(updateEmployee(formState.values));
+    setIsUpdating(true)
   };
+
+  const handleDeleteImage = (img) => {
+    let imgArr = formState.values.img;
+    imgArr.find((e, i) => {
+      if (e === img) {
+        imgArr.splice(i, 1);
+      }
+    })
+    setFormState(formState => ({
+      ...formState,
+      values: {
+        ...formState.values,
+        img: imgArr
+      }
+    }));
+  };
+
+  const hasError = field =>
+    formState.touched[field] && formState.errors[field] ? true : false;
 
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -161,7 +263,7 @@ const EmployeesTable = () => {
               }}
             />
 
-            <Dialog
+<Dialog
               fullWidth={true}
               maxWidth={'sm'}
               scroll={'body'}
@@ -182,13 +284,16 @@ const EmployeesTable = () => {
                   >
                     <TextField
                       fullWidth
-                      helperText=""
+                      error={hasError('name')}
+                      helperText={
+                        hasError('name') ? formState.errors.name[0] : null
+                      }
                       label="Tên sản phẩm"
                       margin="dense"
                       name="name"
                       onChange={handleChange}
                       required
-                      value={values.name}
+                      value={formState.values.name}
                       variant="outlined"
                     />
                   </Grid>
@@ -199,30 +304,16 @@ const EmployeesTable = () => {
                   >
                     <TextField
                       fullWidth
-                      helperText=""
+                      error={hasError('price')}
+                      helperText={
+                        hasError('price') ? formState.errors.price[0] : null
+                      }
                       label="Giá"
                       margin="dense"
                       name="price"
                       onChange={handleChange}
                       required
-                      value={values.price}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    md={12}
-                    xs={12}
-                  >
-                    <TextField
-                      fullWidth
-                      helperText=""
-                      label="Số lượng"
-                      margin="dense"
-                      name="amount"
-                      onChange={handleChange}
-                      required
-                      value={values.amount}
+                      value={formState.values.price}
                       variant="outlined"
                     />
                   </Grid>
@@ -239,7 +330,7 @@ const EmployeesTable = () => {
                       name="description"
                       onChange={handleChange}
                       required
-                      value={values.description}
+                      value={formState.values.description}
                       variant="outlined"
                     />
                   </Grid>
@@ -248,16 +339,30 @@ const EmployeesTable = () => {
                     md={12}
                     xs={12}
                   >
-                    <DropzoneArea
+                    <input
+                      accept="image/*"
+                      className={classes.input}
+                      style={{ display: 'none' }}
+                      id="raised-button-file"
                       onChange={handleChangeFile}
-                      acceptedFiles={['image/*']}
-                      filesLimit={1}
-                      dropzoneText={'Ảnh sản phẩm'}
-                      showPreviews={true}
-                      showPreviewsInDropzone={false}
-                      initialFiles={[]}
+                      type="file"
+                      multiple
+                    // disabled={uploadEnable}
                     />
-                    <img src={values.ItemImage} alt={values.ItemName} style={{ width: 40, borderRadius: '50%' }} />
+                    <label htmlFor="raised-button-file">
+                      <Button variant="contained" component="span" color="primary" className={classes.uploadButton} >
+                        Upload
+                    </Button>
+                    </label>
+                    <div id='resultEdit' className={classes.resultEdit}>
+                      {formState.values.img.map((track, i) => {
+                        return (<div className={classes.imgItem} key={i}>
+                          <Button style={{ minWidth:'0px', padding:'0px' }} onClick={() => handleDeleteImage(track)}><DeleteOutline fontSize={'small'}/></Button>
+                          <img src={track} style={{ width: 70, height: 70, borderRadius: '50%' }}  />
+                        </div>)
+                      })}
+                    </div>
+
                   </Grid>
 
                 </Grid>
@@ -266,7 +371,7 @@ const EmployeesTable = () => {
                 <Button autoFocus onClick={handleClose} color="primary">
                   Huỷ
           </Button>
-                <Button onClick={handleAccept} color="primary" autoFocus>
+                <Button onClick={handleAccept} color="primary" autoFocus disabled={!formState.isValid || isUpdate}>
                   Xác nhận
           </Button>
               </DialogActions>

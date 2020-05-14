@@ -1,6 +1,5 @@
 import { put, call, takeLatest } from 'redux-saga/effects'
 import callApiUnAuth from '../../../utils/apis/apiUnAuth';
-import {imagesUpload} from '../../../utils/apis/apiAuth';
 import * as actions from './actions'
 import * as Types from './constants'
 
@@ -12,12 +11,6 @@ function fetchEmployeeApi() {
 
 function addEmployeeApi(employee) {
     return callApiUnAuth(`employee`, 'POST', employee)
-        .then(res => res)
-        .catch(error => error.response.data);
-}
-
-function uploadImagesApi(img) {
-    return imagesUpload(img)
         .then(res => res)
         .catch(error => error.response.data);
 }
@@ -39,7 +32,7 @@ function* fetchEmployee() {
       
         let employee = yield call(fetchEmployeeApi)   
         // if (msg.success === true) {            
-        yield put(actions.fetchEmployeeSuccess(employee));
+        yield put(actions.fetchEmployeeSuccess(employee.data));
         // } else {
         // yield put(actions.fetchPartnerFail(partner));
         // }
@@ -52,21 +45,13 @@ function* fetchEmployee() {
 function* addEmployee(action) {
     try {
         const { employee } = action      
-        const imgLink = [];  
+        let rsAdd = yield call(addEmployeeApi, employee)
 
-        for (let index = 0; index < employee.img.length; index++) {
-            let rs = yield call(uploadImagesApi, employee.img[index])
-            imgLink.push(rs.data.data.link)
+         if (rsAdd.data.type === 'success') {            
+        yield put(actions.addEmployeeSuccess(rsAdd.data));
+        } else {
+        yield put(actions.addEmployeeFail(rsAdd.data));
         }
-        employee.img = imgLink
-       
-        yield call(addEmployeeApi, employee)
-
-        // if (msg.success === true) {            
-        yield put(actions.addEmployeeSuccess(employee));
-        // } else {
-        // yield put(actions.fetchPartnerFail(partner));
-        // }
 
     } catch (error) {
         console.log(error);

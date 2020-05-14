@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useDispatch, useStore } from 'react-redux';
+import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@material-ui/core';
-import { DropzoneArea } from 'material-ui-dropzone'
 import { addEmployee } from '../../actions';
+import validate from 'validate.js';
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -29,17 +29,60 @@ const useStyles = makeStyles(theme => ({
   dialogContent: {
     overflowX: 'hidden',
     overflowY: 'hidden'
+  },
+  resultEdit: {
+    overflowX: 'scroll',
+    overflowY: 'hidden',
+    whiteSpace: 'nowrap'
+  },
+  imgItem:{
+    display:'inline-block',
+    position:'relative',
+    margin:'2px'
   }
 }));
+
+const schema = {
+  name: {
+    presence: { allowEmpty: false, message: 'Tên không được để trống !' },
+  },
+  phone: {
+    presence: { allowEmpty: false, message: 'Số điện thoại không được để trống !' },
+    length: {
+      minimum: 10,
+      maximum: 11,
+      message: 'Số dt không hợp lệ!'
+    }
+  },
+  username: {
+    presence: { allowEmpty: false, message: 'Tên đăng nhập không được để trống !' },
+  },
+  pass: {
+    presence: { allowEmpty: false, message: 'Mật khẩu không được để trống !' },
+  },
+};
 
 const EmployeesToolbar = props => {
   const { className, ...rest } = props;
   const classes = useStyles();
   // const firstUpdate = useRef(true);
-
+  const firstUpdate = useRef(true);
   const [open, setOpen] = React.useState(false);
+  const [isAdd, setIsAdd] = React.useState(false);
 
   const handleClickOpen = () => {
+    setFormState({
+      isValid: false,
+      values: {
+        name: '',
+        address: '',
+        phone: '',
+        username: '',
+        pass: ''
+      },
+      touched: {},
+      errors: {}
+    })
     setOpen(true);
   };
 
@@ -47,34 +90,71 @@ const EmployeesToolbar = props => {
     setOpen(false);
   };
 
-  const [values, setValues] = useState({
-    name: 'name',
-    price: '0',
-    description: 'description',
-    amount: '0',
-    category_id: 'category000000000002',
-    img: null
+  const { count } = useSelector(state => ({
+    count: state.employee.count
+  }));
+
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+    setIsAdd(false);
+  }, [count])
+
+
+  const [formState, setFormState] = useState({
+    isValid: false,
+    values: {
+      name: '',
+      address: '',
+      phone: '',
+      username: '',
+      pass: ''
+    },
+    touched: {},
+    errors: {}
   });
-  const store = useStore();
-  const category = store.getState().adminInfo.category;
+
+  useEffect(() => {
+    const errors = validate(formState.values, schema, { fullMessages: false });
+    setFormState(formState => ({
+      ...formState,
+      isValid: errors ? false : true,
+      errors: errors || {}
+    }));
+
+  }, [formState.values]);
+
   const handleChange = event => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value
-    });
+    event.persist();
+
+    setFormState(formState => ({
+      ...formState,
+      values: {
+        ...formState.values,
+        [event.target.name]:
+          event.target.type === 'checkbox'
+            ? event.target.checked
+            : event.target.value
+      },
+      touched: {
+        ...formState.touched,
+        [event.target.name]: true
+      }
+    }));
   };
+
   const dispatch = useDispatch();
-  const handleChangeFile = file => {  
-    setValues({
-      ...values,
-      img: file
-    })
-  };
-  const handleAccept = () => {    
-    dispatch(addEmployee(values));
-  };
 
 
+  const handleAccept = () => {  
+      dispatch(addEmployee(formState.values));
+      setIsAdd(true);
+  };
+
+  const hasError = field =>
+    formState.touched[field] && formState.errors[field] ? true : false;
 
   return (
     <div
@@ -90,7 +170,7 @@ const EmployeesToolbar = props => {
           variant="contained"
           onClick={handleClickOpen}
         >
-          THÊM SẢN PHẨM
+          THÊM NHÂN VIÊN
         </Button>
         <Dialog
           fullWidth={true}
@@ -113,13 +193,16 @@ const EmployeesToolbar = props => {
               >
                 <TextField
                   fullWidth
-                  helperText=""
-                  label="Tên sản phẩm"
+                  error={hasError('name')}
+                  helperText={
+                    hasError('name') ? formState.errors.name[0] : null
+                  }
+                  label="Tên nhân viên"
                   margin="dense"
                   name="name"
                   onChange={handleChange}
                   required
-                  value={values.name}
+                  value={formState.values.name}
                   variant="outlined"
                 />
               </Grid>
@@ -130,14 +213,11 @@ const EmployeesToolbar = props => {
               >
                 <TextField
                   fullWidth
-                  helperText=""
-                  label="Giá"
+                  label="Địa chỉ"
                   margin="dense"
-                  name="price"
+                  name="address"
                   onChange={handleChange}
-                  type="number"
-                  required
-                  value={values.price}
+                  value={formState.values.address}
                   variant="outlined"
                 />
               </Grid>
@@ -148,35 +228,41 @@ const EmployeesToolbar = props => {
               >
                 <TextField
                   fullWidth
-                  helperText=""
-                  label="Số lượng"
-                  margin="dense"
-                  name="amount"
-                  onChange={handleChange}
-                  type="number"
+                  error={hasError('phone')}
+                  helperText={
+                    hasError('phone') ? formState.errors.phone[0] : null
+                  }
                   required
-                  value={values.amount}
+                  label="Số điện thoại"
+                  margin="dense"
+                  name="phone"
+                  onChange={handleChange}
+                  value={formState.values.phone}
                   variant="outlined"
+                  type='number'
                 />
               </Grid>
+
               <Grid
                 item
                 md={12}
                 xs={12}
               >
-                <TextField
+               <TextField
                   fullWidth
-                  helperText=""
-                  label="Mô tả"
-                  margin="dense"
-                  name="description"
-                  onChange={handleChange}
+                  error={hasError('username')}
+                  helperText={
+                    hasError('username') ? formState.errors.username[0] : null
+                  }
                   required
-                  value={values.description}
+                  label="Tên đăng nhập"
+                  margin="dense"
+                  name="username"
+                  onChange={handleChange}
+                  value={formState.values.username}
                   variant="outlined"
-                  multiline={true}
-                  rows={4}
                 />
+                 
               </Grid>
 
               <Grid
@@ -186,41 +272,18 @@ const EmployeesToolbar = props => {
               >
                 <TextField
                   fullWidth
-                  label="Loại sản phẩm"
-                  margin="dense"
-                  name="category_id"
-                  onChange={handleChange}
+                  error={hasError('pass')}
+                  helperText={
+                    hasError('pass') ? formState.errors.pass[0] : null
+                  }
+                  type='password'
                   required
-                  select
-                  // eslint-disable-next-line react/jsx-sort-props
-                  SelectProps={{ native: true }}
-                  value={values.category_id}
+                  label="Mật khẩu"
+                  margin="dense"
+                  name="pass"
+                  onChange={handleChange}
+                  value={formState.values.pass}
                   variant="outlined"
-                >
-                  {category.map(option => (
-                    <option
-                      key={option.id}
-                      value={option.id}
-                    >
-                      {option.name +' - '+ option.gender}
-                    </option>
-                  ))}
-                </TextField>
-              </Grid>
-
-              <Grid
-                item
-                md={12}
-                xs={12}
-              >
-                <DropzoneArea
-                  onChange={handleChangeFile}
-                  acceptedFiles={['image/jpeg', 'image/png', 'image/bmp']}
-                  filesLimit={5}
-                  dropzoneText={'Ảnh sản phẩm'}
-                  showPreviews={true}
-                  showPreviewsInDropzone={false}
-                  initialFiles={[]}
                 />
               </Grid>
 
@@ -228,9 +291,9 @@ const EmployeesToolbar = props => {
           </DialogContent>
           <DialogActions>
             <Button autoFocus onClick={handleClose} color="primary">
-              Huỷ
+              Đóng
           </Button>
-            <Button onClick={handleAccept} color="primary" autoFocus>
+            <Button onClick={handleAccept} color="primary" autoFocus disabled={!formState.isValid || isAdd}>
               Xác nhận
           </Button>
           </DialogActions>

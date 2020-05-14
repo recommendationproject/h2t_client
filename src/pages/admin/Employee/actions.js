@@ -29,17 +29,17 @@ export const addEmployee = (employee) => {
     }
 }
 
-export const addEmployeeSuccess = (employee) => {
+export const addEmployeeSuccess = (response) => {
     return {
         type : Types.ADD_EMPLOYEE_SUCCESS,
-        employee
+        response
     }
 }
 
-export const addEmployeeFail = (msg) => {
+export const addEmployeeFail = (response) => {
     return {
         type : Types.ADD_EMPLOYEE_FAIL,
-        msg
+        response
     }
 }
 
@@ -51,17 +51,17 @@ export const deleteEmployee = (employeeId) => {
     }
 }
 
-export const deleteEmployeeSuccess = (msg) => {
+export const deleteEmployeeSuccess = (response) => {
     return {
         type : Types.ADD_EMPLOYEE_SUCCESS,
-        msg
+        response
     }
 }
 
-export const deleteEmployeeFail = (msg) => {
+export const deleteEmployeeFail = (response) => {
     return {
         type : Types.ADD_EMPLOYEE_FAIL,
-        msg
+        response
     }
 }
 
@@ -73,16 +73,16 @@ export const updateEmployee = (employee) => {
     }
 }
 
-export const updateEmployeeSuccess = (msg) => {
+export const updateEmployeeSuccess = (response) => {
     return {
         type : Types.UPDATE_EMPLOYEE_SUCCESS,
-        msg
+        response
     }
 }
 
-export const updateEmployeeFail = (msg) => {
+export const updateEmployeeFail = (response) => {
     return {
         type : Types.UPDATE_EMPLOYEE_FAIL,
-        msg
+        response
     }
 }

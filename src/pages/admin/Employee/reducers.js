@@ -1,5 +1,10 @@
 import * as Types from './constants';
-var initialState = null;
+var initialState = {
+  lst: null,
+  msg: '',
+  type: '',
+  count: 0
+};
 
 const employee = (state = initialState, action) => {
 
@@ -7,16 +12,34 @@ const employee = (state = initialState, action) => {
     case Types.FETCH_EMPLOYEE:
       return state
     case Types.FETCH_EMPLOYEE_SUCCESS:
-      return action.listEmployee
+      {
+        state.msg = ''
+        state.type = ''
+        state.lst = action.listEmployee
+        return state
+      }
     case Types.FETCH_EMPLOYEE_FAIL:
       return action.msg
 
     case Types.ADD_EMPLOYEE:
       return state
     case Types.ADD_EMPLOYEE_SUCCESS:
-      return state
+      {
+        state.count++;
+        state.msg = action.response.msg
+        state.type = action.response.type
+        state.lst.unshift(action.response.employee[0])
+        return state
+      }
     case Types.ADD_EMPLOYEE_FAIL:
-      return state
+      {
+        console.log(action);
+        
+        state.count++;
+        state.msg = action.response.msg
+        state.type = action.response.type
+        return state
+      }
 
     case Types.DELETE_EMPLOYEE:
       return state

@@ -39,7 +39,7 @@ function* fetchProduct() {
 
         let product = yield call(fetchProductApi)
         // if (msg.success === true) {            
-        yield put(actions.fetchProductSuccess(product));
+        yield put(actions.fetchProductSuccess(product.data));
         // } else {
         // yield put(actions.fetchPartnerFail(partner));
         // }
@@ -52,16 +52,9 @@ function* fetchProduct() {
 function* addProduct(action) {
     try {
         const { product } = action
-        const imgLink = [];
-
-        for (let index = 0; index < product.img.length; index++) {
-            let rs = yield call(uploadImagesApi, product.img[index])
-            imgLink.push(rs.data.data.link)
-        }
-        product.img = imgLink
-
         let rsAdd = yield call(addProductApi, product)
-
+        console.log(rsAdd);
+        
         if (rsAdd.data.type === 'success') {
             yield put(actions.addProductSuccess(rsAdd.data));
         } else {
@@ -93,13 +86,13 @@ function* updateProduct(action) {
 function* deleteProduct(action) {
     try {
         const { productId } = action
-        yield call(deleteProductApi, productId)
+        let rs = yield call(deleteProductApi, productId)
 
-        // if (msg.success === true) {            
-        yield put(actions.deleteProductSuccess(productId));
-        // } else {
-        // yield put(actions.fetchPartnerFail(partner));
-        // }
+         if (rs.data.type === 'success') {                         
+        yield put(actions.deleteProductSuccess(rs.data));
+        } else {
+        yield put(actions.deleteProductFail(rs.data));
+        }
 
     } catch (error) {
         yield put(actions.deleteProductFail(error));

@@ -12,18 +12,23 @@ const product = (state = initialState, action) => {
     case Types.FETCH_PRODUCT:
       return state
     case Types.FETCH_PRODUCT_SUCCESS:
-      return action.listProduct
+      {
+        state.msg = ''
+        state.type = ''
+        state.lst = action.listProduct
+        return state
+      }
     case Types.FETCH_PRODUCT_FAIL:
       return action.msg
 
     case Types.ADD_PRODUCT:
       return state
     case Types.ADD_PRODUCT_SUCCESS:
-      {        
+      {
         state.count++;
         state.msg = action.response.msg
         state.type = action.response.type
-        state.lst.push(action.response.product[0])
+        state.lst.unshift(action.response.product[0])
         return state
       }
     case Types.ADD_PRODUCT_FAIL:
@@ -37,9 +42,30 @@ const product = (state = initialState, action) => {
     case Types.DELETE_PRODUCT:
       return state
     case Types.DELETE_PRODUCT_SUCCESS:
-      return state
+      {
+        state.count++;
+        state.msg = action.response.msg
+        state.type = action.response.type
+        let rm = null;
+        // eslint-disable-next-line
+        state.lst.find((e, i) => {
+          if (e.id === action.response.productId) {
+            rm = i;
+          }
+        })
+        if (rm !== null) {
+          state.lst.splice(rm, 1)
+        }
+
+        return state
+      }
     case Types.DELETE_PRODUCT_FAIL:
-      return state
+      {
+        state.count++;
+        state.msg = action.response.msg
+        state.type = action.response.type
+        return state
+      }
 
     case Types.UPDATE_PRODUCT:
       return state
@@ -50,7 +76,7 @@ const product = (state = initialState, action) => {
         state.type = action.response.type
         // eslint-disable-next-line
         state.lst.find((e, i) => {
-          if (e.id === action.response.product.id) {            
+          if (e.id === action.response.product.id) {
             state.lst[i] = action.response.product
           }
         })
