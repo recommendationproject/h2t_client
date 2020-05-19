@@ -21,11 +21,8 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextFi
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchEmployee, deleteEmployee, updateEmployee } from '../../actions';
-import { callApiUnauthWithHeader } from '../../../../../utils/apis/apiUnAuth';
-import async from 'async';
 import { useToasts } from 'react-toast-notifications';
 import validate from 'validate.js';
-import { imagesUpload } from '../../../../../utils/apis/apiAuth';
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -54,11 +51,19 @@ const useStyles = makeStyles(theme => ({
 
 const schema = {
   name: {
-    presence: { allowEmpty: false, message: 'Tên sản phẩm không được để trống !' },
+    presence: { allowEmpty: false, message: 'Tên không được để trống !' },
   },
-  price: {
-    presence: { allowEmpty: false, message: 'Số lượng không được để trống !' },
+  phone: {
+    presence: { allowEmpty: false, message: 'Số điện thoại không được để trống !' },
+    length: {
+      minimum: 10,
+      maximum: 11,
+      message: 'Số dt không hợp lệ!'
+    }
   },
+  username: {
+    presence: { allowEmpty: false, message: 'Tên đăng nhập không được để trống !' },
+  }
 };
 
 const EmployeesTable = () => {
@@ -94,11 +99,10 @@ const EmployeesTable = () => {
       return;
     }
     setIsLoading(false);
-    
-    
+
+
   }, [data]);
-  console.log(data);
-  
+
   const { addToast } = useToasts();
   useEffect(() => {
     if (firstUpdate.current) {
@@ -120,11 +124,12 @@ const EmployeesTable = () => {
   const [formState, setFormState] = useState({
     isValid: false,
     values: {
+      id: '',
       name: '',
-      price: '',
-      description: '',
-      category_id: 'category000000000002',
-      img: []
+      address: '',
+      phone: '',
+      username: '',
+      pass: '',
     },
     touched: {},
     errors: {}
@@ -161,13 +166,11 @@ const EmployeesTable = () => {
 
   const [open, setOpen] = useState(false);
   const handleEdit = async (data) => {
-    const listImage = await callApiUnauthWithHeader(`product/img`, 'GET', { id: data.id })
-    let imgArr = listImage.data.map((value, key) => value.images);
     setFormState(formState => ({
       ...formState,
       values: {
         ...data,
-        img: imgArr
+        pass:''
       }
     }));
     setOpen(true);
@@ -177,42 +180,9 @@ const EmployeesTable = () => {
     setOpen(false);
   };
 
-  const handleChangeFile = async file => {
-    let imgArr = formState.values.img;
-    async.forEachOf(file.target.files, async (value, key) => {
-      let rs = await imagesUpload(value);
-      imgArr.push(rs.data.data.link);
-
-    }, async err => {
-      if (err) console.log(err);
-      setFormState(formState => ({
-        ...formState,
-        values: {
-          ...formState.values,
-          img: imgArr
-        }
-      }));
-    });
-  };
   const handleAccept = () => {
     dispatch(updateEmployee(formState.values));
     setIsUpdating(true)
-  };
-
-  const handleDeleteImage = (img) => {
-    let imgArr = formState.values.img;
-    imgArr.find((e, i) => {
-      if (e === img) {
-        imgArr.splice(i, 1);
-      }
-    })
-    setFormState(formState => ({
-      ...formState,
-      values: {
-        ...formState.values,
-        img: imgArr
-      }
-    }));
   };
 
   const hasError = field =>
@@ -263,7 +233,7 @@ const EmployeesTable = () => {
               }}
             />
 
-<Dialog
+            <Dialog
               fullWidth={true}
               maxWidth={'sm'}
               scroll={'body'}
@@ -288,7 +258,7 @@ const EmployeesTable = () => {
                       helperText={
                         hasError('name') ? formState.errors.name[0] : null
                       }
-                      label="Tên sản phẩm"
+                      label="Tên nhân viên"
                       margin="dense"
                       name="name"
                       onChange={handleChange}
@@ -304,16 +274,11 @@ const EmployeesTable = () => {
                   >
                     <TextField
                       fullWidth
-                      error={hasError('price')}
-                      helperText={
-                        hasError('price') ? formState.errors.price[0] : null
-                      }
-                      label="Giá"
+                      label="Địa chỉ"
                       margin="dense"
-                      name="price"
+                      name="address"
                       onChange={handleChange}
-                      required
-                      value={formState.values.price}
+                      value={formState.values.address}
                       variant="outlined"
                     />
                   </Grid>
@@ -324,54 +289,67 @@ const EmployeesTable = () => {
                   >
                     <TextField
                       fullWidth
-                      helperText=""
-                      label="Mô tả"
-                      margin="dense"
-                      name="description"
-                      onChange={handleChange}
+                      error={hasError('phone')}
+                      helperText={
+                        hasError('phone') ? formState.errors.phone[0] : null
+                      }
                       required
-                      value={formState.values.description}
+                      label="Số điện thoại"
+                      margin="dense"
+                      name="phone"
+                      onChange={handleChange}
+                      value={formState.values.phone}
                       variant="outlined"
+                      type='number'
                     />
                   </Grid>
+
                   <Grid
                     item
                     md={12}
                     xs={12}
                   >
-                    <input
-                      accept="image/*"
-                      className={classes.input}
-                      style={{ display: 'none' }}
-                      id="raised-button-file"
-                      onChange={handleChangeFile}
-                      type="file"
-                      multiple
-                    // disabled={uploadEnable}
+                    <TextField
+                      fullWidth
+                      error={hasError('username')}
+                      helperText={
+                        hasError('username') ? formState.errors.username[0] : null
+                      }
+                      required
+                      label="Tên đăng nhập"
+                      margin="dense"
+                      name="username"
+                      onChange={handleChange}
+                      value={formState.values.username}
+                      variant="outlined"
                     />
-                    <label htmlFor="raised-button-file">
-                      <Button variant="contained" component="span" color="primary" className={classes.uploadButton} >
-                        Upload
-                    </Button>
-                    </label>
-                    <div id='resultEdit' className={classes.resultEdit}>
-                      {formState.values.img.map((track, i) => {
-                        return (<div className={classes.imgItem} key={i}>
-                          <Button style={{ minWidth:'0px', padding:'0px' }} onClick={() => handleDeleteImage(track)}><DeleteOutline fontSize={'small'}/></Button>
-                          <img src={track} style={{ width: 70, height: 70, borderRadius: '50%' }}  />
-                        </div>)
-                      })}
-                    </div>
 
+                  </Grid>
+
+                  <Grid
+                    item
+                    md={12}
+                    xs={12}
+                  >
+                    <TextField
+                      fullWidth
+                      type='password'
+                      label="Mật khẩu"
+                      margin="dense"
+                      name="pass"
+                      onChange={handleChange}
+                      value={formState.values.pass}
+                      variant="outlined"
+                    />
                   </Grid>
 
                 </Grid>
               </DialogContent>
               <DialogActions>
                 <Button autoFocus onClick={handleClose} color="primary">
-                  Huỷ
+                  Đóng
           </Button>
-                <Button onClick={handleAccept} color="primary" autoFocus disabled={!formState.isValid || isUpdate}>
+                <Button onClick={handleAccept} color="primary" autoFocus disabled={!formState.isValid}>
                   Xác nhận
           </Button>
               </DialogActions>

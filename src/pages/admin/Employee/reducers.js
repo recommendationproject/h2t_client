@@ -51,9 +51,27 @@ const employee = (state = initialState, action) => {
     case Types.UPDATE_EMPLOYEE:
       return state
     case Types.UPDATE_EMPLOYEE_SUCCESS:
-      return state
+      {
+        state.count++;
+        state.msg = action.response.msg
+        state.type = action.response.type
+        // eslint-disable-next-line
+        state.lst.find((e, i) => {
+          if (e.id === action.response.employee.id) {
+            state.lst[i] = action.response.employee
+            console.log(1);
+            
+          }
+        })
+        return state
+      }
     case Types.UPDATE_EMPLOYEE_FAIL:
-      return state
+      {
+        state.count++;
+        state.msg = action.response.msg
+        state.type = action.response.type
+        return state
+      }
 
     default:
       return state

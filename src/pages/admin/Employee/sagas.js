@@ -62,13 +62,13 @@ function* addEmployee(action) {
 function* updateEmployee(action) {
     try {
         const { employee } = action
-        yield call(updateEmployeeApi, employee)
+        let rsUpdate = yield call(updateEmployeeApi, employee)
 
-        // if (msg.success === true) {            
-        yield put(actions.updateEmployeeSuccess(employee));
-        // } else {
-        // yield put(actions.fetchPartnerFail(partner));
-        // }
+         if (rsUpdate.data.type === 'success') {            
+        yield put(actions.updateEmployeeSuccess(rsUpdate.data));
+         } else {
+        yield put(actions.updateEmployeeFail(rsUpdate.data));
+        }
 
     } catch (error) {
       
