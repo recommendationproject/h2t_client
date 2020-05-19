@@ -44,9 +44,25 @@ const employee = (state = initialState, action) => {
     case Types.DELETE_EMPLOYEE:
       return state
     case Types.DELETE_EMPLOYEE_SUCCESS:
-      return state
+      {
+        state.count++;
+        state.msg = action.response.msg
+        state.type = action.response.type
+        // eslint-disable-next-line
+        state.lst.find((e, i) => {
+          if (e.id === action.response.employeeid) {
+            state.lst[i].status = action.response.status            
+          }
+        })
+        return state
+      }
     case Types.DELETE_EMPLOYEE_FAIL:
-      return state
+      {
+        state.count++;
+        state.msg = action.response.msg
+        state.type = action.response.type
+        return state
+      }
 
     case Types.UPDATE_EMPLOYEE:
       return state
@@ -58,9 +74,7 @@ const employee = (state = initialState, action) => {
         // eslint-disable-next-line
         state.lst.find((e, i) => {
           if (e.id === action.response.employee.id) {
-            state.lst[i] = action.response.employee
-            console.log(1);
-            
+            state.lst[i] = action.response.employee            
           }
         })
         return state

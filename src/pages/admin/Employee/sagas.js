@@ -15,8 +15,8 @@ function addEmployeeApi(employee) {
         .catch(error => error.response.data);
 }
 
-function deleteEmployeeApi(employeeId) {
-    return callApiUnAuth(`employee/${employeeId}`, 'DELETE', [])
+function deleteEmployeeApi(employee) {
+    return callApiUnAuth(`employee`, 'DELETE', employee)
         .then(res => res)
         .catch(error => error.response.data);
 }
@@ -79,14 +79,14 @@ function* updateEmployee(action) {
 
 function* deleteEmployee(action) {
     try {
-        const { employeeId } = action
-        yield call(deleteEmployeeApi, employeeId)
+        const { employee } = action
+        let rsDelete = yield call(deleteEmployeeApi, employee)
 
-        // if (msg.success === true) {            
-        yield put(actions.deleteEmployeeSuccess(employeeId));
-        // } else {
-        // yield put(actions.fetchPartnerFail(partner));
-        // }
+        if (rsDelete.data.type === 'success') {            
+        yield put(actions.deleteEmployeeSuccess(rsDelete.data));
+        } else {
+        yield put(actions.deleteEmployeeFail(rsDelete.data));
+        }
 
     } catch (error) {
         yield put(actions.deleteEmployeeFail(error));

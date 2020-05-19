@@ -17,7 +17,7 @@ import {
   Search,
   ViewColumn
 } from '@material-ui/icons';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField, Switch } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchEmployee, deleteEmployee, updateEmployee } from '../../actions';
@@ -69,12 +69,22 @@ const schema = {
 const EmployeesTable = () => {
   const classes = useStyles();
   const columns = [
-    // { title: 'Avatar', field: 'images', render: rowData => <img src={rowData.images} alt={rowData.name} style={{ width: 40, height: 40, borderRadius: '50%' }} /> },
     { title: 'Tên', field: 'name' },
     { title: 'Địa chỉ', field: 'address' },
     { title: 'Số điện thoại', field: 'phone' },
     { title: 'tên đăng nhập', field: 'username' },
-    // { title: 'Gtới tính', field: 'gender' },
+    {
+      title: '', field: 'status', render: rowData => {
+          return (<Switch
+            checked={rowData.status ==1 ? true : false}
+            onChange={() => handleChangeStatus(rowData)}
+            color="primary"
+            name="checkedB"
+            inputProps={{ 'aria-label': 'primary checkbox' }}
+          />)
+        
+      }
+    },
   ];
 
 
@@ -163,7 +173,10 @@ const EmployeesTable = () => {
       }
     }));
   };
-
+  
+  const handleChangeStatus = rowdata => {
+    dispatch(deleteEmployee({employeeid: rowdata.id, status: rowdata.status}));
+  };
   const [open, setOpen] = useState(false);
   const handleEdit = async (data) => {
     setFormState(formState => ({
@@ -220,11 +233,6 @@ const EmployeesTable = () => {
                   icon: Edit,
                   tooltip: 'Sửa',
                   onClick: (event, rowData) => handleEdit(rowData)
-                },
-                {
-                  icon: DeleteOutline,
-                  tooltip: 'Xóa',
-                  onClick: (event, rowData) => handleDelete(rowData)
                 }
               ]}
               options={{

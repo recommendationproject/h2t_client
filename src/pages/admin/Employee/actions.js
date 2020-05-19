@@ -44,10 +44,10 @@ export const addEmployeeFail = (response) => {
 }
 
 // Delete Employee
-export const deleteEmployee = (employeeId) => {
+export const deleteEmployee = (employee) => {
     return {
         type : Types.DELETE_EMPLOYEE,
-        employeeId
+        employee
     }
 }
 
