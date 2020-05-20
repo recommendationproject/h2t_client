@@ -47,7 +47,7 @@ const employee = (state = initialState, action) => {
       {
         state.count++;
         state.msg = action.response.msg
-        state.type = action.response.type
+        state.type = action.response.type        
         // eslint-disable-next-line
         state.lst.find((e, i) => {
           if (e.id === action.response.employeeid) {

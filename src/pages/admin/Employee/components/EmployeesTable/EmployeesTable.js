@@ -75,14 +75,14 @@ const EmployeesTable = () => {
     { title: 'tên đăng nhập', field: 'username' },
     {
       title: '', field: 'status', render: rowData => {
-          return (<Switch
-            checked={rowData.status ==1 ? true : false}
-            onChange={() => handleChangeStatus(rowData)}
-            color="primary"
-            name="checkedB"
-            inputProps={{ 'aria-label': 'primary checkbox' }}
-          />)
-        
+        return (<Switch
+          checked={rowData.status == 1 ? true : false}
+          onChange={() => handleChangeStatus(rowData)}
+          color="primary"
+          name="checkedB"
+          inputProps={{ 'aria-label': 'primary checkbox' }}
+        />)
+
       }
     },
   ];
@@ -173,9 +173,9 @@ const EmployeesTable = () => {
       }
     }));
   };
-  
+
   const handleChangeStatus = rowdata => {
-    dispatch(deleteEmployee({employeeid: rowdata.id, status: rowdata.status}));
+    dispatch(deleteEmployee({ employeeid: rowdata.id, status: rowdata.status === 1 ? 0 : 1 }));
   };
   const [open, setOpen] = useState(false);
   const handleEdit = async (data) => {
@@ -183,7 +183,7 @@ const EmployeesTable = () => {
       ...formState,
       values: {
         ...data,
-        pass:''
+        pass: ''
       }
     }));
     setOpen(true);

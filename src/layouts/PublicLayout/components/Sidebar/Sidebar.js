@@ -16,11 +16,11 @@ const Sidebar = (props) => {
 
   var items = data.map((track, i) => {
     var subItems = track.items.map((t, j) => {
-      return (<NavLink to={"/category/" + t.id} ><li data-name="profile" className="drop-down__item">{t.name} </li></NavLink>)
+      return (<NavLink key={j} to={"/category/" + t.id} ><li data-name="profile" className="drop-down__item">{t.name} </li></NavLink>)
     });
 
     return (
-      <div className="drop-down drop-down--active">
+      <div className="drop-down drop-down--active" key={i}>
       <NavLink to={"/type/" + track.group_eng} style={{ color: 'white' }}>
       <div id="dropDown" className="drop-down__button">
       <span className="drop-down__name">{track.group}</span>

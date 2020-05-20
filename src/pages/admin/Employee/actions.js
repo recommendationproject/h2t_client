@@ -53,14 +53,14 @@ export const deleteEmployee = (employee) => {
 
 export const deleteEmployeeSuccess = (response) => {
     return {
-        type : Types.ADD_EMPLOYEE_SUCCESS,
+        type : Types.DELETE_EMPLOYEE_SUCCESS,
         response
     }
 }
 
 export const deleteEmployeeFail = (response) => {
     return {
-        type : Types.ADD_EMPLOYEE_FAIL,
+        type : Types.DELETE_EMPLOYEE_FAIL,
         response
     }
 }

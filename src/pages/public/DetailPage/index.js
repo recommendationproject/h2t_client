@@ -25,7 +25,7 @@ const DetailPage = (props) => {
     const [isLoading, setIsLoading] = useState(true);
     const productId = props.route.match.params.id;
     useEffect(() => {
-        
+
         const fetchData = async () => {
             const result = await callApiUnauthWithHeader(`product/detail`, 'GET', { id: productId })
             setData(result.data.product);
@@ -37,18 +37,36 @@ const DetailPage = (props) => {
     useEffect(() => {
         if (data.id) {
             setIsLoading(false);
+            let arrItemHistory = [];
+            if ('itemHistory' in localStorage) {
+                arrItemHistory = JSON.parse(localStorage.getItem('itemHistory'));
+            }
+
+            if (arrItemHistory.length === 10) {
+                arrItemHistory.pop();
+            }
+            let checkExist = 0;
+            arrItemHistory.forEach(element => {
+                if (element === data.id)
+                    checkExist = 1
+            });
+            if (checkExist === 0)
+                arrItemHistory.unshift(data.id);
+            localStorage.setItem('itemHistory', JSON.stringify(arrItemHistory));
         }
+
+
     }, [data]);
     const classes = useStyles();
     const store = useStore();
     const { addToast } = useToasts();
     const addToCart = async () => {
-      if(store.getState().userInfo){
-        await callApiUnauth(`addCart`, 'POST', {product_id:props.product.id, customer_id: store.getState().userInfo.token.user.id, amount : 1});
-        addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
-      }else{
-        addToast('Bạn cần đăng nhập để thêm vào giỏ hàng', { autoDismiss: true, appearance: 'success' })
-      }
+        if (store.getState().userInfo) {
+            await callApiUnauth(`addCart`, 'POST', { product_id: props.product.id, customer_id: store.getState().userInfo.token.user.id, amount: 1 });
+            addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
+        } else {
+            addToast('Bạn cần đăng nhập để thêm vào giỏ hàng', { autoDismiss: true, appearance: 'success' })
+        }
     }
     return (
 
@@ -85,22 +103,22 @@ const DetailPage = (props) => {
                         >
                             <h2>{data.name}</h2>
                             <p>Mã : {data.id}</p>
-                            <CurrencyFormat value={data.price} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{color: 'red'}}>{value}</div>} />
-                            <p style={{ marginTop:'40px'}}>Mô tả</p>
+                            <CurrencyFormat value={data.price} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{ color: 'red' }}>{value}</div>} />
+                            <p style={{ marginTop: '40px' }}>Mô tả</p>
                             <p>{data.description}</p>
-                            <p style={{marginTop:'40px'}}>Số lượng trong kho: {data.amount}</p>
-                            <p><TextField
+                            <p style={{ marginTop: '40px' }}>Số lượng trong kho: {data.amount}</p>
+                            <TextField
                                 id="outlined-number"
                                 label="Số lượng"
                                 type="number"
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
-                                style={{width:'100%'}}
+                                style={{ width: '100%', margin: '10px 0px' }}
                                 variant="outlined"
                                 inputProps={{ min: "1", max: data.amount, step: "1" }}
-                            /></p>
-                            <Button variant="outlined" color="primary" href="#outlined-buttons" style={{width:'100%'}} onClick={addToCart}>
+                            />
+                            <Button variant="outlined" color="primary" href="#outlined-buttons" style={{ width: '100%' }} onClick={addToCart}>
                                 Thêm vào giỏ hàng
                             </Button>
                         </Grid>
