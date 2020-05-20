@@ -48,10 +48,10 @@ const Main = props => {
                 </Grid>
                 <Grid
                     item
-                    lg={8}
-                    md={8}
-                    xl={8}
-                    xs={8}
+                    lg={10}
+                    md={10}
+                    xl={10}
+                    xs={10}
                 >
                   {children}
                 </Grid>

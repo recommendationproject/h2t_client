@@ -127,10 +127,6 @@ const EmployeesTable = () => {
     setIsUpdating(false)
   }, [msg, type, count]);
 
-  const handleDelete = (rowData) => {
-    dispatch(deleteEmployee(rowData.id));
-  }
-
   const [formState, setFormState] = useState({
     isValid: false,
     values: {
