@@ -7,6 +7,8 @@ import Loading from 'react-fullscreen-loading';
 import ImageGallery from 'react-image-gallery';
 import "react-image-gallery/styles/css/image-gallery.css";
 import callApiUnauth, { callApiUnauthWithHeader } from '../../../utils/apis/apiUnAuth';
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import { TextField, Button } from '@material-ui/core';
 import { useStore } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
@@ -21,6 +23,9 @@ const useStyles = makeStyles(theme => ({
 
 const DetailPage = (props) => {
     const [data, setData] = useState([]);
+    const [dataRecommend, setDataRecommend] = useState([]);
+    const [dataBySupp, setDataBySupp] = useState([]);
+    const [dataHistory, setDataHistory] = useState([]);
     const [amount, setAmount] = useState([]);
     const [images, setImages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -32,8 +37,33 @@ const DetailPage = (props) => {
             const result = await callApiUnauthWithHeader(`product/detail`, 'GET', { id: productId })
             setData(result.data.product);
             setImages(result.data.images);
+            fetchDataBySupp(result.data.product.suppid)
         };
         fetchData();
+        const fetchDataBySupp = async (suppid) => {
+            const result = await callApiUnauthWithHeader(`recommentBySupp/${suppid}?limit=6`, 'GET', {})
+            setDataBySupp(result.data.product);
+        };
+        let userid = null;
+        if (store.getState().userInfo) {
+            userid = store.getState().userInfo.token.user.id;
+        }
+
+        const fetchDataRecommend = async (userid) => {
+            const result = await callApiUnauthWithHeader(`product`, 'GET', { userid: userid })
+            setDataRecommend(result.data);
+        };
+        fetchDataRecommend(userid);
+
+        const fetchDataHistory = async (arr) => {
+            const result = await callApiUnauth(`product/history`, 'POST', { lst: arr })
+            setDataHistory(result.data);
+        };
+
+        if ('itemHistory' in localStorage) {
+            let arrItemHistory = JSON.parse(localStorage.getItem('itemHistory'));
+            fetchDataHistory(arrItemHistory);
+        }
     }, []);
 
     useEffect(() => {
@@ -59,14 +89,14 @@ const DetailPage = (props) => {
     }, [data]);
 
     const handleChange = event => {
-        event.persist();        
-        if(data.amount >= event.target.value && event.target.value >0){
+        event.persist();
+        if (data.amount >= event.target.value && event.target.value > 0) {
             setAmount(event.target.value);
             setAdd(false);
         } else {
             setAdd(true);
         }
-      };
+    };
 
     const classes = useStyles();
     const store = useStore();
@@ -74,11 +104,11 @@ const DetailPage = (props) => {
     const addToCart = async () => {
         if (store.getState().userInfo) {
             console.log(amount);
-            
+
             await callApiUnauth(`addCart`, 'POST', { product_id: props.product.id, customer_id: store.getState().userInfo.token.user.id, amount: amount });
             addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
-        } 
-         else {
+        }
+        else {
             addToast('Bạn cần đăng nhập để thêm vào giỏ hàng', { autoDismiss: true, appearance: 'success' })
         }
     }
@@ -136,6 +166,127 @@ const DetailPage = (props) => {
                             <Button variant="outlined" color="primary" href="#outlined-buttons" style={{ width: '100%' }} onClick={addToCart} disabled={add}>
                                 Thêm vào giỏ hàng
                             </Button>
+                        </Grid>
+                        <Grid
+                            item
+                            lg={3}
+                            md={3}
+                            xl={3}
+                            xs={3}
+                        >
+                            {dataBySupp && dataBySupp.length > 0 ? (
+
+                                <React.Fragment>
+                                    <div className="items-wrapper">
+                                        <div className="items-title">
+                                            <h4>Sản phẩm cùng hãng</h4>
+                                        </div>
+                                        <div className="items">
+                                            {map(dataBySupp, (product, i) => (
+                                                <ItemRecommend key={i} product={product} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </React.Fragment>
+                            ) : (
+                                    <React.Fragment>
+                                        <div className="items-wrapper">
+                                            <div className="items-title">
+                                                <h4>Mới nhất</h4>
+                                            </div>
+                                            <div className="items">
+                                                {map(dataRecommend.new, (product, i) => (
+                                                    <ItemRecommend key={i} product={product} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </React.Fragment>
+                                )}
+                        </Grid>
+                        <Grid
+                            item
+                            lg={9}
+                            md={9}
+                            xl={9}
+                            xs={9}
+                        >
+                            <Grid
+                                item
+                                lg={12}
+                                md={12}
+                                xl={12}
+                                xs={12}
+                            >
+                                {dataRecommend && dataRecommend.length > 0 ? (
+                                    <React.Fragment>
+                                        <div className="items-title">
+                                            <h4>Gợi ý cho bạn</h4>
+                                        </div>
+                                        <div className="items">
+                                            <Carousel
+                                                swipeable={false}
+                                                draggable={false}
+                                                showDots={true}
+                                                responsive={responsive}
+                                                ssr={true} // means to render carousel on server-side.
+                                                infinite={true}
+                                                autoPlaySpeed={1000}
+                                                keyBoardControl={true}
+                                                customTransition="all .5"
+                                                transitionDuration={500}
+                                                containerClass="carousel-container"
+                                                dotListClass="custom-dot-list-style"
+                                                itemClass="carousel-item-padding-40-px"
+                                            >
+                                                {map(dataRecommend, (product, i) => (
+                                                    <Item key={i} product={product} />
+                                                ))}
+                                            </Carousel>
+                                        </div>
+                                    </React.Fragment>
+                                ) : (
+                                        <React.Fragment></React.Fragment>
+                                    )}
+                            </Grid>
+
+                            <Grid
+                                item
+                                lg={12}
+                                md={12}
+                                xl={12}
+                                xs={12}
+                            >
+                                {dataHistory && dataHistory.length > 0 ? (
+                                    <React.Fragment>
+                                        <div className="items-title">
+                                            <h4>Xem gần đây</h4>
+                                        </div>
+                                        <div className="items">
+                                            <Carousel
+                                                swipeable={false}
+                                                draggable={false}
+                                                showDots={true}
+                                                responsive={responsive}
+                                                ssr={true} // means to render carousel on server-side.
+                                                infinite={true}
+                                                autoPlaySpeed={1000}
+                                                keyBoardControl={true}
+                                                customTransition="all .5"
+                                                transitionDuration={500}
+                                                containerClass="carousel-container"
+                                                dotListClass="custom-dot-list-style"
+                                                itemClass="carousel-item-padding-40-px"
+                                            >
+                                                {map(dataHistory, (product, i) => (
+                                                    <Item key={i} product={product} />
+                                                ))}
+                                            </Carousel>
+                                        </div>
+                                    </React.Fragment>
+                                ) : (
+                                        <React.Fragment></React.Fragment>
+                                    )}
+                            </Grid>
                         </Grid>
                     </Grid>
                 )}

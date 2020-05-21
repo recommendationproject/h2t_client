@@ -11,7 +11,9 @@ import { NavLink } from 'react-router-dom';
 import map from 'lodash/map';
 import { useStore } from 'react-redux';
 import { callApiUnauthWithHeader } from '../../../utils/apis/apiUnAuth';
-
+import callApiUnauthWithBody from '../../../utils/apis/apiUnAuth';
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 const useStyles = makeStyles(theme => ({
     root: {
         padding: theme.spacing(4)
@@ -19,9 +21,29 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const responsive = {
+    desktop: {
+        breakpoint: { max: 3000, min: 1024 },
+        items: 3,
+        slidesToSlide: 3 // optional, default to 1.
+    },
+    tablet: {
+        breakpoint: { max: 1024, min: 464 },
+        items: 2,
+        slidesToSlide: 2 // optional, default to 1.
+    },
+    mobile: {
+        breakpoint: { max: 464, min: 0 },
+        items: 1,
+        slidesToSlide: 1 // optional, default to 1.
+    }
+};
+
+
 const CategoryPage = (props) => {
     const [data, setData] = useState([]);
     const [dataRecommend, setDataRecommend] = useState([]);
+    const [dataHistory, setDataHistory] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState({ currentPage: 1, totalPage: 1 });
     const [cateName, setCateName] = useState('');
@@ -70,6 +92,16 @@ const CategoryPage = (props) => {
             setDataRecommend(result.data);
         };
         fetchDataRecommend(userid);
+
+        const fetchDataHistory = async (arr) => {
+            const result = await callApiUnauthWithBody(`product/history`, 'POST', { lst: arr })
+            setDataHistory(result.data);
+        };
+
+        if ('itemHistory' in localStorage) {
+            let arrItemHistory = JSON.parse(localStorage.getItem('itemHistory'));
+            fetchDataHistory(arrItemHistory);
+        }
     }, [props]);
 
     const firstUpdate = useRef(true);
@@ -78,7 +110,7 @@ const CategoryPage = (props) => {
             firstUpdate.current = false;
             return;
         }
-       setIsLoading(false);
+        setIsLoading(false);
     }, [data]);
     const classes = useStyles();
     let leftPageinationItems = Array(page.currentPage).fill(2).map((x, i) => {
@@ -135,15 +167,37 @@ const CategoryPage = (props) => {
                                     </div>
                                 </nav>
                             </div>
-                            <div className="items-wrapper">
-                                <div className="items-title">
+                            <div>
+                            {dataHistory && dataHistory.length > 0 ? (
+                               <React.Fragment>
+                                    <div className="items-title">
                                     <h4>Xem gần đây</h4>
                                 </div>
                                 <div className="items">
-                                        <Item  product={data[0]} />
-                                        <Item  product={data[1]} />
-                                        <Item  product={data[2]} />
+                                    <Carousel
+                                        swipeable={false}
+                                        draggable={false}
+                                        showDots={true}
+                                        responsive={responsive}
+                                        ssr={true} // means to render carousel on server-side.
+                                        infinite={true}
+                                        autoPlaySpeed={1000}
+                                        keyBoardControl={true}
+                                        customTransition="all .5"
+                                        transitionDuration={500}
+                                        containerClass="carousel-container"
+                                        dotListClass="custom-dot-list-style"
+                                        itemClass="carousel-item-padding-40-px"
+                                    >
+                                        {map(dataHistory, (product, i) => (
+                                        <Item key={i} product={product} />
+                                    ))}
+                                    </Carousel>
                                 </div>
+                               </React.Fragment>
+                            ) : (
+                                <React.Fragment></React.Fragment>
+                            )}
                             </div>
                         </Grid>
                         <Grid
