@@ -5,12 +5,15 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import PersonIcon from '@material-ui/icons/Person';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { callApiUnauthWithHeader } from '../../../../utils/apis/apiUnAuth';
+import {signout}  from '../../../../pages/public/Account/actions';
 import './index.css';
 import { useStore } from 'react-redux';
+import { useHistory } from 'react-router'
 
 const Navbar = () => {
 
   const [data, setData] = useState([]);
+  let history = useHistory();
   const store = useStore();
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +22,11 @@ const Navbar = () => {
     };
     fetchData();
   }, []);
+  const handleSignout = () => {
+    localStorage.removeItem('sessionuser');
+    dispatch(signout());
+    history.push('/');
+  }
 
   var items = data.map((track, i) => {
     var subItems = track.items.map((t, j) => {
@@ -51,7 +59,7 @@ const Navbar = () => {
         {store.getState().userInfo ? (
           <div>
             <NavLink to='/acc' style={{ color: 'white', marginRight: '10px' }}><PersonIcon /></NavLink>
-            <ExitToAppIcon style={{ color: 'white', marginRight: '10px', lineHeight: '3rem' }}></ExitToAppIcon>
+            <ExitToAppIcon onClick={handleSignout} style={{ color: 'white', marginRight: '10px', lineHeight: '3rem' }}></ExitToAppIcon>
           </div>
          ) : (
           

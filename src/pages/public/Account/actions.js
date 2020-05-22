@@ -30,3 +30,10 @@ export const mlts = (admin) => {
     }
 }
 
+///////// signout
+export const signout = () => {
+    return {
+        type : Types.SIGN_OUT
+    }
+}
+

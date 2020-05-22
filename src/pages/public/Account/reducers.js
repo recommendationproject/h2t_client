@@ -14,6 +14,10 @@ const user = (state = initialState, action) => {
     //
     case Types.MLTS:
       return action.admin
+
+    case Types.SIGN_OUT:
+      return null
+
     default:
       return state
   }
