@@ -168,12 +168,11 @@ const CategoryPage = (props) => {
                                 </nav>
                             </div>
                             <div>
-                            {dataHistory && dataHistory.length > 0 ? (
+                            {/* {dataHistory && dataHistory.length > 0 ? (
                                <React.Fragment>
                                     <div className="items-title">
                                     <h4>Xem gần đây</h4>
                                 </div>
-                                <div className="items">
                                     <Carousel
                                         swipeable={false}
                                         draggable={false}
@@ -189,15 +188,15 @@ const CategoryPage = (props) => {
                                         dotListClass="custom-dot-list-style"
                                         itemClass="carousel-item-padding-40-px"
                                     >
-                                        {map(dataHistory, (product, i) => (
+                                       {map(dataHistory, (product, i) => (
                                         <Item key={i} product={product} />
-                                    ))}
+                                    ))} 
+                                  
                                     </Carousel>
-                                </div>
                                </React.Fragment>
                             ) : (
                                 <React.Fragment></React.Fragment>
-                            )}
+                            )} */}
                             </div>
                         </Grid>
                         <Grid
