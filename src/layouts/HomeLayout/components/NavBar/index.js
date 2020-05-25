@@ -7,7 +7,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { callApiUnauthWithHeader } from '../../../../utils/apis/apiUnAuth';
 import {signout}  from '../../../../pages/public/Account/actions';
 import './index.css';
-import { useStore } from 'react-redux';
+import { useStore, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router'
 
 const Navbar = () => {
@@ -15,6 +15,7 @@ const Navbar = () => {
   const [data, setData] = useState([]);
   let history = useHistory();
   const store = useStore();
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
       const result = await callApiUnauthWithHeader(`categoryGroupByGender`, 'GET')

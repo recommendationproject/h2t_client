@@ -44,7 +44,7 @@ const routes = {
     path: '/admin/login',
     exact: true,
     component:
-      (localStorage.getItem("session") && ((new Date(JSON.parse(localStorage.getItem("session")).expires) - new Date()) >= 0)
+      (localStorage.getItem("sessionadmin") && ((new Date(JSON.parse(localStorage.getItem("sessionadmin")).token.expires) - new Date()) >= 0)
         ? HomePage
         : LoginPage
       ),

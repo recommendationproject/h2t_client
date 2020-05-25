@@ -45,12 +45,15 @@ const DetailPage = (props) => {
     const [data, setData] = useState([]);
     const [dataRecommend, setDataRecommend] = useState([]);
     const [dataBySupp, setDataBySupp] = useState([]);
+    const [dataByCategory, setDataByCategory] = useState([]);
+    const [dataByPrice, setDataByPrice] = useState([]);
     const [dataHistory, setDataHistory] = useState([]);
     const [amount, setAmount] = useState([]);
     const [images, setImages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [add, setAdd] = useState(true);
     const productId = props.route.match.params.id;
+    const history = props.route.history;
     useEffect(() => {
 
         const fetchData = async () => {
@@ -58,11 +61,21 @@ const DetailPage = (props) => {
             setData(result.data.product);
             setImages(result.data.images);
             fetchDataBySupp(result.data.product.suppid)
+            fetchDataByCategory(result.data.product.category_id);
+            fetchDataByPrice(result.data.product.price);
         };
         fetchData();
         const fetchDataBySupp = async (suppid) => {
             const result = await callApiUnauthWithHeader(`recommentBySupp/${suppid}?limit=6`, 'GET', {})
             setDataBySupp(result.data);
+        };
+        const fetchDataByCategory = async (category_id) => {
+            const result = await callApiUnauthWithHeader(`category/category/${category_id}?limit=6`, 'GET', {})
+            setDataByCategory(result.data);
+        };
+        const fetchDataByPrice = async (price) => {
+            const result = await callApiUnauthWithHeader(`recommentByPrice/${price}?limit=6`, 'GET', {})
+            setDataByPrice(result.data);
         };
         let userid = null;
         if (store.getState().userInfo) {
@@ -85,8 +98,7 @@ const DetailPage = (props) => {
             fetchDataHistory(arrItemHistory);
         }
     }, []);
-    console.log(dataBySupp);
-    
+
     useEffect(() => {
         if (data.id) {
             setIsLoading(false);
@@ -128,8 +140,49 @@ const DetailPage = (props) => {
             addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
         }
         else {
-            addToast('Bạn cần đăng nhập để thêm vào giỏ hàng', { autoDismiss: true, appearance: 'success' })
+            let arrItemCart = [];
+            if ('itemCart' in localStorage) {
+                arrItemCart = JSON.parse(localStorage.getItem('itemCart'));
+            }
+
+            let checkExist = null;
+            arrItemCart.forEach(element => {
+                if (element.id === props.product.id)
+                    checkExist = 1
+            });
+            if (checkExist !== null)
+                arrItemCart[checkExist].amount = arrItemCart[checkExist].amount + amount;
+            else
+                arrItemCart.push({ id: props.product.id, name: props.product.name, price: props.product.price, amount: amount, images: props.product.images });
+            localStorage.setItem('itemCart', JSON.stringify(arrItemCart));
+            addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
         }
+    }
+
+    const addAndGoToCart = async () => {
+        if (store.getState().userInfo) {
+            await callApiUnauth(`addCart`, 'POST', { product_id: props.product.id, customer_id: store.getState().userInfo.token.user.id, amount: amount });
+            addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
+        }
+        else {
+            let arrItemCart = [];
+            if ('itemCart' in localStorage) {
+                arrItemCart = JSON.parse(localStorage.getItem('itemCart'));
+            }
+
+            let checkExist = null;
+            arrItemCart.forEach(element => {
+                if (element.id === props.product.id)
+                    checkExist = 1
+            });
+            if (checkExist !== null)
+                arrItemCart[checkExist].amount = arrItemCart[checkExist].amount + amount;
+            else
+                arrItemCart.push({ id: props.product.id, name: props.product.name, price: props.product.price, amount: amount, images: props.product.images });
+            localStorage.setItem('itemCart', JSON.stringify(arrItemCart));
+            addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
+        }
+        history.push('/cart');
     }
     return (
 
@@ -187,84 +240,121 @@ const DetailPage = (props) => {
                                     variant="outlined"
                                     inputProps={{ min: "1", max: data.amount, step: "1" }}
                                 />
-                                <Button variant="outlined" color="primary" href="#outlined-buttons" style={{ width: '100%' }} onClick={addToCart} disabled={add}>
+                                <Button variant="outlined" color="primary" href="#outlined-buttons" style={{ width: '45%' }} onClick={addToCart} disabled={add}>
                                     Thêm vào giỏ hàng
+                            </Button>
+                                <Button variant="outlined" color="primary" href="#outlined-buttons" style={{ width: '45%' }} onClick={addAndGoToCart}>
+                                    Mua ngay
                             </Button>
                             </Grid>
 
-                            
-                                {dataRecommend.recommend && dataRecommend.recommend.length > 0 ? (
-                                    <Grid
+
+                            {dataRecommend.recommend && dataRecommend.recommend.length > 0 ? (
+                                <Grid
                                     item
                                     lg={12}
                                     md={12}
                                     xl={12}
                                     xs={12}
                                 >
-                                        <div className="items-title">
-                                            <h4>Gợi ý cho bạn</h4>
-                                        </div>
-                                            <Carousel
-                                                swipeable={false}
-                                                draggable={false}
-                                                showDots={true}
-                                                responsive={responsive}
-                                                ssr={true} // means to render carousel on server-side.
-                                                infinite={true}
-                                                autoPlaySpeed={1000}
-                                                keyBoardControl={true}
-                                                customTransition="all .5"
-                                                transitionDuration={500}
-                                                containerClass="carousel-container"
-                                                dotListClass="custom-dot-list-style"
-                                                itemClass="carousel-item-padding-40-px"
-                                            >
-                                                {map(dataRecommend.recommend, (product, i) => (
-                                                    <ItemRecommend key={i} product={product} />
-                                                ))}
-                                            </Carousel>
-                                        </Grid>
-                                ) : (
-                                        <React.Fragment></React.Fragment>
-                                    )}
-                           
+                                    <div className="items-title">
+                                        <h4>Gợi ý cho bạn</h4>
+                                    </div>
+                                    <Carousel
+                                        swipeable={false}
+                                        draggable={false}
+                                        showDots={true}
+                                        responsive={responsive}
+                                        ssr={true} // means to render carousel on server-side.
+                                        infinite={true}
+                                        autoPlaySpeed={1000}
+                                        keyBoardControl={true}
+                                        customTransition="all .5"
+                                        transitionDuration={500}
+                                        containerClass="carousel-container"
+                                        dotListClass="custom-dot-list-style"
+                                        itemClass="carousel-item-padding-40-px"
+                                    >
+                                        {map(dataRecommend.recommend, (product, i) => (
+                                            <ItemRecommend key={i} product={product} />
+                                        ))}
+                                    </Carousel>
+                                </Grid>
+                            ) : (
+                                    <React.Fragment></React.Fragment>
+                                )}
 
-                            <Grid
-                                item
-                                lg={12}
-                                md={12}
-                                xl={12}
-                                xs={12}
-                            >
-                                {dataHistory && dataHistory.length > 0 ? (
-                                    <React.Fragment>
-                                        <div className="items-title">
-                                            <h4>Xem gần đây</h4>
-                                        </div>
-                                            <Carousel
-                                                swipeable={false}
-                                                draggable={false}
-                                                showDots={true}
-                                                responsive={responsive}
-                                                ssr={true} // means to render carousel on server-side.
-                                                infinite={true}
-                                                autoPlaySpeed={1000}
-                                                keyBoardControl={true}
-                                                customTransition="all .5"
-                                                transitionDuration={500}
-                                                containerClass="carousel-container"
-                                                dotListClass="custom-dot-list-style"
-                                                itemClass="carousel-item-padding-40-px"
-                                            >
-                                                {map(dataHistory, (product, i) => (
-                                                    <ItemRecommend key={i} product={product} />
-                                                ))}
-                                            </Carousel>
-                                    </React.Fragment>
-                                ) : (
-                                        <React.Fragment></React.Fragment>
-                                    )}
-                            </Grid>
+                            {dataBySupp && dataBySupp.length > 0 ? (
+                                <Grid
+                                    item
+                                    lg={12}
+                                    md={12}
+                                    xl={12}
+                                    xs={12}
+                                >
+                                    <div className="items-title">
+                                        <h4>Sản phẩm cùng hãng</h4>
+                                    </div>
+                                    <Carousel
+                                        swipeable={false}
+                                        draggable={false}
+                                        showDots={true}
+                                        responsive={responsive}
+                                        ssr={true} // means to render carousel on server-side.
+                                        infinite={true}
+                                        autoPlaySpeed={1000}
+                                        keyBoardControl={true}
+                                        customTransition="all .5"
+                                        transitionDuration={500}
+                                        containerClass="carousel-container"
+                                        dotListClass="custom-dot-list-style"
+                                        itemClass="carousel-item-padding-40-px"
+                                    >
+                                        {map(dataBySupp, (product, i) => (
+                                            <ItemRecommend key={i} product={product} />
+                                        ))}
+                                    </Carousel>
+                                </Grid>
+                            ) : (
+                                    <React.Fragment></React.Fragment>
+                                )}
+
+
+                            {dataHistory && dataHistory.length > 0 ? (
+                                <Grid
+                                    item
+                                    lg={12}
+                                    md={12}
+                                    xl={12}
+                                    xs={12}
+                                >
+                                    <div className="items-title">
+                                        <h4>Xem gần đây</h4>
+                                    </div>
+                                    <Carousel
+                                        swipeable={false}
+                                        draggable={false}
+                                        showDots={true}
+                                        responsive={responsive}
+                                        ssr={true} // means to render carousel on server-side.
+                                        infinite={true}
+                                        autoPlaySpeed={1000}
+                                        keyBoardControl={true}
+                                        customTransition="all .5"
+                                        transitionDuration={500}
+                                        containerClass="carousel-container"
+                                        dotListClass="custom-dot-list-style"
+                                        itemClass="carousel-item-padding-40-px"
+                                    >
+                                        {map(dataHistory, (product, i) => (
+                                            <ItemRecommend key={i} product={product} />
+                                        ))}
+                                    </Carousel>
+                                </Grid>
+                            ) : (
+                                    <React.Fragment></React.Fragment>
+                                )}
+
                         </Grid>
 
                         <Grid
@@ -274,33 +364,40 @@ const DetailPage = (props) => {
                             xl={3}
                             xs={3}
                         >
-                            {dataBySupp && dataBySupp.length > 0 ? (
+                            {dataByCategory && dataByCategory.length > 0 ? (
 
                                 <React.Fragment>
                                     <div className="items-wrapper">
                                         <div className="items-title">
-                                            <h4>Sản phẩm cùng hãng</h4>
+                                            <h4>Sản phẩm cùng loại</h4>
                                         </div>
                                         <div className="items">
-                                            {map(dataBySupp, (product, i) => (
+                                            {map(dataByCategory, (product, i) => (
                                                 <ItemRecommend key={i} product={product} />
                                             ))}
                                         </div>
                                     </div>
                                 </React.Fragment>
                             ) : (
-                                    <React.Fragment>
-                                        <div className="items-wrapper">
-                                            <div className="items-title">
-                                                <h4>Mới nhất</h4>
-                                            </div>
-                                            <div className="items">
-                                                {map(dataRecommend.new, (product, i) => (
-                                                    <ItemRecommend key={i} product={product} />
-                                                ))}
-                                            </div>
+                                    <React.Fragment></React.Fragment>
+                                )}
+
+                            {dataByPrice && dataByPrice.length > 0 ? (
+
+                                <React.Fragment>
+                                    <div className="items-wrapper">
+                                        <div className="items-title">
+                                            <h4>Sản phẩm cùng tầm giá</h4>
                                         </div>
-                                    </React.Fragment>
+                                        <div className="items">
+                                            {map(dataByPrice, (product, i) => (
+                                                <ItemRecommend key={i} product={product} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </React.Fragment>
+                            ) : (
+                                    <React.Fragment></React.Fragment>
                                 )}
                         </Grid>
 

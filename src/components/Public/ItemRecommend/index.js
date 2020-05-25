@@ -16,7 +16,22 @@ const ItemRecommend = (props) => {
       await callApiUnauth(`addCart`, 'POST', {product_id:props.product.id, customer_id: store.getState().userInfo.token.user.id, amount : 1});
       addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
     }else{
-      addToast('Bạn cần đăng nhập để thêm vào giỏ hàng', { autoDismiss: true, appearance: 'success' })
+      let arrItemCart = [];
+      if ('itemCart' in localStorage) {
+        arrItemCart = JSON.parse(localStorage.getItem('itemCart'));
+      }
+
+      let checkExist = null;
+      arrItemCart.forEach(element => {
+        if (element.id === props.product.id)
+          checkExist = 1
+      });
+      if (checkExist !== null)
+        arrItemCart[checkExist].amount = arrItemCart[checkExist].amount + 1;
+      else
+        arrItemCart.push({ id: props.product.id, name: props.product.name, price: props.product.price, amount: 1, images: props.product.images });
+      localStorage.setItem('itemCart', JSON.stringify(arrItemCart));
+      addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
     }
   }
   return (

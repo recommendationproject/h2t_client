@@ -6,13 +6,13 @@ const admin = (state = initialState, action) => {
   switch (action.type) {
     // update partner
     case Types.UPDATE_ADMIN:
-        return state;
+      return state;
     case Types.UPDATE_ADMIN_SUCCESS:
-        {
-          state.token.user= Object.assign(state.token.user, action.admin);
-          localStorage.setItem('sessionadmin', JSON.stringify(state));
-          return state
-        }
+      {
+        state.token.user = Object.assign(state.token.user, action.admin);
+        localStorage.setItem('sessionadmin', JSON.stringify(state));
+        return state
+      }
     case Types.UPDATE_ADMIN_FAIL:
       return action.msg
     // Sign in
@@ -25,6 +25,10 @@ const admin = (state = initialState, action) => {
     //
     case Types.MLTS:
       return action.admin
+
+    case Types.SIGN_OUT:
+      return null
+
     default:
       return state
   }
