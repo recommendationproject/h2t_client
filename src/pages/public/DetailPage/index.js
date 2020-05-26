@@ -14,7 +14,7 @@ import { TextField, Button } from '@material-ui/core';
 import { useStore } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
 import ItemRecommend from '../../../components/Public/ItemRecommend';
-import Item from '../../../components/Public/Item';
+import LeftListItem from '../../../components/Public/leftListItem';
 var CurrencyFormat = require('react-currency-format');
 const useStyles = makeStyles(theme => ({
     root: {
@@ -386,10 +386,8 @@ const DetailPage = (props) => {
                                         <div className="items-title">
                                             <h4>Sản phẩm cùng loại</h4>
                                         </div>
-                                        <div className="items">
-                                            {map(dataByCategory, (product, i) => (
-                                                <ItemRecommend key={i} product={product} />
-                                            ))}
+                                        <div>
+                                        <LeftListItem data={dataByCategory} />
                                         </div>
                                     </div>
                                 </React.Fragment>
@@ -404,10 +402,8 @@ const DetailPage = (props) => {
                                         <div className="items-title">
                                             <h4>Sản phẩm cùng tầm giá</h4>
                                         </div>
-                                        <div className="items">
-                                            {map(dataByPrice, (product, i) => (
-                                                <ItemRecommend key={i} product={product} />
-                                            ))}
+                                        <div >
+                                            <LeftListItem data={dataByPrice} />
                                         </div>
                                     </div>
                                 </React.Fragment>

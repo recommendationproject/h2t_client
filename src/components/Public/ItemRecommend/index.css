@@ -24,7 +24,7 @@ a {
 }
 
 .item-recommend {
-  width: 20em;
+  /* width: 20em; */
   font-family: 'Quicksand', sans-serif;
   /* overflow: hidden; */
   display: flex;
