@@ -22,12 +22,13 @@ const Item = (props) => {
       }
 
       let checkExist = null;
-      arrItemCart.forEach(element => {
-        if (element.id === props.product.id)
-          checkExist = 1
+      arrItemCart.forEach((e,i) => {
+        if (e.id === props.product.id)
+          checkExist = i
       });
+      
       if (checkExist !== null)
-        arrItemCart[checkExist].amount = arrItemCart[checkExist].amount + 1;
+        arrItemCart[checkExist].amount = parseInt(arrItemCart[checkExist].amount) + 1;
       else
         arrItemCart.push({ id: props.product.id, name: props.product.name, price: props.product.price, amount: 1, images: props.product.images });
       localStorage.setItem('itemCart', JSON.stringify(arrItemCart));

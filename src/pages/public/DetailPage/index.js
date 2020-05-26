@@ -71,7 +71,7 @@ const DetailPage = (props) => {
         };
         const fetchDataByCategory = async (category_id) => {
             const result = await callApiUnauthWithHeader(`category/category/${category_id}?limit=6`, 'GET', {})
-            setDataByCategory(result.data);
+            setDataByCategory(result.data.data);
         };
         const fetchDataByPrice = async (price) => {
             const result = await callApiUnauthWithHeader(`recommentByPrice/${price}?limit=6`, 'GET', {})
@@ -136,7 +136,7 @@ const DetailPage = (props) => {
     const { addToast } = useToasts();
     const addToCart = async () => {
         if (store.getState().userInfo) {
-            await callApiUnauth(`addCart`, 'POST', { product_id: props.product.id, customer_id: store.getState().userInfo.token.user.id, amount: amount });
+            await callApiUnauth(`addCart`, 'POST', { product_id: data.id, customer_id: store.getState().userInfo.token.user.id, amount: amount });
             addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
         }
         else {
@@ -146,14 +146,14 @@ const DetailPage = (props) => {
             }
 
             let checkExist = null;
-            arrItemCart.forEach(element => {
-                if (element.id === props.product.id)
-                    checkExist = 1
+            arrItemCart.forEach((e,i) => {
+                if (e.id === data.id)
+                    checkExist = i
             });
             if (checkExist !== null)
-                arrItemCart[checkExist].amount = arrItemCart[checkExist].amount + amount;
+                arrItemCart[checkExist].amount = parseInt(arrItemCart[checkExist].amount) + parseInt(amount);
             else
-                arrItemCart.push({ id: props.product.id, name: props.product.name, price: props.product.price, amount: amount, images: props.product.images });
+                arrItemCart.push({ id: data.id, name: data.name, price: data.price, amount: amount, images: data.images });
             localStorage.setItem('itemCart', JSON.stringify(arrItemCart));
             addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
         }
@@ -161,7 +161,7 @@ const DetailPage = (props) => {
 
     const addAndGoToCart = async () => {
         if (store.getState().userInfo) {
-            await callApiUnauth(`addCart`, 'POST', { product_id: props.product.id, customer_id: store.getState().userInfo.token.user.id, amount: amount });
+            await callApiUnauth(`addCart`, 'POST', { product_id: data.id, customer_id: store.getState().userInfo.token.user.id, amount: amount });
             addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
         }
         else {
@@ -170,15 +170,15 @@ const DetailPage = (props) => {
                 arrItemCart = JSON.parse(localStorage.getItem('itemCart'));
             }
 
-            let checkExist = null;
-            arrItemCart.forEach(element => {
-                if (element.id === props.product.id)
-                    checkExist = 1
+            let checkExist = null;            
+            arrItemCart.forEach((e,i) => {
+                if (e.id === data.id)
+                    checkExist = i
             });
             if (checkExist !== null)
-                arrItemCart[checkExist].amount = arrItemCart[checkExist].amount + amount;
+                arrItemCart[checkExist].amount = parseInt(arrItemCart[checkExist].amount) + 1;
             else
-                arrItemCart.push({ id: props.product.id, name: props.product.name, price: props.product.price, amount: amount, images: props.product.images });
+                arrItemCart.push({ id: data.id, name: data.name, price: data.price, amount: 1, images: data.images });
             localStorage.setItem('itemCart', JSON.stringify(arrItemCart));
             addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
         }
@@ -246,7 +246,7 @@ const DetailPage = (props) => {
                                         md={6}
                                         xl={6}
                                         xs={6}>
-                                        <Button variant="outlined" color="primary" href="#outlined-buttons" style={{ width: '100%' }} onClick={addToCart} disabled={add}>
+                                        <Button variant="outlined" color="primary" style={{ width: '100%' }} onClick={addToCart} disabled={add}>
                                             Thêm vào giỏ hàng
                                         </Button>
                                     </Grid>
@@ -255,7 +255,7 @@ const DetailPage = (props) => {
                                         md={6}
                                         xl={6}
                                         xs={6}>
-                                        <Button variant="outlined"  href="#outlined-buttons" style={{ width: '100%', color: 'white', background:'red' }} onClick={addAndGoToCart}>
+                                        <Button variant="outlined" style={{ width: '100%', color: 'white', background:'red' }} onClick={addAndGoToCart}>
                                             Mua ngay
                                         </Button>
                                     </Grid>

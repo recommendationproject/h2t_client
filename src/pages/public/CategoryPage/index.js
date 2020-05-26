@@ -49,7 +49,7 @@ const CategoryPage = (props) => {
                     break;
                 default:
                     type = 'category';
-                    url = `search/${type}/${id}${search}`;
+                    url = `category/${type}/${id}${search}`;
                     break;
             }
             if (props.route.match.path === '/search/:keyword') {

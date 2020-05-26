@@ -1,8 +1,9 @@
 import React, { useState, forwardRef, useEffect, useRef } from 'react';
 import './main.css';
 import { makeStyles } from '@material-ui/styles';
-import { Grid, Button } from '@material-ui/core';
+import { Grid, Button, TextField, Typography } from '@material-ui/core';
 import MaterialTable from 'material-table';
+import validate from 'validate.js';
 import PaymentIcon from '@material-ui/icons/Payment';
 import {
     AddBox,
@@ -22,11 +23,52 @@ import {
     ViewColumn
 } from '@material-ui/icons';
 import { callApiUnauthWithHeader } from '../../../utils/apis/apiUnAuth';
+import callApiUnauthWithBody from '../../../utils/apis/apiUnAuth';
 import { useStore } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
+
+const schema = {
+    name: {
+        presence: { allowEmpty: false, message: 'Tên không được để trống !' },
+        length: {
+            maximum: 64
+        }
+    },
+    email: {
+        presence: { allowEmpty: false, message: 'Email không được để trống !' },
+        email: true
+    },
+    phone: {
+        presence: { allowEmpty: false, message: 'Số điện thoại không được để trống !' },
+        length: {
+            minimum: 10,
+            maximum: 11,
+            message: 'Số dt không hợp lệ!'
+        }
+    },
+    address: {
+        presence: { allowEmpty: false, message: 'Địa chỉ không được để trống !' },
+    }
+};
+
 const useStyles = makeStyles(theme => ({
     root: {
-        padding: theme.spacing(4)
+        padding: theme.spacing(1)
+    }, form: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingBottom: 125,
+        flexBasis: 700,
+        [theme.breakpoints.down('sm')]: {
+            paddingLeft: theme.spacing(2),
+            paddingRight: theme.spacing(2)
+        }
+    }, title: {
+        marginTop: theme.spacing(3)
+    }, textField: {
+        marginTop: theme.spacing(2)
+    }, signInButton: {
+        margin: theme.spacing(2, 0)
     }
 }));
 
@@ -38,6 +80,56 @@ const CartPage = () => {
         { title: 'Giá', field: 'price', editable: 'never' },
         { title: 'Số lượng', field: 'amount', type: 'numeric' },
     ];
+    const [formState, setFormState] = useState({
+        isValid: false,
+        values: {
+            name: '',
+            phone: '',
+            comment:'',
+            email:'',
+            address:''
+        },
+        touched: {},
+        errors: {}
+    });
+
+    useEffect(() => {
+        const errors = validate(formState.values, schema);
+
+        setFormState(formState => ({
+            ...formState,
+            isValid: errors ? false : true,
+            errors: errors || {}
+        }));
+    }, [formState.values]);
+
+    const handleChange = event => {
+        event.persist();
+
+        setFormState(formState => ({
+            ...formState,
+            values: {
+                ...formState.values,
+                [event.target.name]:
+                    event.target.type === 'checkbox'
+                        ? event.target.checked
+                        : event.target.value
+            },
+            touched: {
+                ...formState.touched,
+                [event.target.name]: true
+            }
+        }));
+    };
+
+    const handleSignUp = async event => {
+        event.preventDefault();
+
+    }
+
+    const hasError = field =>
+        formState.touched[field] && formState.errors[field] ? true : false;
+
     const [data, setData] = useState([]);
     const [dataAmount, setDataAmount] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -60,7 +152,19 @@ const CartPage = () => {
             }
             setIsLoading(false);
         }
-
+        if (store.getState().userInfo) {
+            setFormState(formState => ({
+                ...formState,
+                values: {
+                    ...formState.values,
+                    customerid: store.getState().userInfo.token.user.id,
+                    name: store.getState().userInfo.token.user.name,
+                    phone: store.getState().userInfo.token.user.phone,
+                    email: store.getState().userInfo.token.user.email,
+                    address: store.getState().userInfo.token.user.address,
+                }
+            }));
+        }
     }, [store]);
 
     useEffect(() => {
@@ -68,7 +172,7 @@ const CartPage = () => {
             firstUpdate.current = false;
             return;
         }
-        
+
 
         const fetchData = async () => {
             let arrid = data.map(v => v.id);
@@ -76,7 +180,7 @@ const CartPage = () => {
             setDataAmount();
         };
         fetchData()
-            setIsLoading(false);
+        setIsLoading(false);
     }, [data]);
 
     const tableIcons = {
@@ -131,16 +235,20 @@ const CartPage = () => {
     }
 
     const handleCheckout = async () => {
-        if (store.getState().userInfo) {
-            await callApiUnauthWithHeader(`checkout`, 'GET', { customer_id: store.getState().userInfo.token.user.id })
-            addToast('Thanh toán thành công !', { autoDismiss: true, appearance: 'success' })
 
-
+        if (data.length === 0) {
+            addToast('Không có sản phẩm nào trong giỏ hàng !', { autoDismiss: true, appearance: 'info' })
         } else {
-            addToast('Bạn cần đăng nhập để thanh toán !', { autoDismiss: true, appearance: 'info' })
+            if (store.getState().userInfo) {
+               let a= await callApiUnauthWithBody(`checkout`, 'POST', { customer_id: store.getState().userInfo.token.user.id, comment: formState.values.comment, address: formState.values.address});
+               console.log(formState.values.address);
+               
+                addToast('Thanh toán thành công !', { autoDismiss: true, appearance: 'success' })
+            } else {
+                await callApiUnauthWithBody(`checkoutforguest`, 'GET', formState.values)
+                addToast('Thanh toán thành công !', { autoDismiss: true, appearance: 'success' })
+            }
         }
-
-
     }
 
     return (
@@ -154,46 +262,166 @@ const CartPage = () => {
 
                 <Grid
                     item
+                    container
                     lg={12}
                     md={12}
                     xl={12}
                     xs={12}
                 >
-                    <div>
-                        {isLoading ? (
-                            <div>Loading ...</div>
-                        ) : (
-                                <div>
-                                    <MaterialTable title="Giỏ hàng" columns={columns} data={data} icons={tableIcons}
-                                        actions={[
-                                            {
-                                                icon: DeleteOutline,
-                                                tooltip: 'Xóa',
-                                                onClick: (event, rowData) => handleDelete(rowData)
+                    {isLoading ? (
+                        <div>Loading ...</div>
+                    ) : (
+                            <React.Fragment>
+                                <Grid item
+                                    lg={8}
+                                    md={8}
+                                    xl={8}
+                                    xs={8}>
+                                    <div>
+                                        <MaterialTable title="Giỏ hàng" columns={columns} data={data} icons={tableIcons}
+                                            actions={[
+                                                {
+                                                    icon: DeleteOutline,
+                                                    tooltip: 'Xóa',
+                                                    onClick: (event, rowData) => handleDelete(rowData)
+                                                }
+                                            ]}
+                                            options={{
+                                                actionsColumnIndex: -1,
+                                                search: false
+                                            }}
+
+                                            editable={{
+                                                onRowUpdate: (newData, oldData) =>
+                                                    new Promise((resolve, reject) => {
+                                                        const dataUpdate = [...data];
+                                                        const index = oldData.tableData.id;
+                                                        dataUpdate[index] = newData;
+                                                        setData([...dataUpdate]);
+                                                        resolve();
+                                                    }),
+                                            }}
+                                        />
+                                    </div>
+                                </Grid>
+                                <Grid item
+                                    lg={4}
+                                    md={4}
+                                    xl={4}
+                                    xs={4}>
+                                    <form
+                                        className={classes.form}
+                                        onSubmit={handleSignUp}
+                                    >
+                                        <Typography
+                                            className={classes.title}
+                                            variant="h2"
+                                        >
+                                            Thông tin
+                                        </Typography>
+                                        <TextField
+                                            className={classes.textField}
+                                            error={hasError('name')}
+                                            fullWidth
+                                            required
+                                            helperText={
+                                                hasError('name') ? formState.errors.name[0] : null
                                             }
-                                        ]}
-                                        options={{
-                                            actionsColumnIndex: -1,
-                                            search: false
-                                        }}
+                                            disabled={store.getState().userInfo!==null}
+                                            label="Họ Và Tên"
+                                            name="name"
+                                            onChange={handleChange}
+                                            type="text"
+                                            value={formState.values.name || ''}
+                                            variant="outlined"
+                                        />
+                                        <TextField
+                                            className={classes.textField}
+                                            disabled={store.getState().userInfo!==null}
+                                            error={hasError('phone')}
+                                            fullWidth
+                                            required
+                                            helperText={
+                                                hasError('phone') ? formState.errors.phone[0] : null
+                                            }
+                                            label="Số điện thoại"
+                                            name="phone"
+                                            type="number"
+                                            onChange={handleChange}
+                                            value={formState.values.phone || ''}
+                                            variant="outlined"
+                                        />
+                                        <TextField
+                                            className={classes.textField}
+                                            fullWidth
+                                            label="Yêu cầu khác"
+                                            name="comment"
+                                            onChange={handleChange}
+                                            type="text"
+                                            value={formState.values.comment || ''}
+                                            variant="outlined"
+                                        />
+                                        <TextField
+                                            className={classes.textField}
+                                            disabled={store.getState().userInfo!==null}
+                                            error={hasError('email')}
+                                            fullWidth
+                                            required
+                                            helperText={
+                                                hasError('email') ? formState.errors.email[0] : null
+                                            }
+                                            label="Email"
+                                            name="email"
+                                            onChange={handleChange}
+                                            value={formState.values.email || ''}
+                                            variant="outlined"
+                                        />
 
-                                        editable={{
-                                            onRowUpdate: (newData, oldData) =>
-                                              new Promise((resolve, reject) => {
-                                                const dataUpdate = [...data];
-                                                  const index = oldData.tableData.id;
-                                                  dataUpdate[index] = newData;
-                                                  setData([...dataUpdate]);
-                                                  resolve();
-                                              }),
-                                          }}
-                                    />
-                                </div>
+                                        <TextField
+                                            className={classes.textField}
+                                            error={hasError('address')}
+                                            fullWidth
+                                            required
+                                            helperText={
+                                                hasError('address') ? formState.errors.address[0] : null
+                                            }
+                                            label="Địa chỉ giao hàng"
+                                            name="address"
+                                            onChange={handleChange}
+                                            value={formState.values.address || ''}
+                                            variant="outlined"
+                                        />
 
-                            )}
-                    </div>
+                                        {/* <Button
+                                            className={classes.signInButton}
+                                            color="primary"
+                                            disabled={!formState.isValid}
+                                            fullWidth
+                                            size="large"
+                                            type="submit"
+                                            variant="contained"
+                                        >
+                                            Đăng ký
+                                         </Button> */}
+
+                                        <Button
+                                            className={classes.signInButton}
+                                            variant="contained"
+                                            color="primary"
+                                            size="large"
+                                            startIcon={<PaymentIcon />}
+                                            onClick={handleCheckout}
+                                            fullWidth
+                                            disabled={!formState.isValid}
+                                        >
+                                            Thanh toán
+                            </Button>
+                                    </form>
+                                </Grid>
+                            </React.Fragment>
+                        )}
                 </Grid>
-                <Grid item
+                {/* <Grid item
                     lg={12}
                     md={12}
                     xl={12}
@@ -213,7 +441,7 @@ const CartPage = () => {
                         Thanh toán
                             </Button>
 
-                </Grid>
+                </Grid> */}
             </Grid>
         </div>
 
