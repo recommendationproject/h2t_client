@@ -61,6 +61,13 @@ const routes = {
     private: true,
     layout: 'PublicLayout'
   },
+  SearchPage: {
+    path: '/search/:keyword',
+    exact: true,
+    component: CategoryPage,
+    private: true,
+    layout: 'PublicLayout'
+  },
   NewPage: {
     path: '/new',
     exact: true,

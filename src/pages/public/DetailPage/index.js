@@ -240,12 +240,27 @@ const DetailPage = (props) => {
                                     variant="outlined"
                                     inputProps={{ min: "1", max: data.amount, step: "1" }}
                                 />
-                                <Button variant="outlined" color="primary" href="#outlined-buttons" style={{ width: '45%' }} onClick={addToCart} disabled={add}>
-                                    Thêm vào giỏ hàng
-                            </Button>
-                                <Button variant="outlined" color="primary" href="#outlined-buttons" style={{ width: '45%' }} onClick={addAndGoToCart}>
-                                    Mua ngay
-                            </Button>
+                                <Grid container spacing={1}>
+                                    <Grid item
+                                        lg={6}
+                                        md={6}
+                                        xl={6}
+                                        xs={6}>
+                                        <Button variant="outlined" color="primary" href="#outlined-buttons" style={{ width: '100%' }} onClick={addToCart} disabled={add}>
+                                            Thêm vào giỏ hàng
+                                        </Button>
+                                    </Grid>
+                                    <Grid item
+                                        lg={6}
+                                        md={6}
+                                        xl={6}
+                                        xs={6}>
+                                        <Button variant="outlined"  href="#outlined-buttons" style={{ width: '100%', color: 'white', background:'red' }} onClick={addAndGoToCart}>
+                                            Mua ngay
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+
                             </Grid>
 
 

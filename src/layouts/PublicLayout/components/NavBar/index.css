@@ -74,7 +74,7 @@
 
 .headerCustom .header-button_submit {
   border: 0;
-  font-size: 24px;
+  /* font-size: 24px; */
   position: absolute;
   right: -2px;
   top: 0;
@@ -406,4 +406,11 @@ from {
 to {
   opacity: 1;
 }
+}
+
+.sticky {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 100; /* this is optional and should be different for every project */
 }
