@@ -273,17 +273,23 @@ const DetailPage = (props) => {
                             </Grid>
 
                             {comments.length > 0 ? (
-                                <React.Fragment>
+                                    <Grid
+                                    item
+                                    lg={12}
+                                    md={12}
+                                    xl={12}
+                                    xs={12}
+                                >
+                                    <div className="items-title">
+                                        <h4>ĐÁNH GIÁ SẢN PHẨM</h4>
+                                    </div>
                                     {map(comments, (comment, i) => (
-                                        <div>
-                                            <Avatar name={comment.name} size="30" /> 
-                                            <Box component="fieldset" mb={3} borderColor="transparent">
-                                                <Typography component="legend">{comment.comment}</Typography>
-                                                <Rating name="read-only" value={comment.rating} readOnly />
-                                            </Box>
+                                        <div style={{paddingBottom:'20px'}}>
+                                            <div><Avatar name={comment.name} size="30" style={{float:'left'}}/><div style={{display: 'grid', fontSize:'10px', marginLeft:'20px', float:'left'}}><span>{comment.name}</span>  <Rating name="read-only" value={comment.rating} readOnly /></div></div>
+                                            <div style={{clear:'both', marginLeft:'50px', padding:'10px 0px'}}>{comment.comment}</div>
                                         </div>
                                     ))}
-                                </React.Fragment>
+                                    </Grid>
                             ) : (<React.Fragment></React.Fragment>)}
 
                             {dataRecommend.recommend && dataRecommend.recommend.length > 0 ? (
