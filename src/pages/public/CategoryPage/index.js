@@ -78,6 +78,7 @@ const CategoryPage = (props) => {
             setDataRecommend(result.data);
         };
         fetchDataRecommend(userid);
+        // eslint-disable-next-line
     }, [props]);
 
     const firstUpdate = useRef(true);

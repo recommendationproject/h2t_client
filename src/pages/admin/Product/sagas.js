@@ -1,6 +1,5 @@
 import { put, call, takeLatest } from 'redux-saga/effects'
 import callApiUnAuth from '../../../utils/apis/apiUnAuth';
-import { imagesUpload } from '../../../utils/apis/apiAuth';
 import * as actions from './actions'
 import * as Types from './constants'
 
@@ -12,12 +11,6 @@ function fetchProductApi() {
 
 function addProductApi(product) {
     return callApiUnAuth(`product`, 'POST', product)
-        .then(res => res)
-        .catch(error => error.response.data);
-}
-
-function uploadImagesApi(img) {
-    return imagesUpload(img)
         .then(res => res)
         .catch(error => error.response.data);
 }

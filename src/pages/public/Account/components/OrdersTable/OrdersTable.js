@@ -18,12 +18,11 @@ import {
   ViewColumn,
   Visibility
 } from '@material-ui/icons';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import callApiUnauth, { callApiUnauthWithHeader } from '../../../../../utils/apis/apiUnAuth';
 import { useStore } from 'react-redux';
 import Rating from '@material-ui/lab/Rating';
-import Box from '@material-ui/core/Box';
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -104,11 +103,20 @@ const OrdersTable = () => {
     setOpen(false);
   };
 
-  const handleSaveRating = async () => {
-    let rs = values.map((v) => ({ order_id: v.order_id, odid: v.odid, rating: v.rating }))
+  const handleChangeComment = event => {
+    event.persist();    
+    let oldValue = [];
+    oldValue = oldValue.concat(values);
+    oldValue[event.target.name.replace("hover-feedback", "")].comment = event.target.value;
+    setValues(oldValue);
+  };
+
+  const handleSaveRating = async () => {    
+    let rs = values.map((v) => ({ order_id: v.order_id, odid: v.odid, rating: v.rating, comment: v.comment }))
     await callApiUnauth(`order/rating`, 'POST', { value: rs });
     let datas = [];
     datas = datas.concat(data);
+    // eslint-disable-next-line
     datas.find(item => {
       if (item.id === values[0].order_id) {
         item.israting = 1;
@@ -209,6 +217,20 @@ const OrdersTable = () => {
                                       oldValue[event.target.name.replace("hover-feedback", "")].rating = newValue;
                                       setValues(oldValue);
                                     }}
+                                  />
+                                </div>
+                              )
+                            }
+                          },
+                          {
+                            title: 'Phản hồi', field: 'comment', render: rowData => {
+                              return (
+                                <div>
+                                  <TextField
+                                    name={"hover-feedback" + rowData.tableData.id}
+                                    value={rowData.comment}
+                                    readOnly={isRating}
+                                    onChange={handleChangeComment}
                                   />
                                 </div>
                               )

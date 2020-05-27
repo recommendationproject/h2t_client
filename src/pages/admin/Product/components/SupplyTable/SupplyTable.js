@@ -138,6 +138,7 @@ const SupplyTable = () => {
       addToast(msg, { autoDismiss: true, appearance: type })
     }
     setIsUpdate(false)
+    // eslint-disable-next-line
   }, [msg, type, count]);
 
   const handleChange = event => {

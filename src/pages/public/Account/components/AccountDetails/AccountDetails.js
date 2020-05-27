@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useStore, useDispatch } from 'react-redux';
+import { useStore } from 'react-redux';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
@@ -32,7 +32,7 @@ const AccountDetails = props => {
     CityName: 'USA'
   });
 
-  const [city, setCity] = useState([]);
+  const city = useState([]);
 
   const store = useStore().getState().userInfo;
   useEffect(() => {
@@ -53,7 +53,6 @@ const AccountDetails = props => {
       [event.target.name]: event.target.value
     });
   };
-  const dispatch = useDispatch();
   const handleChangeInfo = () => {
     city.forEach(e => {
       if (e.CityName === values.CityName) {

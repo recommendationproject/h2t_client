@@ -190,6 +190,7 @@ const SignIn = props => {
     history.push('/admin');
     addToast('Đăng nhập thành công !', { autoDismiss: true, appearance: 'success' })
   }
+  // eslint-disable-next-line
   }, [store, history]);
 
 

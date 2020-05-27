@@ -9,7 +9,6 @@ import map from 'lodash/map';
 import { useStore } from 'react-redux';
 // import PRODUCTS from '../Data';
 import { callApiUnauthWithHeader } from '../../../utils/apis/apiUnAuth';
-import callApiUnauthWithBody from '../../../utils/apis/apiUnAuth';
 const useStyles = makeStyles(theme => ({
     root: {
         padding: theme.spacing(4)
@@ -21,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 const Homepage = () => {
     const classes = useStyles();
     const [data, setData] = useState([]);
-    const [dataHistory, setDataHistory] = useState([]);
+    // const [dataHistory, setDataHistory] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const store = useStore();
     useEffect(() => {
@@ -36,15 +35,15 @@ const Homepage = () => {
         };
         fetchData(userid);
 
-        const fetchDataHistory = async (arr) => {            
-            const result = await callApiUnauthWithBody(`product/history`, 'POST', { lst: arr })
-            setDataHistory(result.data);
-        };
+        // const fetchDataHistory = async (arr) => {            
+        //     const result = await callApiUnauthWithBody(`product/history`, 'POST', { lst: arr })
+        //     setDataHistory(result.data);
+        // };
 
-        if ('itemHistory' in localStorage) {
-            let arrItemHistory = JSON.parse(localStorage.getItem('itemHistory'));            
-            fetchDataHistory(arrItemHistory);
-        }
+        // if ('itemHistory' in localStorage) {
+        //     let arrItemHistory = JSON.parse(localStorage.getItem('itemHistory'));            
+        //     fetchDataHistory(arrItemHistory);
+        // }
 
 
     }, [store]);

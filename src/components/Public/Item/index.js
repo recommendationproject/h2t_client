@@ -1,5 +1,5 @@
 //Dependencies
-import React, { useEffect } from 'react';
+import React from 'react';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import { Link } from 'react-router-dom';
 import './index.css';

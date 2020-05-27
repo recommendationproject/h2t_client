@@ -27,7 +27,7 @@ const Profile = props => {
 
   const classes = useStyles();
 
-  const [user, setUser] = useState({
+  const user = useState({
     PartnerName: 'Anonymous',
     CityName: 'Locate',
     PartnerImage: '/images/avatars/avatar_11.png',

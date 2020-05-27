@@ -26,8 +26,7 @@ const LeftListItem = (props) => {
 
       <Slider style={{ maxWidth: '100%' }}>
         {map(props.data, (product, i) => (
-
-          <Slide index={0}>
+          <Slide index={0} key={i}>
             <ItemRecommend key={i} product={product} style={{ width: '100%', height: '100%' }} />
           </Slide>
         ))}

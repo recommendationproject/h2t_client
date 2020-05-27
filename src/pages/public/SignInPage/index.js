@@ -181,6 +181,7 @@ const SignInPage = props => {
         addToast('Đăng nhập thành công !', { autoDismiss: true, appearance: 'success' })
         history.push('/');
       }
+      // eslint-disable-next-line
     }, [store, history]);
 
     const hasError = field =>

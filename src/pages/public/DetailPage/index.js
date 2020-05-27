@@ -15,6 +15,11 @@ import { useStore } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
 import ItemRecommend from '../../../components/Public/ItemRecommend';
 import LeftListItem from '../../../components/Public/leftListItem';
+import Avatar from 'react-avatar';
+import Rating from '@material-ui/lab/Rating';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+
 var CurrencyFormat = require('react-currency-format');
 const useStyles = makeStyles(theme => ({
     root: {
@@ -48,18 +53,22 @@ const DetailPage = (props) => {
     const [dataByCategory, setDataByCategory] = useState([]);
     const [dataByPrice, setDataByPrice] = useState([]);
     const [dataHistory, setDataHistory] = useState([]);
+    const [comments, setComments] = useState([]);
     const [amount, setAmount] = useState([]);
     const [images, setImages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [add, setAdd] = useState(true);
     const productId = props.route.match.params.id;
     const history = props.route.history;
+    const store = useStore();
     useEffect(() => {
 
         const fetchData = async () => {
             const result = await callApiUnauthWithHeader(`product/detail`, 'GET', { id: productId })
             setData(result.data.product);
             setImages(result.data.images);
+            const rsComment = await callApiUnauthWithHeader(`getCommentByProduct`, 'GET', { id: productId })
+            setComments(rsComment.data);
             fetchDataBySupp(result.data.product.suppid)
             fetchDataByCategory(result.data.product.category_id);
             fetchDataByPrice(result.data.product.price);
@@ -97,7 +106,8 @@ const DetailPage = (props) => {
             let arrItemHistory = JSON.parse(localStorage.getItem('itemHistory'));
             fetchDataHistory(arrItemHistory);
         }
-    }, []);
+    }, [productId, store]);
+    console.log(comments);
 
     useEffect(() => {
         if (data.id) {
@@ -132,7 +142,6 @@ const DetailPage = (props) => {
     };
 
     const classes = useStyles();
-    const store = useStore();
     const { addToast } = useToasts();
     const addToCart = async () => {
         if (store.getState().userInfo) {
@@ -146,7 +155,7 @@ const DetailPage = (props) => {
             }
 
             let checkExist = null;
-            arrItemCart.forEach((e,i) => {
+            arrItemCart.forEach((e, i) => {
                 if (e.id === data.id)
                     checkExist = i
             });
@@ -170,8 +179,8 @@ const DetailPage = (props) => {
                 arrItemCart = JSON.parse(localStorage.getItem('itemCart'));
             }
 
-            let checkExist = null;            
-            arrItemCart.forEach((e,i) => {
+            let checkExist = null;
+            arrItemCart.forEach((e, i) => {
                 if (e.id === data.id)
                     checkExist = i
             });
@@ -194,7 +203,7 @@ const DetailPage = (props) => {
                         container
                         spacing={1}
                     >
-                        <Grid container
+                        <Grid container item
                             lg={9}
                             md={9}
                             xl={9}
@@ -255,7 +264,7 @@ const DetailPage = (props) => {
                                         md={6}
                                         xl={6}
                                         xs={6}>
-                                        <Button variant="outlined" style={{ width: '100%', color: 'white', background:'red' }} onClick={addAndGoToCart}>
+                                        <Button variant="outlined" style={{ width: '100%', color: 'white', background: 'red' }} onClick={addAndGoToCart}>
                                             Mua ngay
                                         </Button>
                                     </Grid>
@@ -263,6 +272,19 @@ const DetailPage = (props) => {
 
                             </Grid>
 
+                            {comments.length > 0 ? (
+                                <React.Fragment>
+                                    {map(comments, (comment, i) => (
+                                        <div>
+                                            <Avatar name={comment.name} size="30" /> 
+                                            <Box component="fieldset" mb={3} borderColor="transparent">
+                                                <Typography component="legend">{comment.comment}</Typography>
+                                                <Rating name="read-only" value={comment.rating} readOnly />
+                                            </Box>
+                                        </div>
+                                    ))}
+                                </React.Fragment>
+                            ) : (<React.Fragment></React.Fragment>)}
 
                             {dataRecommend.recommend && dataRecommend.recommend.length > 0 ? (
                                 <Grid
@@ -387,7 +409,7 @@ const DetailPage = (props) => {
                                             <h4>Sản phẩm cùng loại</h4>
                                         </div>
                                         <div>
-                                        <LeftListItem data={dataByCategory} />
+                                            <LeftListItem data={dataByCategory} />
                                         </div>
                                     </div>
                                 </React.Fragment>

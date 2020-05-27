@@ -22,6 +22,11 @@ import {
     Search,
     ViewColumn
 } from '@material-ui/icons';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 import { callApiUnauthWithHeader } from '../../../utils/apis/apiUnAuth';
 import callApiUnauthWithBody from '../../../utils/apis/apiUnAuth';
 import { useStore } from 'react-redux';
@@ -85,9 +90,10 @@ const CartPage = () => {
         values: {
             name: '',
             phone: '',
-            comment:'',
-            email:'',
-            address:''
+            comment: '',
+            email: '',
+            address: '',
+            tt:'truc_tiep'
         },
         touched: {},
         errors: {}
@@ -104,8 +110,7 @@ const CartPage = () => {
     }, [formState.values]);
 
     const handleChange = event => {
-        event.persist();
-
+        event.persist();        
         setFormState(formState => ({
             ...formState,
             values: {
@@ -121,11 +126,6 @@ const CartPage = () => {
             }
         }));
     };
-
-    const handleSignUp = async event => {
-        event.preventDefault();
-
-    }
 
     const hasError = field =>
         formState.touched[field] && formState.errors[field] ? true : false;
@@ -172,12 +172,12 @@ const CartPage = () => {
             firstUpdate.current = false;
             return;
         }
-
-
         const fetchData = async () => {
+           if(data.length>0){
             let arrid = data.map(v => v.id);
             const result = await callApiUnauthWithHeader(`amountProduct`, 'GET', { arr: JSON.stringify(arrid) })
-            setDataAmount();
+            setDataAmount(result.data);
+           }
         };
         fetchData()
         setIsLoading(false);
@@ -234,19 +234,19 @@ const CartPage = () => {
 
     }
 
-    const handleCheckout = async () => {
-
+    const handleCheckout = async () => {        
         if (data.length === 0) {
             addToast('Không có sản phẩm nào trong giỏ hàng !', { autoDismiss: true, appearance: 'info' })
         } else {
             if (store.getState().userInfo) {
-               let a= await callApiUnauthWithBody(`checkout`, 'POST', { customer_id: store.getState().userInfo.token.user.id, comment: formState.values.comment, address: formState.values.address});
-               console.log(formState.values.address);
-               
+                 await callApiUnauthWithBody(`checkout`, 'POST', { customer_id: store.getState().userInfo.token.user.id, comment: formState.values.comment, address: formState.values.address, tt: formState.values.tt });
                 addToast('Thanh toán thành công !', { autoDismiss: true, appearance: 'success' })
+                setData([])
             } else {
-                await callApiUnauthWithBody(`checkoutforguest`, 'GET', formState.values)
+                await callApiUnauthWithBody(`checkoutforguest`, 'POST', {customer: formState.values, product: data})
                 addToast('Thanh toán thành công !', { autoDismiss: true, appearance: 'success' })
+                 setData([])
+                 localStorage.removeItem("itemCart")
             }
         }
     }
@@ -296,8 +296,36 @@ const CartPage = () => {
                                                     new Promise((resolve, reject) => {
                                                         const dataUpdate = [...data];
                                                         const index = oldData.tableData.id;
-                                                        dataUpdate[index] = newData;
-                                                        setData([...dataUpdate]);
+                                                        // eslint-disable-next-line
+                                                        dataAmount.find(async (e, i) => {
+                                                            if (e.id === newData.id) {
+                                                                if (newData.amount > e.amount)
+                                                                    addToast('Trong kho hiện còn : ' + e.amount + ' sản phẩm !', { autoDismiss: true, appearance: 'info' })
+                                                                else if (newData.amount <= 0)
+                                                                    addToast('Số lượng sản phẩm phải lớn hơn 0 !', { autoDismiss: true, appearance: 'info' })
+                                                                else {
+                                                                    if (store.getState().userInfo) {
+                                                                        await callApiUnauthWithBody(`amountProduct`, 'POST', { productid: newData.id, amount: newData.amount, customerid: store.getState().userInfo.token.user.id });
+                                                                    } else {
+                                                                        let arrItemCart = [];
+                                                                        if ('itemCart' in localStorage) {
+                                                                            arrItemCart = JSON.parse(localStorage.getItem('itemCart'));
+                                                                        }
+
+                                                                        let checkExist = null;
+                                                                        arrItemCart.forEach((e, i) => {
+                                                                            if (e.id === newData.id)
+                                                                                checkExist = i
+                                                                        });
+                                                                        arrItemCart[checkExist].amount = parseInt(newData.amount);
+                                                                        localStorage.setItem('itemCart', JSON.stringify(arrItemCart));
+                                                                    }
+                                                                    dataUpdate[index] = newData;
+                                                                    setData([...dataUpdate]);
+                                                                }
+                                                            }
+                                                        })
+
                                                         resolve();
                                                     }),
                                             }}
@@ -311,7 +339,6 @@ const CartPage = () => {
                                     xs={4}>
                                     <form
                                         className={classes.form}
-                                        onSubmit={handleSignUp}
                                     >
                                         <Typography
                                             className={classes.title}
@@ -327,7 +354,7 @@ const CartPage = () => {
                                             helperText={
                                                 hasError('name') ? formState.errors.name[0] : null
                                             }
-                                            disabled={store.getState().userInfo!==null}
+                                            disabled={store.getState().userInfo !== null}
                                             label="Họ Và Tên"
                                             name="name"
                                             onChange={handleChange}
@@ -337,7 +364,7 @@ const CartPage = () => {
                                         />
                                         <TextField
                                             className={classes.textField}
-                                            disabled={store.getState().userInfo!==null}
+                                            disabled={store.getState().userInfo !== null}
                                             error={hasError('phone')}
                                             fullWidth
                                             required
@@ -363,7 +390,7 @@ const CartPage = () => {
                                         />
                                         <TextField
                                             className={classes.textField}
-                                            disabled={store.getState().userInfo!==null}
+                                            disabled={store.getState().userInfo !== null}
                                             error={hasError('email')}
                                             fullWidth
                                             required
@@ -392,17 +419,13 @@ const CartPage = () => {
                                             variant="outlined"
                                         />
 
-                                        {/* <Button
-                                            className={classes.signInButton}
-                                            color="primary"
-                                            disabled={!formState.isValid}
-                                            fullWidth
-                                            size="large"
-                                            type="submit"
-                                            variant="contained"
-                                        >
-                                            Đăng ký
-                                         </Button> */}
+                                        <FormControl component="fieldset" fullWidth className={classes.textField}>
+                                            <FormLabel component="legend">Hình thức thanh toán</FormLabel>
+                                            <RadioGroup row aria-label="tt" name="tt" defaultValue="truc_tiep" onChange={handleChange}>
+                                                <FormControlLabel value="truc_tiep" control={<Radio color="primary" />} label="Thanh toán trực tiếp" />
+                                                <FormControlLabel value="truc_tuyen" control={<Radio color="primary" />} label="Thanh toán trực tuyến(Thanh toán qua thẻ VISA/MASTER)" />
+                                            </RadioGroup>
+                                        </FormControl>
 
                                         <Button
                                             className={classes.signInButton}
@@ -412,7 +435,7 @@ const CartPage = () => {
                                             startIcon={<PaymentIcon />}
                                             onClick={handleCheckout}
                                             fullWidth
-                                            disabled={!formState.isValid}
+                                            disabled={!formState.isValid || data.length <= 0}
                                         >
                                             Thanh toán
                             </Button>

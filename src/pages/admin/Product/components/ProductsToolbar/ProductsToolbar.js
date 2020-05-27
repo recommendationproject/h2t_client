@@ -162,7 +162,7 @@ const UsersToolbar = props => {
   };
   const { addToast } = useToasts();
   const handleAccept = () => {
-    if(formState.values.img.length ==0){
+    if(formState.values.img.length ===0){
       addToast('Bạn cần thêm ảnh cho sản phẩm', { autoDismiss: true, appearance: 'error' })
     } else {
       console.log(formState.values.img);
@@ -175,6 +175,7 @@ const UsersToolbar = props => {
 
   const handleDeleteImage = (img) => {
     let imgArr = formState.values.img;
+    // eslint-disable-next-line
     imgArr.find((e, i) => {
       if (e === img) {
         imgArr.splice(i, 1);
@@ -334,7 +335,7 @@ const UsersToolbar = props => {
                   {formState.values.img.map((track, i) => {
                     return (<div className={classes.imgItem} key={i}>
                       <Button style={{ minWidth: '0px', padding: '0px' }} onClick={() => handleDeleteImage(track)}><DeleteOutline fontSize={'small'} /></Button>
-                      <img src={track} style={{ width: 70, height: 70, borderRadius: '50%' }} />
+                      <img src={track} alt='z' style={{ width: 70, height: 70, borderRadius: '50%' }} />
                     </div>)
                   })}
                 </div>

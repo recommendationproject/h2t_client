@@ -160,15 +160,15 @@ const Navbar = () => {
       </div>
 
       <div id="navbar">
-        <nav class="global-nav">
-          <div class="container">
+        <nav className="global-nav">
+          <div className="container">
             <center>
-              <ul class="ul">
-                <li class="itemNav"><a href="/">TRANG CHỦ</a></li>
+              <ul className="ul">
+                <li className="itemNav"><a href="/">TRANG CHỦ</a></li>
                 {items}
 
-                <li class="itemNav"><a href="/tin-tuc">TIN TỨC</a></li>
-                <li class="itemNav"><a href="/lien-he">LIÊN HỆ</a></li>
+                <li className="itemNav"><a href="/new">NEW</a></li>
+                <li className="itemNav"><a href="/sale">SALE</a></li>
               </ul>
             </center>
           </div>

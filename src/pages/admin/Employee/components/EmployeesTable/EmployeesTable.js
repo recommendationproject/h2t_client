@@ -76,7 +76,7 @@ const EmployeesTable = () => {
     {
       title: '', field: 'status', render: rowData => {
         return (<Switch
-          checked={rowData.status == 1 ? true : false}
+          checked={rowData.status === 1 ? true : false}
           onChange={() => handleChangeStatus(rowData)}
           color="primary"
           name="checkedB"
@@ -125,6 +125,7 @@ const EmployeesTable = () => {
       addToast(msg, { autoDismiss: true, appearance: type })
     }
     setIsUpdating(false)
+    // eslint-disable-next-line
   }, [msg, type, count]);
 
   const [formState, setFormState] = useState({
@@ -353,7 +354,7 @@ const EmployeesTable = () => {
                 <Button autoFocus onClick={handleClose} color="primary">
                   Đóng
           </Button>
-                <Button onClick={handleAccept} color="primary" autoFocus disabled={!formState.isValid}>
+                <Button onClick={handleAccept} color="primary" autoFocus disabled={!formState.isValid || isUpdate}>
                   Xác nhận
           </Button>
               </DialogActions>

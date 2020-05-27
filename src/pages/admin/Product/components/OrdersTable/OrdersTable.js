@@ -116,6 +116,7 @@ const UsersTable = () => {
   const handleStatus = async (order_id, status) => {
     let datas = [];
     datas = datas.concat(data)
+    // eslint-disable-next-line
     datas.find(item => {
       if (item.id === order_id) {
         item.status_id++;

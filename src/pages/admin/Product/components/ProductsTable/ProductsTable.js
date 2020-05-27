@@ -118,6 +118,7 @@ const UsersTable = () => {
       addToast(msg, { autoDismiss: true, appearance: type })
     }
     setIsUpdating(false)
+    // eslint-disable-next-line
   }, [msg, type, count]);
 
   const handleDelete = (rowData) => {
@@ -208,6 +209,7 @@ const UsersTable = () => {
 
   const handleDeleteImage = (img) => {   
     let imgArr = formState.values.img;
+    // eslint-disable-next-line
     imgArr.find((e, i) => {
       if (e === img) {
         imgArr.splice(i, 1);
@@ -365,7 +367,7 @@ const UsersTable = () => {
                       {formState.values.img.map((track, i) => {
                         return (<div className={classes.imgItem} key={i}>
                           <Button style={{ minWidth:'0px', padding:'0px' }} onClick={() => handleDeleteImage(track)}><DeleteOutline fontSize={'small'}/></Button>
-                          <img src={track} style={{ width: 70, height: 70, borderRadius: '50%' }}  />
+                          <img src={track} alt='z' style={{ width: 70, height: 70, borderRadius: '50%' }}  />
                         </div>)
                       })}
                     </div>
