@@ -9,6 +9,12 @@ function signInApi(user) {
         .catch(error => error.response.data);
 }
 
+function updateUserApi(user) {
+    return callApiUnAuth(`user`, 'PUT', user)
+        .then(res => res)
+        .catch(error => error.response.data);
+}
+
 /////////////////////////////
 
 function* signIn(action) {
@@ -25,6 +31,23 @@ function* signIn(action) {
     } catch (error) {
         yield put(actions.signInFail(error));
     }
+}
+
+function* putUser(action) {
+    try {
+        const { user } = action
+         const rs = yield call(updateUserApi, user)
+
+         if (rs.data.type === 'success') {            
+        yield put(actions.updateSuccess(rs.data));
+        } else {
+        yield put(actions.updateFail(rs.data));
+        }
+
+    } catch (error) {
+        // yield put(actions.fetchPartnerFail(error));
+    }
+
 }
 
 

@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const AccountDetails = props => {
+const ChangePass = props => {
   const { className, ...rest } = props;
 
   const classes = useStyles();
@@ -30,13 +30,10 @@ const AccountDetails = props => {
   useEffect(() => {
     setValues({
       id: store.token.user.id,
-      name: store.token.user.name,
-      username: store.token.user.username,
-      address: store.token.user.address,
-      email: store.token.user.email,
-      phone: store.token.user.phone,
+      oldPass: '',
+      newPass1:'',
+      newPass2:''
     })
-    
   }, [store]);
 
   const handleChange = event => {
@@ -46,7 +43,7 @@ const AccountDetails = props => {
     });
   };
   const handleChangeInfo = () => {
-
+      
   }
 
   return (
@@ -59,7 +56,7 @@ const AccountDetails = props => {
         noValidate
       >
         <CardHeader
-          subheader="Thông tin khách hàng"
+          subheader="Đổi mật khẩu"
           title="Profile"
         />
         <Divider />
@@ -76,12 +73,13 @@ const AccountDetails = props => {
               <TextField
                 fullWidth
                 helperText=""
-                label="Tên khách hàng"
+                label="Mật khẩu cũ"
                 margin="dense"
-                name="name"
+                name="oldPass"
+                type='password'
                 onChange={handleChange}
                 required
-                value={values.name}
+                value={values.oldPass}
                 variant="outlined"
               />
             </Grid>
@@ -92,12 +90,13 @@ const AccountDetails = props => {
             >
               <TextField
                 fullWidth
-                label="Email"
+                label="Mật khẩu mới"
                 margin="dense"
-                name="email"
+                name="newPass1"
+                type='password'
                 onChange={handleChange}
                 required
-                value={values.email}
+                value={values.newPass1}
                 variant="outlined"
               />
             </Grid>
@@ -108,46 +107,13 @@ const AccountDetails = props => {
             >
               <TextField
                 fullWidth
-                label="Địa chỉ"
+                label="Nhập lại mật khẩu"
                 margin="dense"
-                name="adddress"
+                name="newPass2"
+                type='password'
                 onChange={handleChange}
                 required
-                value={values.adddress}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Tên đăng nhập"
-                margin="dense"
-                name="username"
-                onChange={handleChange}
-                disabled
-                // eslint-disable-next-line react/jsx-sort-props
-                value={values.username}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Số điện thoại"
-                margin="dense"
-                name="PartnerPhone"
-                onChange={handleChange}
-                type="number"
-                required
-                value={values.PartnerPhone}
+                value={values.newPass2}
                 variant="outlined"
               />
             </Grid>
@@ -168,8 +134,8 @@ const AccountDetails = props => {
   );
 };
 
-AccountDetails.propTypes = {
+ChangePass.propTypes = {
   className: PropTypes.string
 };
 
-export default AccountDetails;
+export default ChangePass;

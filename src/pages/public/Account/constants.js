@@ -2,5 +2,9 @@ export const USER_SIGNIN = 'USER_SIGNIN';
 export const USER_SIGNIN_SUCCESS = 'USER_SIGNIN_SUCCESS';
 export const USER_SIGNIN_FAIL = 'USER_SIGNIN_FAIL';
 
+export const USER_UPDATE = 'USER_UPDATE';
+export const USER_UPDATE_SUCCESS = 'USER_UPDATE_SUCCESS';
+export const USER_UPDATE_FAIL = 'USER_UPDATE_FAIL';
+
 export const MLTS = 'MLTS';
 export const SIGN_OUT = 'SIGN_OUT';
