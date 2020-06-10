@@ -17,8 +17,7 @@ import ItemRecommend from '../../../components/Public/ItemRecommend';
 import LeftListItem from '../../../components/Public/leftListItem';
 import Avatar from 'react-avatar';
 import Rating from '@material-ui/lab/Rating';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
+
 
 var CurrencyFormat = require('react-currency-format');
 const useStyles = makeStyles(theme => ({

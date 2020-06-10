@@ -13,36 +13,31 @@ import {
   Button,
   TextField
 } from '@material-ui/core';
-
+import callApiUnauth from '../../../../../utils/apis/apiUnAuth';
+import { useToasts } from 'react-toast-notifications';
+import { useDispatch } from 'react-redux';
+import {mlts} from '../../actions';
 const useStyles = makeStyles(() => ({
   root: {}
 }));
-
 const AccountDetails = props => {
   const { className, ...rest } = props;
 
   const classes = useStyles();
 
-  const [values, setValues] = useState({
-    PartnerName: 'Shen',
-    PartnerAddress: 'Zhi',
-    PartnerEmail: 'shen.zhi@devias.io',
-    PartnerPhone: '0123456789',
-    PartnerDescription: 'Alabama',
-    CityName: 'USA'
-  });
+  const [values, setValues] = useState({});
 
-  const city = useState([]);
+  // const city = useState([]);
 
   const store = useStore().getState().userInfo;
   useEffect(() => {
     setValues({
-      PartnerID: store.token.user.id,
-      PartnerName: store.token.user.name,
-      PartnerUserName: store.token.user.username,
-      PartnerAddress: store.token.user.address,
-      PartnerEmail: store.token.user.email,
-      PartnerPhone: store.token.user.phone,
+      id: store.token.user.id,
+      name: store.token.user.name,
+      username: store.token.user.username,
+      address: store.token.user.address,
+      email: store.token.user.email,
+      phone: store.token.user.phone,
     })
     
   }, [store]);
@@ -53,13 +48,18 @@ const AccountDetails = props => {
       [event.target.name]: event.target.value
     });
   };
-  const handleChangeInfo = () => {
-    city.forEach(e => {
-      if (e.CityName === values.CityName) {
-        values.CityID = e.CityID;
-        delete values.CityName;
-      }
-    });
+
+  const { addToast } = useToasts();
+  const dispatch = useDispatch();
+
+  const handleChangeInfo = async () => {
+    console.log(values);
+    let res = await callApiUnauth('user', 'PUT', values);
+    let sessionuser = JSON.parse(localStorage.getItem('sessionuser'));
+    sessionuser.token.user = Object.assign(sessionuser.token.user, values);
+    localStorage.setItem('sessionuser', JSON.stringify(sessionuser));
+     dispatch(mlts(sessionuser))
+    addToast(res.data.msg, { autoDismiss: true, appearance: res.data.type })
   }
 
   return (
@@ -89,12 +89,12 @@ const AccountDetails = props => {
               <TextField
                 fullWidth
                 helperText=""
-                label="Tên cửa hàng"
+                label="Tên của bạn"
                 margin="dense"
-                name="PartnerName"
+                name="name"
                 onChange={handleChange}
                 required
-                value={values.PartnerName}
+                value={values.name}
                 variant="outlined"
               />
             </Grid>
@@ -107,10 +107,11 @@ const AccountDetails = props => {
                 fullWidth
                 label="Email"
                 margin="dense"
-                name="PartnerEmail"
+                name="email"
                 onChange={handleChange}
                 required
-                value={values.PartnerEmail}
+                
+                value={values.email}
                 variant="outlined"
               />
             </Grid>
@@ -121,16 +122,16 @@ const AccountDetails = props => {
             >
               <TextField
                 fullWidth
-                label="Mô tả"
+                label="Địa chỉ"
                 margin="dense"
-                name="PartnerAddress"
+                name="address"
                 onChange={handleChange}
                 required
-                value={values.PartnerAddress}
+                value={values.address}
                 variant="outlined"
               />
             </Grid>
-            <Grid
+            {/* <Grid
               item
               md={6}
               xs={12}
@@ -151,13 +152,13 @@ const AccountDetails = props => {
                 {city.map(option => (
                   <option
                     key={option.CityID}
-                    value={option.CityName}
+                    value={option.CityID}
                   >
                     {option.CityName}
                   </option>
                 ))}
               </TextField>
-            </Grid>
+            </Grid> */}
             <Grid
               item
               md={6}
@@ -167,30 +168,12 @@ const AccountDetails = props => {
                 fullWidth
                 label="Số điện thoại"
                 margin="dense"
-                name="PartnerPhone"
+                name="phone"
                 onChange={handleChange}
                 type="number"
                 required
-                value={values.PartnerPhone}
+                value={values.phone}
                 variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Mô tả"
-                margin="dense"
-                name="PartnerDescription"
-                onChange={handleChange}
-                required
-                value={values.PartnerDescription}
-                variant="outlined"
-                multiline={true}
-                rows={4}
               />
             </Grid>
           </Grid>
@@ -202,7 +185,7 @@ const AccountDetails = props => {
             variant="contained"
             onClick={handleChangeInfo}
           >
-            Save details
+            Lưu
           </Button>
         </CardActions>
       </form>

@@ -36,4 +36,3 @@ export const signout = () => {
         type : Types.SIGN_OUT
     }
 }
-
