@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { AccountDetails, OrdersTable } from './components';
+import { AccountDetails, OrdersTable, ChangePass } from './components';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -55,7 +55,8 @@ const Account = () => {
       <AppBar position="static">
         <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
           <Tab label="Tài khoản" {...a11yProps(0)} />
-          <Tab label="Đơn hàng" {...a11yProps(1)} />
+          <Tab label="Đổi mật khẩu" {...a11yProps(1)} />
+          <Tab label="Đơn hàng" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
@@ -64,6 +65,11 @@ const Account = () => {
         </div>
       </TabPanel>
       <TabPanel value={value} index={1}>
+      <div className={classes.content}>
+          <ChangePass/>
+        </div>
+      </TabPanel>
+      <TabPanel value={value} index={2}>
       <div className={classes.content}>
           <OrdersTable />
         </div>

@@ -22,6 +22,28 @@ export const signInFail = (msg) => {
     }
 }
 
+///////// update
+export const update = (user) => {
+    return {
+        type : Types.USER_UPDATE,
+        user
+    }
+}
+
+export const updateSuccess = (response) => {
+    return {
+        type : Types.USER_UPDATE_SUCCESS,
+        response
+    }
+}
+
+export const updateFail = (response) => {
+    return {
+        type : Types.USER_UPDATE_FAIL,
+        response
+    }
+}
+
 ///////// map localstorage to store
 export const mlts = (admin) => {
     return {

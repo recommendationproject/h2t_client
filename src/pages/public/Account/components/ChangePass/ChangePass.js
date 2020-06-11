@@ -15,30 +15,25 @@ import {
 } from '@material-ui/core';
 import callApiUnauth from '../../../../../utils/apis/apiUnAuth';
 import { useToasts } from 'react-toast-notifications';
-import { useDispatch } from 'react-redux';
-import {mlts} from '../../actions';
 const useStyles = makeStyles(() => ({
   root: {}
 }));
-const AccountDetails = props => {
+const ChangePass = props => {
   const { className, ...rest } = props;
 
   const classes = useStyles();
 
   const [values, setValues] = useState({});
 
-
   const store = useStore().getState().userInfo;
   useEffect(() => {
     setValues({
       id: store.token.user.id,
-      name: store.token.user.name,
-      username: store.token.user.username,
-      address: store.token.user.address,
-      email: store.token.user.email,
-      phone: store.token.user.phone,
+      oldPass: '',
+      newPass: '',
+      rePass: ''
     })
-    
+
   }, [store]);
 
   const handleChange = event => {
@@ -50,14 +45,8 @@ const AccountDetails = props => {
 
 
   const { addToast } = useToasts();
-  const dispatch = useDispatch();
-
   const handleChangeInfo = async () => {
-    let res = await callApiUnauth('user', 'PUT', values);
-    let sessionuser = JSON.parse(localStorage.getItem('sessionuser'));
-    sessionuser.token.user = Object.assign(sessionuser.token.user, values);
-    localStorage.setItem('sessionuser', JSON.stringify(sessionuser));
-     dispatch(mlts(sessionuser))
+    let res = await callApiUnauth('user/changepass', 'POST', values);
     addToast(res.data.msg, { autoDismiss: true, appearance: res.data.type })
   }
 
@@ -71,8 +60,8 @@ const AccountDetails = props => {
         noValidate
       >
         <CardHeader
-          subheader="Thông tin khách hàng"
-          title="Profile"
+          subheader="Thông tin mật khẩu"
+          title="Password"
         />
         <Divider />
         <CardContent>
@@ -88,12 +77,13 @@ const AccountDetails = props => {
               <TextField
                 fullWidth
                 helperText=""
-                label="Tên của bạn"
+                label="Mật khẩu cũ"
                 margin="dense"
-                name="name"
+                name="oldPass"
                 onChange={handleChange}
                 required
-                value={values.name}
+                type="password"
+                value={values.oldPass}
                 variant="outlined"
               />
             </Grid>
@@ -101,18 +91,7 @@ const AccountDetails = props => {
               item
               md={6}
               xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Email"
-                margin="dense"
-                name="email"
-                onChange={handleChange}
-                required
-                value={values.email}
-                variant="outlined"
-              />
-            </Grid>
+            ></Grid>
             <Grid
               item
               md={6}
@@ -120,16 +99,21 @@ const AccountDetails = props => {
             >
               <TextField
                 fullWidth
-                label="Địa chỉ"
+                label="Mật khẩu mới"
                 margin="dense"
-                name="address"
+                name="newPass"
                 onChange={handleChange}
                 required
-                value={values.address}
+                type="password"
+                value={values.newPass}
                 variant="outlined"
               />
             </Grid>
-          
+            <Grid
+              item
+              md={6}
+              xs={12}
+            ></Grid>
             <Grid
               item
               md={6}
@@ -137,14 +121,13 @@ const AccountDetails = props => {
             >
               <TextField
                 fullWidth
-                label="Số điện thoại"
+                label="Nhập lại mật khẩu"
                 margin="dense"
-                name="phone"
+                name="rePass"
+                type="password"
                 onChange={handleChange}
-                type="number"
                 required
-                value={values.phone}
-
+                value={values.rePass}
                 variant="outlined"
               />
             </Grid>
@@ -165,8 +148,8 @@ const AccountDetails = props => {
   );
 };
 
-AccountDetails.propTypes = {
+ChangePass.propTypes = {
   className: PropTypes.string
 };
 
-export default AccountDetails;
+export default ChangePass;

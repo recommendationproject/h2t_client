@@ -12,6 +12,17 @@ const user = (state = initialState, action) => {
     case Types.USER_SIGNIN_FAIL:
       return action.msg
     //
+    case Types.USER_UPDATE:
+      return state
+    case Types.USER_UPDATE_SUCCESS:
+      {
+        state.token.user = Object.assign(state.token.user, action.response);
+        localStorage.setItem('sessionuser', JSON.stringify(state));
+        return state
+      }
+    case Types.USER_UPDATE_FAIL:
+      return action.msg
+    //
     case Types.MLTS:
       return action.admin
 
