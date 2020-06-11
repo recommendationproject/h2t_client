@@ -41,24 +41,29 @@ const Sidebar = props => {
 
   const pages = [
     {
-      title: 'Dashboard',
+      title: 'Trang chủ',
       href: '/admin',
       icon: <DashboardIcon />
     },
+    // {
+    //   title: 'Account',
+    //   href: '/admin/account',
+    //   icon: <PersonIcon />
+    // }, 
     {
-      title: 'Account',
-      href: '/admin/account',
-      icon: <PersonIcon />
-    },{
-      title: 'Products',
+      title: 'Quản lý sản phẩm',
       href: '/admin/product',
       icon: <Fastfood />
-    } , {
-      title: 'Employee',
+    }, {
+      title: 'Khuyến mãi',
+      href: '/admin/promotion',
+      icon: <Fastfood />
+    }, {
+      title: 'Quản lý nhân sự',
       href: '/admin/employee',
       icon: <PeopleIcon />
     }, {
-      title: 'Sign Out',
+      title: 'Đăng xuất',
       href: '/admin/signout',
       icon: <ExitToAppIcon />
     }

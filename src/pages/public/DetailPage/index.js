@@ -106,7 +106,6 @@ const DetailPage = (props) => {
             fetchDataHistory(arrItemHistory);
         }
     }, [productId, store]);
-    console.log(comments);
 
     useEffect(() => {
         if (data.id) {
@@ -280,7 +279,8 @@ const DetailPage = (props) => {
                                     xs={12}
                                 >
                                     <div className="items-title">
-                                        <h4>ĐÁNH GIÁ SẢN PHẨM</h4>
+                                        <h3>ĐÁNH GIÁ SẢN PHẨM</h3>
+                                        <h4><Rating name="read-only" precision={0.1} value={comments.map(a => a.rating).reduce((a, b) => a+b)/comment.length} readOnly /></h4>
                                     </div>
                                     {map(comments, (comment, i) => (
                                         <div style={{paddingBottom:'20px'}}>
@@ -299,8 +299,9 @@ const DetailPage = (props) => {
                                     xl={12}
                                     xs={12}
                                 >
+                                    <div className="items-wrapper"></div>
                                     <div className="items-title">
-                                        <h4>Gợi ý cho bạn</h4>
+                                        <h3>GỢI Ý CHO BẠN</h3>
                                     </div>
                                     <Carousel
                                         swipeable={false}
@@ -335,7 +336,7 @@ const DetailPage = (props) => {
                                     xs={12}
                                 >
                                     <div className="items-title">
-                                        <h4>Sản phẩm cùng hãng</h4>
+                                        <h3>SẢN PHẨM CÙNG HÃNG</h3>
                                     </div>
                                     <Carousel
                                         swipeable={false}
@@ -371,7 +372,7 @@ const DetailPage = (props) => {
                                     xs={12}
                                 >
                                     <div className="items-title">
-                                        <h4>Xem gần đây</h4>
+                                        <h3>XEM GẦN ĐÂY</h3>
                                     </div>
                                     <Carousel
                                         swipeable={false}
@@ -411,7 +412,7 @@ const DetailPage = (props) => {
                                 <React.Fragment>
                                     <div className="items-wrapper">
                                         <div className="items-title">
-                                            <h4>Sản phẩm cùng loại</h4>
+                                            <h3>SẢN PHẨM CÙNG LOẠI</h3>
                                         </div>
                                         <div>
                                             <LeftListItem data={dataByCategory} />
@@ -427,7 +428,7 @@ const DetailPage = (props) => {
                                 <React.Fragment>
                                     <div className="items-wrapper">
                                         <div className="items-title">
-                                            <h4>Sản phẩm cùng tầm giá</h4>
+                                            <h3>SẢN PHẨM CÙNG TẦM GIÁ</h3>
                                         </div>
                                         <div >
                                             <LeftListItem data={dataByPrice} />

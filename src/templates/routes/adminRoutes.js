@@ -20,6 +20,10 @@ const LoginPage = Loadable({
   loader: () => import("../../pages/admin/SignIn"),
   loading: MyLoadingComponent
 });
+const PromotionPage = Loadable({
+  loader: () => import("../../pages/admin/Promotion"),
+  loading: MyLoadingComponent
+});
 
 const routes = {
   HomePage: {
@@ -39,6 +43,12 @@ const routes = {
     exact: true,
     component: EmployeePage,
     private: true
+  },
+  PromotionPage: {
+    path: '/admin/promotion',
+    exact: true,
+    component: PromotionPage,
+    private: true,
   },
   LoginPage: {
     path: '/admin/login',

@@ -58,9 +58,7 @@ const CategoryPage = (props) => {
                 setPage({ currentPage: result.data.currentPage, totalPage: result.data.totalPage })
                 setCateName(result.data.cateName);
             } else {
-                const result = await callApiUnauthWithHeader(url, 'GET', {})
-                console.log(props.route.match.path);
-                
+                const result = await callApiUnauthWithHeader(url, 'GET', {})                
                 setData(result.data.data);
                 setPage({ currentPage: result.data.currentPage, totalPage: result.data.totalPage })
                 setCateName(result.data.cateName);
