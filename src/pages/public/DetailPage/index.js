@@ -280,7 +280,7 @@ const DetailPage = (props) => {
                                 >
                                     <div className="items-title">
                                         <h3>ĐÁNH GIÁ SẢN PHẨM</h3>
-                                        <h4><Rating name="read-only" precision={0.1} value={comments.map(a => a.rating).reduce((a, b) => a+b)/comment.length} readOnly /></h4>
+                                        <h4><Rating name="read-only" precision={0.1} value={comments.map(a => a.rating).reduce((a, b) => a+b)/comments.length} readOnly /></h4>
                                     </div>
                                     {map(comments, (comment, i) => (
                                         <div style={{paddingBottom:'20px'}}>

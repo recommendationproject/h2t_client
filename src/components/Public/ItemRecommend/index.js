@@ -45,7 +45,7 @@ const ItemRecommend = (props) => {
         <h4 id="product-description" style={{textAlign: 'center'}}>{props.product.name}</h4>
       </div>
       </Link>
-      <div className="price-add">
+      <div className="price-add-recommend">
         <h5 id="product-price"><CurrencyFormat value={props.product.price} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{color: 'red'}}>{value}</div>} /></h5>
         {/* <AddShoppingCartIcon  className="addcart-icon" onClick={addToCart}/> */}
      <Button style={{display:'flex'}} onClick={addToCart}><AddShoppingCartIcon className="addcart-icon" /></Button>

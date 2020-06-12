@@ -22,11 +22,11 @@ const Item = (props) => {
       }
 
       let checkExist = null;
-      arrItemCart.forEach((e,i) => {
+      arrItemCart.forEach((e, i) => {
         if (e.id === props.product.id)
           checkExist = i
       });
-      
+
       if (checkExist !== null)
         arrItemCart[checkExist].amount = parseInt(arrItemCart[checkExist].amount) + 1;
       else
@@ -47,7 +47,10 @@ const Item = (props) => {
         </div>
       </Link>
       <div className="price-add">
-        <h5 id="product-price"><CurrencyFormat value={props.product.price} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{ color: 'red' }}>{value}</div>} /></h5>
+        <h5 id="product-price" style={{width: '100%'}}>
+          <CurrencyFormat value={props.product.price} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{ color: 'red', float: 'left' }}>{value}</div>} />
+          <CurrencyFormat value={props.product.discountprice} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{ color: 'rgba(0,0,0,0.4)', textDecoration:'line-through', marginLeft:'10px', float:'left'}}>{value}</div>} />
+        </h5>
         {/* <AddShoppingCartIcon  className="addcart-icon" onClick={addToCart}/> */}
         <Button style={{ display: 'flex' }} onClick={addToCart}><AddShoppingCartIcon className="addcart-icon" /></Button>
       </div>

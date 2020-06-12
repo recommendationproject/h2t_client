@@ -22,15 +22,12 @@ import { useStore } from 'react-redux';
 import { Grid, TextField, Button } from '@material-ui/core';
 import callApiUnAuth from '../../../../../utils/apis/apiUnAuth';
 import moment from 'moment';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { useToasts } from 'react-toast-notifications';
 import validate from 'validate.js';
 
 const schema = {
-  condition: {
-    presence: { allowEmpty: false, message: 'Số lượng không được để trống !' }
-  },
-  type: {
-    presence: { allowEmpty: false, message: 'Giá không được để trống !' }
+  name: {
+    presence: { allowEmpty: false, message: 'Tên chương trình khuyến mãi không được để trống !' }
   },
   StartTime: {
     presence: { allowEmpty: false, message: 'Thời gian bắt đầu không được để trống !' },
@@ -53,22 +50,28 @@ const schema = {
 
 const ItemsTable = () => {
   const columns = [
-    { title: 'Avatar', field: 'images', render: rowData => <img src={rowData.ItemImage} alt={rowData.ItemName} style={{ width: 40, height: 40, borderRadius: '50%' }} /> },
+    { title: 'Avatar', field: 'images', render: rowData => <img src={rowData.images} alt={rowData.name} style={{ width: 40, height: 40, borderRadius: '50%' }} /> },
     { title: 'Tên sản phẩm', field: 'name' },
   ];
 
   const [isLoading, setIsLoading] = useState(true);
   const firstUpdate = useRef(true);
-  const store = useStore().getState().partnerInfo.token.user.PartnerID;
   useEffect(() => {
-    const fetchData = async (userid) => {
+    const fetchData = async () => {
       const resultItem = await callApiUnAuth(`product/promotionadd`, 'GET', [])
       const resultPromotionType = await callApiUnAuth(`product/promotiontype`, 'GET', [])
       setItem(resultItem.data);
+      setFormState(formState => ({
+        ...formState,
+        values: {
+          ...formState.values,
+          type: resultItem.data[0].typeid
+        },
+      }));
       setType(resultPromotionType.data);
     };
-    fetchData(store);
-  }, [store]);
+    fetchData();
+  }, []);
 
   const [item, setItem] = useState([]);
   const [type, setType] = useState([]);
@@ -141,7 +144,7 @@ const ItemsTable = () => {
       }
     }));
   };
-
+  const { addToast } = useToasts();
   const handleSubmit = async () => {
     setIsCreating(true);
     const rs = await callApiUnAuth(`product/promotion`, 'POST', formState.values);
@@ -155,9 +158,11 @@ const ItemsTable = () => {
           item: []
         }
       }))
-      NotificationManager.success(rs.data.type, rs.data.msg, 3000);
+      // NotificationManager.success(rs.data.type, rs.data.msg, 3000);
+      addToast(rs.data.msg, { autoDismiss: true, appearance: rs.data.type })
     } else {
-      NotificationManager.success('fail', 'Ko thành công', 3000);
+      addToast(rs.data.msg, { autoDismiss: true, appearance: rs.data.type })
+      // NotificationManager.success('fail', 'Ko thành công', 3000);
     }
    
     setIsCreating(false);
@@ -172,7 +177,7 @@ const ItemsTable = () => {
       ...formState,
       values: {
         ...formState.values,
-        item: rows.map(e => e.ItemID)
+        item: rows.map(e => e.id)
       }
     }))
   }
@@ -201,7 +206,6 @@ const ItemsTable = () => {
 
   return (
     <div>
-      <NotificationContainer />
       {isLoading ? (
         <div>Loading ...</div>
       ) : (
@@ -270,7 +274,6 @@ const ItemsTable = () => {
                     SelectProps={{ native: true }}
                     variant="outlined"
                   >
-                    <option></option>
                     {type.map(option => (
                       <option
                         key={option.typeid}
