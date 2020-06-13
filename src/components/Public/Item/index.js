@@ -49,10 +49,10 @@ const Item = (props) => {
       <div className="price-add">
         <h5 id="product-price" style={{width: '100%'}}>
           <CurrencyFormat value={props.product.price} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{ color: 'red', float: 'left' }}>{value}</div>} />
-          <CurrencyFormat value={props.product.discountprice} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{ color: 'rgba(0,0,0,0.4)', textDecoration:'line-through', marginLeft:'10px', float:'left'}}>{value}</div>} />
+          <CurrencyFormat value={props.product.discountprice} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{ color: 'rgba(0,0,0,0.4)', textDecoration:'line-through', marginLeft:'5px', float:'left'}}>{value}</div>} />
         </h5>
         {/* <AddShoppingCartIcon  className="addcart-icon" onClick={addToCart}/> */}
-        <Button style={{ display: 'flex' }} onClick={addToCart}><AddShoppingCartIcon className="addcart-icon" /></Button>
+        <Button style={{ display: 'flex', minWidth:'40px' }} onClick={addToCart}><AddShoppingCartIcon className="addcart-icon" /></Button>
       </div>
     </div>
   )

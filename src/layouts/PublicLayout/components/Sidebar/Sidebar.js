@@ -1,51 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import './index.css';
 import { withRouter } from 'react-router-dom';
-import { callApiUnauthWithHeader } from '../../../../utils/apis/apiUnAuth';
-import { NavLink } from 'react-router-dom';
+import callApiUnauth, { callApiUnauthWithHeader } from '../../../../utils/apis/apiUnAuth';
+import LeftListItem from '../../../../components/Public/leftListItem';
+import ImageGallery from 'react-image-gallery';
+import "react-image-gallery/styles/css/image-gallery.css";
 const Sidebar = (props) => {
 
-  const [data, setData] = useState([]);
+  const [dataHistory, setDataHistory] = useState([]);
+  const [images, setImages] = useState([]);
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await callApiUnauthWithHeader(`categoryGroupByGender`, 'GET')
-      setData(result.data);
+
+        const fetchData = async () => {
+            const result = await callApiUnauthWithHeader(`product`, 'GET', {  })
+            setImages(result.data.new.map(i => {return {original:i.images, thumbnail:i.images}}))
+        };
+        fetchData();
+
+
+    const fetchDataHistory = async (arr) => {
+      const result = await callApiUnauth(`product/history`, 'POST', { lst: arr })
+      setDataHistory(result.data);
     };
-    fetchData();
+      
+    if ('itemHistory' in localStorage) {
+      let arrItemHistory = JSON.parse(localStorage.getItem('itemHistory'));
+      fetchDataHistory(arrItemHistory);
+    }
   }, []);
+  console.log(images);
+  return (
+    <React.Fragment>
+      {/* <ImageGallery
+        items={images}
+        lazyLoad={true}
+        showPlayButton={false}
+        showFullscreenButton={false}
+        showThumbnails={false}
+        autoPlay={true}
+        showNav={false}
+        /> */}
+      {dataHistory && dataHistory.length > 0 ? (
 
-  var items = data.map((track, i) => {
-    var subItems = track.items.map((t, j) => {
-      return (<NavLink key={j} to={"/category/" + t.id} ><li data-name="profile" className="drop-down__item">{t.name} </li></NavLink>)
-    });
-
-    return (
-      <div className="drop-down drop-down--active" key={i}>
-      <NavLink to={"/type/" + track.group_eng} style={{ color: 'white' }}>
-      <div id="dropDown" className="drop-down__button">
-      <span className="drop-down__name">{track.group}</span>
-      </div></NavLink>
-
-      <div className="drop-down__menu-box">
-        <ul className="drop-down__menu">
-          {subItems}
-        </ul>
-      </div>
-      </div>
-  )
-  });
-return (
-  <div className="table_center">
-    {props.match.path === '/acc' ? (
-      <div></div>
-    ) : (
         <React.Fragment>
-          
-        { items }
+          <div className="items-wrapper" style={{ marginTop: '32px' }}>
+            <div className="items-title">
+              <h3>SẢN PHẨM ĐÃ XEM</h3>
+            </div>
+            <div>
+              <LeftListItem data={dataHistory} />
+            </div>
+          </div>
         </React.Fragment>
-      )}
-  </div>
-);
+      ) : (
+          <React.Fragment></React.Fragment>
+        )}
+      
+    </React.Fragment>
+  );
 };
 
 export default withRouter(Sidebar);

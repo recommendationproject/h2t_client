@@ -47,6 +47,7 @@ a {
 } */
 
 #product-name {
+  text-align: center;
   border-top: 1px solid lightgrey;
   padding: 1em 0 0;
   font-size: 0.9em;
@@ -64,7 +65,7 @@ a {
 }
 
 #product-price {
-  font-size: 1em;
+  font-size: 0.75em;
 }
 
 .price-add-recommend {

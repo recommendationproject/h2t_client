@@ -31,7 +31,13 @@ const Main = props => {
       <div >
         <Navbar />
       </div>
-      <main className={classes.content}>
+      <Grid container>
+        <Grid  item
+                    lg={12}
+                    md={12}
+                    xl={12}
+                    xs={12}>
+        <main className={classes.content}>
         
         <Grid
                 container
@@ -57,7 +63,15 @@ const Main = props => {
                 </Grid>
             </Grid>
       </main>
-      <Footer />
+        </Grid>
+        <Grid lg={12}
+                    md={12}
+                    xl={12}
+                    xs={12}>
+        <Footer />
+        </Grid>
+      </Grid>
+     
     </div>
   );
 };

@@ -106,7 +106,8 @@ const DetailPage = (props) => {
             fetchDataHistory(arrItemHistory);
         }
     }, [productId, store]);
-
+    console.log(images);
+    
     useEffect(() => {
         if (data.id) {
             setIsLoading(false);
@@ -267,11 +268,18 @@ const DetailPage = (props) => {
                                         </Button>
                                     </Grid>
                                 </Grid>
-
+                                
                             </Grid>
-
+                            <Grid
+                                    item
+                                    lg={12}
+                                    md={12}
+                                    xl={12}
+                                    xs={12}
+                                ><div className="items-wrapper"></div></Grid>
+                            
                             {comments.length > 0 ? (
-                                    <Grid
+                                <Grid
                                     item
                                     lg={12}
                                     md={12}
@@ -280,15 +288,22 @@ const DetailPage = (props) => {
                                 >
                                     <div className="items-title">
                                         <h3>ĐÁNH GIÁ SẢN PHẨM</h3>
-                                        <h4><Rating name="read-only" precision={0.1} value={comments.map(a => a.rating).reduce((a, b) => a+b)/comments.length} readOnly /></h4>
+                                    </div>
+                                    <div>
+                                        <h4 style={{marginBottom:'0px'}}>{Math.round(comments.map(a => a.rating).reduce((a, b) => a + b) / comments.length *10) /10}/5</h4>
+                                        <h4 style={{marginTop:'0px'}}><Rating name="read-only"
+                                        precision={0.1}
+                                        value={comments.map(a => a.rating).reduce((a, b) => a + b) / comments.length}
+                                        readOnly /></h4>
                                     </div>
                                     {map(comments, (comment, i) => (
-                                        <div style={{paddingBottom:'20px'}}>
-                                            <div><Avatar name={comment.name} size="30" style={{float:'left'}}/><div style={{display: 'grid', fontSize:'10px', marginLeft:'20px', float:'left'}}><span>{comment.name}</span>  <Rating name="read-only" value={comment.rating} readOnly /></div></div>
-                                            <div style={{clear:'both', marginLeft:'50px', padding:'10px 0px'}}>{comment.comment}</div>
+                                        <div style={{ paddingBottom: '20px' }}>
+                                            <div><Avatar name={comment.name} size="30" style={{ float: 'left' }} /><div style={{ display: 'grid', fontSize: '10px', marginLeft: '20px', float: 'left' }}><span>{comment.name}</span>  <Rating name="read-only" precision={0.5} value={comment.rating} readOnly /></div></div>
+                                            <div style={{ clear: 'both', marginLeft: '50px', padding: '10px 0px' }}>{comment.comment}</div>
                                         </div>
                                     ))}
-                                    </Grid>
+                                    <div className="items-wrapper"></div>
+                                </Grid>
                             ) : (<React.Fragment></React.Fragment>)}
 
                             {dataRecommend.recommend && dataRecommend.recommend.length > 0 ? (
@@ -299,7 +314,6 @@ const DetailPage = (props) => {
                                     xl={12}
                                     xs={12}
                                 >
-                                    <div className="items-wrapper"></div>
                                     <div className="items-title">
                                         <h3>GỢI Ý CHO BẠN</h3>
                                     </div>

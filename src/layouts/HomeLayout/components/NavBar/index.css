@@ -155,6 +155,7 @@
 }
 
 .global-nav .itemNav a {
+  font-size: 22px;
   color: #fff;
   text-transform: uppercase;
   display: inline-block;
