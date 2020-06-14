@@ -26,6 +26,7 @@ import { imagesUpload } from '../../../../../utils/apis/apiAuth';
 import { callApiUnauthWithHeader } from '../../../../../utils/apis/apiUnAuth';
 import async from 'async';
 import { useToasts } from 'react-toast-notifications';
+import CKEditor from 'ckeditor4-react';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -56,10 +57,10 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'hidden',
     whiteSpace: 'nowrap'
   },
-  imgItem:{
-    display:'inline-block',
-    position:'relative',
-    margin:'2px'
+  imgItem: {
+    display: 'inline-block',
+    position: 'relative',
+    margin: '2px'
   }
 
 }));
@@ -83,7 +84,7 @@ const UsersTable = () => {
     { title: 'Loại', field: 'cate_name' },
     { title: 'Gtới tính', field: 'gender' },
   ];
-  const { data,  msg, type, count } = useSelector(state => ({
+  const { data, msg, type, count } = useSelector(state => ({
     data: state.product.lst,
     msg: state.product.msg,
     type: state.product.type,
@@ -207,14 +208,24 @@ const UsersTable = () => {
     setIsUpdating(true)
   };
 
-  const handleDeleteImage = (img) => {   
+  const onEditorChange = ( evt ) => {
+    setFormState(formState => ({
+      ...formState,
+      values: {
+        ...formState.values,
+       detaildescription:evt.editor.getData()
+      }
+    }));
+}
+
+  const handleDeleteImage = (img) => {
     let imgArr = formState.values.img;
     // eslint-disable-next-line
     imgArr.find((e, i) => {
       if (e === img) {
         imgArr.splice(i, 1);
       }
-    }) 
+    })
     setFormState(formState => ({
       ...formState,
       values: {
@@ -348,6 +359,17 @@ const UsersTable = () => {
                     md={12}
                     xs={12}
                   >
+                    <h3>Mô tả chi tiết</h3>
+                    <CKEditor
+                      data={formState.values.detaildescription}
+                      onChange={onEditorChange}
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    md={12}
+                    xs={12}
+                  >
                     <input
                       accept="image/*"
                       className={classes.input}
@@ -366,8 +388,8 @@ const UsersTable = () => {
                     <div id='resultEdit' className={classes.resultEdit}>
                       {formState.values.img.map((track, i) => {
                         return (<div className={classes.imgItem} key={i}>
-                          <Button style={{ minWidth:'0px', padding:'0px' }} onClick={() => handleDeleteImage(track)}><DeleteOutline fontSize={'small'}/></Button>
-                          <img src={track} alt='z' style={{ width: 70, height: 70, borderRadius: '50%' }}  />
+                          <Button style={{ minWidth: '0px', padding: '0px' }} onClick={() => handleDeleteImage(track)}><DeleteOutline fontSize={'small'} /></Button>
+                          <img src={track} alt='z' style={{ width: 70, height: 70, borderRadius: '50%' }} />
                         </div>)
                       })}
                     </div>

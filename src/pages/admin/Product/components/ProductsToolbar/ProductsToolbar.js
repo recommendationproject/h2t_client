@@ -4,12 +4,14 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from '@material-ui/core';
-import {DeleteOutline} from '@material-ui/icons';
+import { DeleteOutline } from '@material-ui/icons';
 import { addProduct } from '../../actions';
 import validate from 'validate.js';
-import { imagesUpload } from '../../../../../utils/apis/apiAuth';
+import  { imagesUpload } from '../../../../../utils/apis/apiAuth';
 import async from 'async';
 import { useToasts } from 'react-toast-notifications';
+import CKEditor from 'ckeditor4-react';
+import { callApiUnauthWithHeader } from '../../../../../utils/apis/apiUnAuth';
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -39,10 +41,10 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'hidden',
     whiteSpace: 'nowrap'
   },
-  imgItem:{
-    display:'inline-block',
-    position:'relative',
-    margin:'2px'
+  imgItem: {
+    display: 'inline-block',
+    position: 'relative',
+    margin: '2px'
   }
 }));
 
@@ -62,24 +64,27 @@ const UsersToolbar = props => {
   const firstUpdate = useRef(true);
   const [open, setOpen] = React.useState(false);
   const [isAdd, setIsAdd] = React.useState(false);
-
+  const [supply, setSupply] = React.useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
     setFormState({
       isValid: false,
       values: {
         name: '',
         price: '',
         description: '',
+        detaildescription: '',
+        supply: '',
         category_id: 'category000000000002',
         img: []
       },
       touched: {},
       errors: {}
     })
-    setOpen(true);
-  };
-
-  const handleClose = () => {
     setOpen(false);
   };
 
@@ -94,20 +99,42 @@ const UsersToolbar = props => {
     }
     setIsAdd(false);
   }, [count])
-
-
+  useEffect(() => {
+    const fetchData = async () => {
+      const resultSupply = await callApiUnauthWithHeader(`supply`, 'GET', {})
+      setSupply(resultSupply.data);      
+    };
+    fetchData();
+  }, []);
+  
   const [formState, setFormState] = useState({
     isValid: false,
     values: {
       name: '',
       price: '',
       description: '',
+      supply:'',
       category_id: 'category000000000002',
       img: []
     },
     touched: {},
     errors: {}
   });
+
+  useEffect(() => {
+
+    if (supply.length > 0) {
+      setFormState(formState => ({
+        ...formState,
+        values: {
+          ...formState.values,
+          supply: supply[0].id
+        }
+      }))      
+      setIsLoading(false);
+    }
+    
+  }, [supply]);
 
   useEffect(() => {
     const errors = validate(formState.values, schema, { fullMessages: false });
@@ -160,17 +187,25 @@ const UsersToolbar = props => {
       }));
     });
   };
+
+  const onEditorChange = (evt) => {
+    setFormState(formState => ({
+      ...formState,
+      values: {
+        ...formState.values,
+        detaildescription: evt.editor.getData()
+      }
+    }));
+  }
+
   const { addToast } = useToasts();
   const handleAccept = () => {
-    if(formState.values.img.length ===0){
+    if (formState.values.img.length === 0) {
       addToast('Bạn cần thêm ảnh cho sản phẩm', { autoDismiss: true, appearance: 'error' })
     } else {
-      console.log(formState.values.img);
-      
       dispatch(addProduct(formState.values));
       setIsAdd(true);
     }
-    
   };
 
   const handleDeleteImage = (img) => {
@@ -198,6 +233,9 @@ const UsersToolbar = props => {
       {...rest}
       className={clsx(classes.root, className)}
     >
+      {isLoading ? (
+        <React.Fragment></React.Fragment>
+      ) : (
       <div className={classes.row}>
         <span className={classes.spacer} />
         {/* <Button className={classes.importButton}>Import</Button> */}
@@ -211,7 +249,7 @@ const UsersToolbar = props => {
         </Button>
         <Dialog
           fullWidth={true}
-          maxWidth={'sm'}
+          maxWidth={'md'}
           scroll={'body'}
           open={open}
           onClose={handleClose}
@@ -271,6 +309,32 @@ const UsersToolbar = props => {
               >
                 <TextField
                   fullWidth
+                  label="Nhà cung cấp"
+                  margin="dense"
+                  name="supply"
+                  onChange={handleChange}
+                  select
+                  SelectProps={{ native: true }}
+                  value={formState.values.supply}
+                  variant="outlined"
+                >
+                  {supply.map(option => (
+                    <option
+                      key={option.id}
+                      value={option.id}
+                    >
+                      {option.name}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <TextField
+                  fullWidth
                   helperText=""
                   label="Mô tả"
                   margin="dense"
@@ -282,7 +346,17 @@ const UsersToolbar = props => {
                   rows={4}
                 />
               </Grid>
-
+              <Grid
+                item
+                md={12}
+                xs={12}
+              >
+                <h3>Mô tả chi tiết</h3>
+                <CKEditor
+                  data=""
+                  onChange={onEditorChange}
+                />
+              </Grid>
               <Grid
                 item
                 md={12}
@@ -354,6 +428,7 @@ const UsersToolbar = props => {
           </DialogActions>
         </Dialog>
       </div>
+       )}
     </div>
   );
 };

@@ -83,6 +83,8 @@ const CartPage = () => {
         { title: 'Avatar', field: 'images', render: rowData => <img src={rowData.images} alt={rowData.name} style={{ width: 40, height: 40, borderRadius: '50%' }} />, editable: 'never' },
         { title: 'Tên sản phẩm', field: 'name', editable: 'never' },
         { title: 'Giá', field: 'price', editable: 'never' },
+        { title: 'Màu sắc', field: 'color', editable: 'never' },
+        { title: 'Kích thước', field: 'size', editable: 'never' },
         { title: 'Số lượng', field: 'amount', type: 'numeric' },
     ];
     const [formState, setFormState] = useState({
@@ -182,7 +184,8 @@ const CartPage = () => {
         fetchData()
         setIsLoading(false);
     }, [data]);
-
+    console.log(dataAmount);
+    
     const tableIcons = {
         Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
         Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -205,11 +208,11 @@ const CartPage = () => {
 
     const handleDelete = async (rowData) => {
         if (store.getState().userInfo) {
-            await callApiUnauthWithHeader(`cart`, 'DELETE', { product_id: rowData.id, customer_id: store.getState().userInfo.token.user.id })
+            await callApiUnauthWithHeader(`cart`, 'DELETE', { product_id: rowData.id, customer_id: store.getState().userInfo.token.user.id, size: rowData.size, color: rowData.color })
             let rm = null;
             // eslint-disable-next-line
             data.find((e, i) => {
-                if (e.id === rowData.id) {
+                if (e.id === rowData.id && e.size === rowData.size && e.color === rowData.color) {
                     rm = i;
                 }
             })
@@ -221,7 +224,7 @@ const CartPage = () => {
             let rm = null;
             // eslint-disable-next-line
             data.find((e, i) => {
-                if (e.id === rowData.id) {
+                if (e.id === rowData.id && e.size === rowData.size && e.color === rowData.color) {
                     rm = i;
                 }
             })
@@ -263,10 +266,6 @@ const CartPage = () => {
                 <Grid
                     item
                     container
-                    lg={12}
-                    md={12}
-                    xl={12}
-                    xs={12}
                 >
                     {isLoading ? (
                         <div>Loading ...</div>
@@ -297,24 +296,26 @@ const CartPage = () => {
                                                         const dataUpdate = [...data];
                                                         const index = oldData.tableData.id;
                                                         // eslint-disable-next-line
-                                                        dataAmount.find(async (e, i) => {
+                                                        dataAmount.forEach(async (e, i) => {                                                                                                                  
                                                             if (e.id === newData.id) {
+                                                                console.log(newData);
                                                                 if (newData.amount > e.amount)
                                                                     addToast('Trong kho hiện còn : ' + e.amount + ' sản phẩm !', { autoDismiss: true, appearance: 'info' })
                                                                 else if (newData.amount <= 0)
                                                                     addToast('Số lượng sản phẩm phải lớn hơn 0 !', { autoDismiss: true, appearance: 'info' })
                                                                 else {
                                                                     if (store.getState().userInfo) {
-                                                                        await callApiUnauthWithBody(`amountProduct`, 'POST', { productid: newData.id, amount: newData.amount, customerid: store.getState().userInfo.token.user.id });
+                                                                        await callApiUnauthWithBody(`amountProduct`, 'POST', { productid: newData.id, amount: newData.amount, customerid: store.getState().userInfo.token.user.id,size: newData.size, color: newData.color});
                                                                     } else {
                                                                         let arrItemCart = [];
                                                                         if ('itemCart' in localStorage) {
                                                                             arrItemCart = JSON.parse(localStorage.getItem('itemCart'));
                                                                         }
-
+                                                                        console.log(arrItemCart);
+                                                                        
                                                                         let checkExist = null;
-                                                                        arrItemCart.forEach((e, i) => {
-                                                                            if (e.id === newData.id)
+                                                                        arrItemCart.forEach((e, i) => {                                                                            
+                                                                            if (e.id === newData.id && e.size === newData.size && e.color === newData.color)
                                                                                 checkExist = i
                                                                         });
                                                                         arrItemCart[checkExist].amount = parseInt(newData.amount);

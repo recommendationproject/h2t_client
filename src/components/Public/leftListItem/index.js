@@ -20,7 +20,7 @@ const LeftListItem = (props) => {
       totalSlides={6}
       orientation="vertical"
       naturalSlideWidth={400}
-      naturalSlideHeight={300}
+      naturalSlideHeight={350}
       step={2}
     >
 

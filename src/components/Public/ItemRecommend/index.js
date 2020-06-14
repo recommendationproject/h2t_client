@@ -13,7 +13,7 @@ const ItemRecommend = (props) => {
   const { addToast } = useToasts();
   const addToCart = async () => {
     if(store.getState().userInfo){
-      await callApiUnauth(`addCart`, 'POST', {product_id:props.product.id, customer_id: store.getState().userInfo.token.user.id, amount : 1});
+      await callApiUnauth(`addCart`, 'POST', {product_id:props.product.id, customer_id: store.getState().userInfo.token.user.id, amount : 1, size:'S', color:'white'});
       addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
     }else{
       let arrItemCart = [];
@@ -23,13 +23,13 @@ const ItemRecommend = (props) => {
 
       let checkExist = null;
       arrItemCart.forEach((e, i) => {
-        if (e.id === props.product.id)
+        if (e.id === props.product.id && e.size=== 'S' && e.color === 'white')
           checkExist = i
       });
       if (checkExist !== null)
         arrItemCart[checkExist].amount = parseInt(arrItemCart[checkExist].amount) + 1;
       else
-        arrItemCart.push({ id: props.product.id, name: props.product.name, price: props.product.price, amount: 1, images: props.product.images });
+        arrItemCart.push({ id: props.product.id, name: props.product.name, price: props.product.price, amount: 1, images: props.product.images, size:'S', color:'white' });
       localStorage.setItem('itemCart', JSON.stringify(arrItemCart));
       addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
     }
@@ -37,7 +37,7 @@ const ItemRecommend = (props) => {
   return (
     <div key={props.product.id} className="item-recommend">
       <Link to={`/products/${props.product.id}`}>
-      <div className="product-img">
+      <div className="product-img-recommend">
         <img alt={props.product.name} src={props.product.images} className="img-recommend"/>
       </div>
       <div className="product-details">

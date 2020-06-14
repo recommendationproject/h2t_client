@@ -22,7 +22,9 @@ img {
   /* height: 20em; */
   width: 100%;
 }
-
+.product-img img {
+  height: 250px;
+}
 .item {
   width: 20%;
   font-family: 'Quicksand', sans-serif;
