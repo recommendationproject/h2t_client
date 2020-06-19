@@ -25,6 +25,11 @@ const PromotionPage = Loadable({
   loading: MyLoadingComponent
 });
 
+const AccountPage = Loadable({
+  loader: () => import("../../pages/admin/Account"),
+  loading: MyLoadingComponent
+});
+
 const routes = {
   HomePage: {
     path: '/admin',
@@ -36,6 +41,12 @@ const routes = {
     path: '/admin/product',
     exact: true,
     component: ProductPage,
+    private: true
+  },
+  AccountPage: {
+    path: '/admin/account',
+    exact: true,
+    component: AccountPage,
     private: true
   },
   EmployeePage: {

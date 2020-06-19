@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
+import PersonIcon from '@material-ui/icons/Person';
 import Fastfood from '@material-ui/icons/Fastfood';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
@@ -44,11 +45,11 @@ const Sidebar = props => {
       href: '/admin',
       icon: <DashboardIcon />
     },
-    // {
-    //   title: 'Account',
-    //   href: '/admin/account',
-    //   icon: <PersonIcon />
-    // }, 
+    {
+      title: 'Account',
+      href: '/admin/account',
+      icon: <PersonIcon />
+    }, 
     {
       title: 'Quản lý sản phẩm',
       href: '/admin/product',

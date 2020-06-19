@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 // import moment from 'moment';
 import { makeStyles } from '@material-ui/styles';
-import { useStore} from 'react-redux';
+import { useStore, useDispatch, useSelector} from 'react-redux';
+import {updateImage} from '../../actions';
 import {
   Card,
   CardActions,
@@ -51,8 +52,29 @@ const AccountProfile = props => {
 
   const store = useStore();
   useEffect(() => {
-       setUser(store.getState().partnerInfo.token.user)    
+    setUser(store.getState().partnerInfo.token.user)
   }, [store]);
+  const dispatch = useDispatch();
+  const [uploadEnable, setUploadEnable] = useState(false);
+  const handleChangeFile = file => {
+    setUploadEnable(true);
+    dispatch(updateImage({PartnerID: user.PartnerID,file:file.target.files[0]}))
+    
+  };
+  const firstUpdate = useRef(true);
+  const store2 = useSelector(state => state.partnerInfo.token.user.PartnerImage);
+  useEffect(() => {    
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+     setUser(prevUser => ({
+       ...prevUser,
+       PartnerImage: store2
+     }))   
+     setUploadEnable(false);
+    
+  }, [store2]);
   return (
     <Card
       {...rest}
@@ -107,13 +129,21 @@ const AccountProfile = props => {
       </CardContent>
       <Divider />
       <CardActions>
-        <Button
-          className={classes.uploadButton}
-          color="primary"
-          variant="text"
-        >
-          Tải ảnh lên
-        </Button>
+
+        <input
+          accept="image/*"
+          className={classes.input}
+          style={{ display: 'none' }}
+          id="raised-button-file"
+          onChange={handleChangeFile}
+          type="file"
+          disabled={uploadEnable}
+        />
+        <label htmlFor="raised-button-file">
+          <Button variant="contained" component="span" color="primary" className={classes.uploadButton} disabled={uploadEnable}>
+            Upload
+          </Button>
+        </label>
         {/* <Button variant="text">Remove picture</Button> */}
       </CardActions>
     </Card>

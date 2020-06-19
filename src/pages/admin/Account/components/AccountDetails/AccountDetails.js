@@ -3,7 +3,7 @@ import { useStore, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { updatePartner } from '../../actions';
+import { updateAdmin } from '../../actions';
 import {
   Card,
   CardHeader,
@@ -24,31 +24,16 @@ const AccountDetails = props => {
 
   const classes = useStyles();
 
-  const [values, setValues] = useState({
-    PartnerName: 'Shen',
-    PartnerAddress: 'Zhi',
-    PartnerEmail: 'shen.zhi@devias.io',
-    PartnerPhone: '0123456789',
-    PartnerDescription: 'Alabama',
-    CityName: 'USA'
-  });
+  const [values, setValues] = useState({});
 
-  const [city, setCity] = useState([]);
-
-  const store = useStore().getState().partnerInfo;
-  useEffect(() => {
+  const store = useStore().getState().adminInfo;
+  useEffect(() => {        
     setValues({
-      PartnerID: store.token.user.PartnerID,
-      PartnerName: store.token.user.PartnerName,
-      PartnerAddress: store.token.user.PartnerAddress,
-      PartnerEmail: store.token.user.PartnerEmail,
-      PartnerPhone: store.token.user.PartnerPhone,
-      PartnerDescription: store.token.user.PartnerDescription,
-      CityName: store.token.user.CityName
+      id: store.token.user.id,
+      name: store.token.user.name,
+      address: store.token.user.address,
+      phone: store.token.user.phone
     })
-    setCity(store.city.data)
-    console.log(store.city.data);
-    
   }, [store]);
 
   const handleChange = event => {
@@ -59,13 +44,7 @@ const AccountDetails = props => {
   };
   const dispatch = useDispatch();
   const handleChangeInfo = () => {
-    city.forEach(e => {
-      if (e.CityName === values.CityName) {
-        values.CityID = e.CityID;
-        delete values.CityName;
-      }
-    });
-    dispatch(updatePartner(values));
+    dispatch(updateAdmin(values));
   }
 
   return (
@@ -78,7 +57,7 @@ const AccountDetails = props => {
         noValidate
       >
         <CardHeader
-          subheader="The information can be edited"
+          subheader="Thông tin tài khoản"
           title="Profile"
         />
         <Divider />
@@ -95,74 +74,14 @@ const AccountDetails = props => {
               <TextField
                 fullWidth
                 helperText=""
-                label="Tên cửa hàng"
+                label="Tên"
                 margin="dense"
-                name="PartnerName"
+                name="name"
                 onChange={handleChange}
                 required
-                value={values.PartnerName}
+                value={values.name}
                 variant="outlined"
               />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Email"
-                margin="dense"
-                name="PartnerEmail"
-                onChange={handleChange}
-                required
-                value={values.PartnerEmail}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Mô tả"
-                margin="dense"
-                name="PartnerAddress"
-                onChange={handleChange}
-                required
-                value={values.PartnerAddress}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Select State"
-                margin="dense"
-                name="CityName"
-                onChange={handleChange}
-                required
-                select
-                // eslint-disable-next-line react/jsx-sort-props
-                SelectProps={{ native: true }}
-                value={values.CityName}
-                variant="outlined"
-              >
-                {city.map(option => (
-                  <option
-                    key={option.CityID}
-                    value={option.CityName}
-                  >
-                    {option.CityName}
-                  </option>
-                ))}
-              </TextField>
             </Grid>
             <Grid
               item
@@ -173,11 +92,11 @@ const AccountDetails = props => {
                 fullWidth
                 label="Số điện thoại"
                 margin="dense"
-                name="PartnerPhone"
+                name="phone"
                 onChange={handleChange}
                 type="number"
                 required
-                value={values.PartnerPhone}
+                value={values.phone}
                 variant="outlined"
               />
             </Grid>
@@ -188,15 +107,13 @@ const AccountDetails = props => {
             >
               <TextField
                 fullWidth
-                label="Mô tả"
+                label="Địa chỉ"
                 margin="dense"
-                name="PartnerDescription"
+                name="address"
                 onChange={handleChange}
                 required
-                value={values.PartnerDescription}
+                value={values.address}
                 variant="outlined"
-                multiline={true}
-                rows={4}
               />
             </Grid>
           </Grid>
@@ -208,7 +125,7 @@ const AccountDetails = props => {
             variant="contained"
             onClick={handleChangeInfo}
           >
-            Save details
+            Lưu thông tin
           </Button>
         </CardActions>
       </form>

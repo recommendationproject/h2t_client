@@ -43,6 +43,28 @@ export const signInFail = (msg) => {
     }
 }
 
+//////// update image
+export const updateImage = (admin) => {
+    return {
+        type : Types.ADMIN_CHANGE_IMAGE,
+        admin
+    }
+}
+
+export const updateImageSuccess = (link) => {
+    return {
+        type : Types.ADMIN_CHANGE_IMAGE_SUCCESS,
+        link
+    }
+}
+
+export const updateImageFail = (msg) => {
+    return {
+        type : Types.ADMIN_CHANGE_IMAGE_FAIL,
+        msg
+    }
+}
+
 ///////// map localstorage to store
 export const mlts = (admin) => {
     return {
