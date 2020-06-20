@@ -22,6 +22,17 @@ const admin = (state = initialState, action) => {
       return action.token
     case Types.ADMIN_SIGNIN_FAIL:
       return action.msg
+      // update image
+    case Types.ADMIN_CHANGE_IMAGE:
+      return state;
+    case Types.ADMIN_CHANGE_IMAGE_SUCCESS:
+      {
+        state.token.user.image = action.link;
+        localStorage.setItem('sessionadmin', JSON.stringify(state));
+        return state
+      }
+    case Types.ADMIN_CHANGE_IMAGE_FAIL:
+      return action.msg
     //
     case Types.MLTS:
       return action.admin

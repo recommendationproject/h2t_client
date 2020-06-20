@@ -5,7 +5,7 @@ import * as actions from './actions'
 import * as Types from './constants'
 
 function updateEmployeeApi(employee) {
-    return callApiUnAuth(`employee`, 'PUT', employee)
+    return callApiUnAuth(`employee/person`, 'PUT', employee)
         .then(res => res)
         .catch(error => error.response.data);
 }
@@ -75,7 +75,7 @@ function* uploadImage(action) {
             let rs = yield call(uploadImagesApi, admin.file)            
             let link = rs.data.data.link
             delete admin.file;
-            admin.PartnerImage = link;
+            admin.image = link;
             yield call(updateEmployeeApi, admin)
         // if (msg.success === true) {            
         yield put(actions.updateImageSuccess(link));

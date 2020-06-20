@@ -42,27 +42,21 @@ const AccountProfile = props => {
   const classes = useStyles();
 
 
-  const [user, setUser] = useState({
-    PartnerName: 'Anonymous',
-    PartnerAddress: 'Locate',
-    CityName: 'Locate',
-    PartnerImage: '/images/avatars/avatar_11.png',
-    PartnerDescription:''
-  });
+  const [user, setUser] = useState({});
 
   const store = useStore();
   useEffect(() => {
-    setUser(store.getState().partnerInfo.token.user)
+    setUser(store.getState().adminInfo.token.user)
   }, [store]);
   const dispatch = useDispatch();
   const [uploadEnable, setUploadEnable] = useState(false);
   const handleChangeFile = file => {
     setUploadEnable(true);
-    dispatch(updateImage({PartnerID: user.PartnerID,file:file.target.files[0]}))
+    dispatch(updateImage({id: user.id,file:file.target.files[0]}))
     
   };
   const firstUpdate = useRef(true);
-  const store2 = useSelector(state => state.partnerInfo.token.user.PartnerImage);
+  const store2 = useSelector(state => state.adminInfo.token.user.image);
   useEffect(() => {    
     if (firstUpdate.current) {
       firstUpdate.current = false;
@@ -87,21 +81,14 @@ const AccountProfile = props => {
               gutterBottom
               variant="h2"
             >
-              {user.PartnerName}
+              {user.name}
             </Typography>
             <Typography
               className={classes.locationText}
               color="textSecondary"
               variant="body1"
             >
-              {user.PartnerAddress}
-            </Typography>
-            <Typography
-              className={classes.locationText}
-              color="textSecondary"
-              variant="body1"
-            >
-              Thành phố :  {user.CityName}
+              {user.address}
             </Typography>
             <Typography
               className={classes.dateText}
@@ -113,7 +100,7 @@ const AccountProfile = props => {
           </div>
           <Avatar
             className={classes.avatar}
-            src={user.PartnerImage}
+            src={user.image}
           />
         </div>
         <div className={classes.progress}>

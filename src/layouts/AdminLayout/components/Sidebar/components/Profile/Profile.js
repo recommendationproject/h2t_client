@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Avatar, Typography } from '@material-ui/core';
-// import callApiUnAuth from '../../../../../../utils/apis/apiUnAuth';
-
+import { useStore, useSelector } from 'react-redux';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -27,18 +26,28 @@ const Profile = props => {
 
   const classes = useStyles();
 
-  const user = useState({
+  const [user, setUser] = useState({
     PartnerName: 'Anonymous',
     CityName: 'Locate',
     PartnerImage: '/images/avatars/avatar_11.png',
   });
-  // useEffect(() => {
-  //   const partner = JSON.parse(localStorage.getItem('regPartner'));
-  //   const fetchData = async () => callApiUnAuth(`partner/${partner.user.CustomerID}`, 'GET', {})
-  //     .then(res => setUser(res.data[0]));
-  //     fetchData();
-  // }, []);
+  const store = useStore().getState().adminInfo;
+  useEffect(() => {    
+    setUser({
+      PartnerName: store.token.user.name,
+      CityName: store.token.user.address,
+      PartnerImage: store.token.user.image,
+    })
+  }, [store]);
 
+  const store2 = useSelector(state => state).adminInfo.token.user.name;
+  useEffect(() => {    
+    // setUser({
+    //   PartnerName: store2.token.user.PartnerName,
+    //   CityName: store2.token.user.CityName,
+    //   PartnerImage: store2.token.user.PartnerImage,
+    // })    
+  }, [store2]);
   return (
     <div
       {...rest}
@@ -49,6 +58,7 @@ const Profile = props => {
         className={classes.avatar}
         component={RouterLink}
         src={user.PartnerImage}
+        to="/settings"
       />
       <Typography
         className={classes.name}
@@ -56,7 +66,7 @@ const Profile = props => {
       >
         {user.PartnerName}
       </Typography>
-      <Typography variant="body2">{user.CityName}</Typography>
+      {/* <Typography variant="body2">{user.CityName}</Typography> */}
     </div>
   );
 };
