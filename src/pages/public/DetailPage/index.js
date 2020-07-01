@@ -102,16 +102,12 @@ const DetailPage = (props) => {
             const result = await callApiUnauthWithHeader(`recommentByPrice/${price}?limit=6`, 'GET', {})
             setDataByPrice(result.data);
         };
-        let userid = null;
-        if (store.getState().userInfo) {
-            userid = store.getState().userInfo.token.user.id;
-        }
 
-        const fetchDataRecommend = async (userid) => {
-            const result = await callApiUnauthWithHeader(`product`, 'GET', { userid: userid })
+        const fetchDataRecommend = async (productId) => {
+            const result = await callApiUnauthWithHeader(`product/recommendbyid/${productId}`, 'GET', {})
             setDataRecommend(result.data);
         };
-        fetchDataRecommend(userid);
+        fetchDataRecommend(productId);
 
         const fetchDataHistory = async (arr) => {
             const result = await callApiUnauth(`product/history`, 'POST', { lst: arr })

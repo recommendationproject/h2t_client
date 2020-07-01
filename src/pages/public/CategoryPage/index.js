@@ -155,16 +155,26 @@ const CategoryPage = (props) => {
 
                             {dataRecommend.recommend && dataRecommend.recommend.length > 0 ? (
 
+                                // <React.Fragment>
+                                //     <div className="items-wrapper">
+                                //         <div className="items-title">
+                                //             <h4>Gợi ý cho bạn</h4>
+                                //         </div>
+                                //         <div>
+                                //             <LeftListItem data={dataRecommend.recommend} />
+                                //         </div>
+                                //     </div>
+                                // </React.Fragment>
                                 <React.Fragment>
-                                    <div className="items-wrapper">
-                                        <div className="items-title">
-                                            <h4>Gợi ý cho bạn</h4>
+                                        <div className="items-wrapper">
+                                            <div className="items-title">
+                                                <h4>Mới nhất</h4>
+                                            </div>
+                                            <div>
+                                                <LeftListItem data={dataRecommend.new} />
+                                            </div>
                                         </div>
-                                        <div>
-                                            <LeftListItem data={dataRecommend.recommend} />
-                                        </div>
-                                    </div>
-                                </React.Fragment>
+                                    </React.Fragment>
                             ) : (
                                     <React.Fragment>
                                         <div className="items-wrapper">

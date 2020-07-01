@@ -5,7 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import { ProductsTable, ProductsToolbar, OrdersTable, RecommendTable, DataWareHouseTable, DataWareHouseToolbar, SupplyTable, SupplyToolbar } from './components';
+import { ProductsTable, ProductsToolbar, OrdersTable, DataWareHouseTable, DataWareHouseToolbar, SupplyTable, SupplyToolbar } from './components';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,9 +55,9 @@ const Product = () => {
         <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
           <Tab label="Sản phẩm" {...a11yProps(0)} />
           <Tab label="Đơn hàng" {...a11yProps(1)} />
-          <Tab label="Gợi ý sản phẩm" {...a11yProps(2)} />
-          <Tab label="Quản lý nhà cung cấp" {...a11yProps(3)} />
-          <Tab label="Quản lý kho" {...a11yProps(4)} />
+          {/* <Tab label="Gợi ý sản phẩm" {...a11yProps(2)} /> */}
+          <Tab label="Quản lý nhà cung cấp" {...a11yProps(2)} />
+          <Tab label="Quản lý kho" {...a11yProps(3)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
@@ -69,16 +69,16 @@ const Product = () => {
       <TabPanel value={value} index={1}>
         <OrdersTable />
       </TabPanel>
-      <TabPanel value={value} index={2}>
+      {/* <TabPanel value={value} index={2}>
         <RecommendTable />
-      </TabPanel>
-      <TabPanel value={value} index={3}>
+      </TabPanel> */}
+      <TabPanel value={value} index={2}>
         <SupplyToolbar />
         <div className={classes.content}>
           <SupplyTable />
         </div>
       </TabPanel>
-      <TabPanel value={value} index={4}>
+      <TabPanel value={value} index={3}>
         <DataWareHouseToolbar />
         <div className={classes.content}>
           <DataWareHouseTable />

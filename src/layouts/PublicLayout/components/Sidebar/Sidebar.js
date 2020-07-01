@@ -5,7 +5,8 @@ import callApiUnauth from '../../../../utils/apis/apiUnAuth';
 import LeftListItem from '../../../../components/Public/leftListItem';
 import "react-image-gallery/styles/css/image-gallery.css";
 const Sidebar = (props) => {
-
+  console.log(props.location.pathname);
+  
   const [dataHistory, setDataHistory] = useState([]);
   useEffect(() => {
 
@@ -21,7 +22,7 @@ const Sidebar = (props) => {
   }, []);
   return (
     <React.Fragment>
-      {dataHistory && dataHistory.length > 0 ? (
+      {(dataHistory && dataHistory.length && props.location.pathname!=='/cart' && props.location.pathname!=='/signin' && props.location.pathname!=='/signup') > 0 ? (
 
         <React.Fragment>
           <div className="items-wrapper" style={{ marginTop: '32px' }}>

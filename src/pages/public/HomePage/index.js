@@ -63,7 +63,7 @@ const Homepage = () => {
                         container
                         spacing={4}
                     >
-                        {data.recommend.length > 0 ? (
+                        {/* {data.recommend.length > 0 ? (
                             <React.Fragment>
                                 <Grid
                                     item
@@ -100,7 +100,7 @@ const Homepage = () => {
                                 >
                                 </Grid>
                             </React.Fragment>
-                        ) : (<React.Fragment></React.Fragment>)}
+                        ) : (<React.Fragment></React.Fragment>)} */}
                         <Grid
                             item
                             lg={2}
