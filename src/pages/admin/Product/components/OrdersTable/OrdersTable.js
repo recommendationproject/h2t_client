@@ -94,8 +94,18 @@ const UsersTable = () => {
     }
   }, [data]);
 
-  const handleDelete = (rowData) => {
-
+  const handleDelete = async (rowData) => {
+    let datas = [];
+    datas = datas.concat(data)
+    // eslint-disable-next-line
+    datas.find(item => {
+      if (item.id === rowData.id) {
+        item.status_id = 6;
+            item.status = 'Đã hủy'
+      }
+    })    
+    await callApiUnauthWithHeader(`order/status`, 'POST', { id: rowData.id, status: 6 });
+    setData(datas)
   }
   const [values, setValues] = useState([]);
 

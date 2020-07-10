@@ -62,6 +62,8 @@ const schema = {
 
 const DataWareHouseTable = () => {
   const classes = useStyles();
+  const store = useSelector(state => state).adminInfo.token.user.groupid;
+
   const columns = [
     { title: 'Tên sản phẩm', field: 'productname' },
     { title: 'Tên nhà cung cấp', field: 'suppname' },
@@ -81,9 +83,14 @@ const DataWareHouseTable = () => {
               <Tooltip title="Xóa">
                 <Button variant="outlined" onClick={() => handleReject(rowData)} style={{ marginLeft: '10px', color: '#f44336', border: '#f44336 1px solid' }}><HighlightOff /></Button>
               </Tooltip>
-              <Tooltip title="Duyệt">
-                <Button variant="outlined" color="primary" onClick={() => handleAcpt(rowData)} style={{ marginLeft: '10px' }}><Done /></Button>
-              </Tooltip>
+              {store === 'admin' ? (
+                <Tooltip title="Duyệt">
+                  <Button variant="outlined" color="primary" onClick={() => handleAcpt(rowData)} style={{ marginLeft: '10px' }}><Done /></Button>
+                </Tooltip>
+              ) : (
+                  <React.Fragment></React.Fragment>
+                )}
+
             </React.Fragment>
           ) : (
               <React.Fragment>
@@ -197,7 +204,7 @@ const DataWareHouseTable = () => {
     }));
   };
 
-  const handleEdit = (data) => {    
+  const handleEdit = (data) => {
     setFormState(formState => ({
       ...formState,
       values: {
@@ -229,7 +236,7 @@ const DataWareHouseTable = () => {
   };
 
   const handleAcpt = (data) => {
-    dispatch(updateWh({id:data.id, product: data.product_id, supply: data.supp_id, amount: data.amount, sttid: 10}));
+    dispatch(updateWh({ id: data.id, product: data.product_id, supply: data.supp_id, amount: data.amount, sttid: 10 }));
   };
 
   const hasError = field =>

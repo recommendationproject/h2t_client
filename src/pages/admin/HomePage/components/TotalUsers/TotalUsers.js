@@ -3,9 +3,9 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import PeopleIcon from '@material-ui/icons/PeopleOutlined';
-
+// import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+// import ListAltIcon from '@material-ui/icons/ListAlt';
+import StoreIcon from '@material-ui/icons/Store';
 const useStyles = makeStyles(theme => ({
   root: {
     height: '100%'
@@ -41,14 +41,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const TotalUsers = props => {
-  const { className, ...rest } = props;
+  const { rsTotalUser, rsTotalGuest } = props;
 
   const classes = useStyles();
 
   return (
     <Card
-      {...rest}
-      className={clsx(classes.root, className)}
+      className={clsx(classes.root)}
     >
       <CardContent>
         <Grid
@@ -62,29 +61,29 @@ const TotalUsers = props => {
               gutterBottom
               variant="body2"
             >
-              TOTAL USERS
+              KHÁCH HÀNG
             </Typography>
-            <Typography variant="h3">1,600</Typography>
+            <Typography variant="h3">{rsTotalUser}</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <PeopleIcon className={classes.icon} />
+              <StoreIcon className={classes.icon} />
             </Avatar>
           </Grid>
         </Grid>
         <div className={classes.difference}>
-          <ArrowUpwardIcon className={classes.differenceIcon} />
+          {/* <ArrowUpwardIcon className={classes.differenceIcon} /> */}
           <Typography
             className={classes.differenceValue}
             variant="body2"
           >
-            16%
+            {rsTotalGuest}
           </Typography>
           <Typography
             className={classes.caption}
             variant="caption"
           >
-            Since last month
+            khách vãng lai
           </Typography>
         </div>
       </CardContent>

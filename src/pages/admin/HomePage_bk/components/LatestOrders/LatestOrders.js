@@ -6,8 +6,10 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import {
   Card,
+  CardActions,
   CardHeader,
   CardContent,
+  Button,
   Divider,
   Table,
   TableBody,
@@ -17,9 +19,11 @@ import {
   Tooltip,
   TableSortLabel
 } from '@material-ui/core';
-// import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+
+import mockData from './data';
 import { StatusBullet } from '../../../../../components';
-var CurrencyFormat = require('react-currency-format');
+
 const useStyles = makeStyles(theme => ({
   root: {},
   content: {
@@ -41,37 +45,34 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const statusColors = {
-  0: 'danger',
-  1: 'info',
-  2: 'info',
-  3: 'info',
-  4: 'info',
-  5: 'success',
-  6: 'danger',
+  delivered: 'success',
+  pending: 'info',
+  refunded: 'danger'
 };
 
 const LatestOrders = props => {
-  const { rsLatestOrder } = props;
+  const { className, ...rest } = props;
 
   const classes = useStyles();
 
-  const [orders] = useState(rsLatestOrder);
+  const [orders] = useState(mockData);
 
   return (
     <Card
-      className={clsx(classes.root)}
+      {...rest}
+      className={clsx(classes.root, className)}
     >
       <CardHeader
-        // action={
-        //   <Button
-        //     color="primary"
-        //     size="small"
-        //     variant="outlined"
-        //   >
-        //     New entry
-        //   </Button>
-        // }
-        title="Đơn hàng gần nhất"
+        action={
+          <Button
+            color="primary"
+            size="small"
+            variant="outlined"
+          >
+            New entry
+          </Button>
+        }
+        title="Latest Orders"
       />
       <Divider />
       <CardContent className={classes.content}>
@@ -80,8 +81,8 @@ const LatestOrders = props => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Mã đơn hàng</TableCell>
-                  <TableCell>Khách hàng</TableCell>
+                  <TableCell>Order Ref</TableCell>
+                  <TableCell>Customer</TableCell>
                   <TableCell sortDirection="desc">
                     <Tooltip
                       enterDelay={300}
@@ -91,12 +92,11 @@ const LatestOrders = props => {
                         active
                         direction="desc"
                       >
-                        Ngày đặt
+                        Date
                       </TableSortLabel>
                     </Tooltip>
                   </TableCell>
-                  <TableCell>Giá trị đơn hàng</TableCell>
-                  <TableCell>Trang thái</TableCell>
+                  <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -105,19 +105,16 @@ const LatestOrders = props => {
                     hover
                     key={order.id}
                   >
-                    <TableCell>{order.id}</TableCell>
-                    <TableCell>{order.customername}</TableCell>
+                    <TableCell>{order.ref}</TableCell>
+                    <TableCell>{order.customer.name}</TableCell>
                     <TableCell>
-                      {moment(order.adddate).format('DD/MM/YYYY')}
-                    </TableCell>
-                    <TableCell>
-                      <CurrencyFormat value={order.total} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value =>  value } />
+                      {moment(order.createdAt).format('DD/MM/YYYY')}
                     </TableCell>
                     <TableCell>
                       <div className={classes.statusContainer}>
                         <StatusBullet
                           className={classes.status}
-                          color={statusColors[order.statusid]}
+                          color={statusColors[order.status]}
                           size="sm"
                         />
                         {order.status}
@@ -131,7 +128,7 @@ const LatestOrders = props => {
         </PerfectScrollbar>
       </CardContent>
       <Divider />
-      {/* <CardActions className={classes.actions}>
+      <CardActions className={classes.actions}>
         <Button
           color="primary"
           size="small"
@@ -139,7 +136,7 @@ const LatestOrders = props => {
         >
           View all <ArrowRightIcon />
         </Button>
-      </CardActions> */}
+      </CardActions>
     </Card>
   );
 };

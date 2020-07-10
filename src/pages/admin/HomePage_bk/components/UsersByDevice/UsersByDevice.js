@@ -7,9 +7,14 @@ import {
   Card,
   CardHeader,
   CardContent,
+  IconButton,
   Divider,
   Typography
 } from '@material-ui/core';
+import LaptopMacIcon from '@material-ui/icons/LaptopMac';
+import PhoneIphoneIcon from '@material-ui/icons/PhoneIphone';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import TabletMacIcon from '@material-ui/icons/TabletMac';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const UsersByDevice = props => {
-  const { rsPercentByCategory } = props;
+  const { className, ...rest } = props;
 
   const classes = useStyles();
   const theme = useTheme();
@@ -42,7 +47,7 @@ const UsersByDevice = props => {
   const data = {
     datasets: [
       {
-        data: rsPercentByCategory.map( e => e.percent),
+        data: [63, 15, 22],
         backgroundColor: [
           theme.palette.primary.main,
           theme.palette.error.main,
@@ -53,7 +58,7 @@ const UsersByDevice = props => {
         hoverBorderColor: theme.palette.white
       }
     ],
-    labels: rsPercentByCategory.map( e => e.name)
+    labels: ['Desktop', 'Tablet', 'Mobile']
   };
 
   const options = {
@@ -78,24 +83,39 @@ const UsersByDevice = props => {
     }
   };
 
-  const devices = rsPercentByCategory.map( e => {
-    return {
-      title: e.name,
-      value: e.percent
+  const devices = [
+    {
+      title: 'Desktop',
+      value: '63',
+      icon: <LaptopMacIcon />,
+      color: theme.palette.primary.main
+    },
+    {
+      title: 'Tablet',
+      value: '15',
+      icon: <TabletMacIcon />,
+      color: theme.palette.error.main
+    },
+    {
+      title: 'Mobile',
+      value: '23',
+      icon: <PhoneIphoneIcon />,
+      color: theme.palette.warning.main
     }
-  });
+  ];
 
   return (
     <Card
-      className={clsx(classes.root)}
+      {...rest}
+      className={clsx(classes.root, className)}
     >
       <CardHeader
-        // action={
-        //   <IconButton size="small">
-        //     <RefreshIcon />
-        //   </IconButton>
-        // }
-        title="Đơn hàng theo loại"
+        action={
+          <IconButton size="small">
+            <RefreshIcon />
+          </IconButton>
+        }
+        title="Users By Device"
       />
       <Divider />
       <CardContent>
@@ -115,7 +135,7 @@ const UsersByDevice = props => {
               <Typography variant="body1">{device.title}</Typography>
               <Typography
                 style={{ color: device.color }}
-                variant="h6"
+                variant="h2"
               >
                 {device.value}%
               </Typography>

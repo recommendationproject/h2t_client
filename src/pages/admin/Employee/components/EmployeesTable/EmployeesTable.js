@@ -75,8 +75,10 @@ const EmployeesTable = () => {
     { title: 'tên đăng nhập', field: 'username' },
     {
       title: '', field: 'status', render: rowData => {
+        
         return (<Switch
-          checked={rowData.status === 1 ? true : false}
+        // eslint-disable-next-line
+          checked={rowData.status == 1 ? true : false}
           onChange={() => handleChangeStatus(rowData)}
           color="primary"
           name="checkedB"
@@ -172,7 +174,8 @@ const EmployeesTable = () => {
   };
 
   const handleChangeStatus = rowdata => {
-    dispatch(deleteEmployee({ employeeid: rowdata.id, status: rowdata.status === 1 ? 0 : 1 }));
+    // eslint-disable-next-line
+    dispatch(deleteEmployee({ employeeid: rowdata.id, status: rowdata.status == 1 ? 0 : 1 }));
   };
   const [open, setOpen] = useState(false);
   const handleEdit = async (data) => {

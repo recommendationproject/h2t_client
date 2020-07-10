@@ -2,14 +2,19 @@ import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-var CurrencyFormat = require('react-currency-format');
+import {
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  Avatar,
+  LinearProgress
+} from '@material-ui/core';
+import InsertChartIcon from '@material-ui/icons/InsertChartOutlined';
+
 const useStyles = makeStyles(theme => ({
   root: {
-    height: '100%',
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText
+    height: '100%'
   },
   content: {
     alignItems: 'center',
@@ -19,25 +24,29 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 700
   },
   avatar: {
-    backgroundColor: theme.palette.white,
-    color: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
     height: 56,
     width: 56
   },
   icon: {
     height: 32,
     width: 32
+  },
+  progress: {
+    marginTop: theme.spacing(3)
   }
 }));
 
-const TotalProfit = props => {
-  const { rsTotal } = props;
+const TasksProgress = props => {
+  const { className, ...rest } = props;
 
   const classes = useStyles();
 
   return (
     <Card
-      className={clsx(classes.root)}
+      {...rest}
+      className={clsx(classes.root, className)}
     >
       <CardContent>
         <Grid
@@ -47,32 +56,32 @@ const TotalProfit = props => {
           <Grid item>
             <Typography
               className={classes.title}
-              color="inherit"
+              color="textSecondary"
               gutterBottom
               variant="body2"
             >
-              DOANH THU TẠM TÍNH
+              TASKS PROGRESS
             </Typography>
-            <Typography
-              color="inherit"
-              variant="h3"
-            >
-             <CurrencyFormat value={rsTotal} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value =>  value } />
-            </Typography>
+            <Typography variant="h3">75.5%</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <AttachMoneyIcon className={classes.icon} />
+              <InsertChartIcon className={classes.icon} />
             </Avatar>
           </Grid>
         </Grid>
+        <LinearProgress
+          className={classes.progress}
+          value={75.5}
+          variant="determinate"
+        />
       </CardContent>
     </Card>
   );
 };
 
-TotalProfit.propTypes = {
+TasksProgress.propTypes = {
   className: PropTypes.string
 };
 
-export default TotalProfit;
+export default TasksProgress;

@@ -3,8 +3,9 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
-// import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import ListAltIcon from '@material-ui/icons/ListAlt';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import PeopleIcon from '@material-ui/icons/PeopleOutlined';
+
 const useStyles = makeStyles(theme => ({
   root: {
     height: '100%'
@@ -40,13 +41,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const TotalUsers = props => {
-  const { rsOrderActive, rsOrderOfYear } = props;
+  const { className, ...rest } = props;
 
   const classes = useStyles();
 
   return (
     <Card
-      className={clsx(classes.root)}
+      {...rest}
+      className={clsx(classes.root, className)}
     >
       <CardContent>
         <Grid
@@ -60,29 +62,29 @@ const TotalUsers = props => {
               gutterBottom
               variant="body2"
             >
-              Đơn hàng hiện có
+              TOTAL USERS
             </Typography>
-            <Typography variant="h3">{rsOrderActive}</Typography>
+            <Typography variant="h3">1,600</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <ListAltIcon className={classes.icon} />
+              <PeopleIcon className={classes.icon} />
             </Avatar>
           </Grid>
         </Grid>
         <div className={classes.difference}>
-          {/* <ArrowUpwardIcon className={classes.differenceIcon} /> */}
+          <ArrowUpwardIcon className={classes.differenceIcon} />
           <Typography
             className={classes.differenceValue}
             variant="body2"
           >
-            {rsOrderOfYear}
+            16%
           </Typography>
           <Typography
             className={classes.caption}
             variant="caption"
           >
-            đơn hàng trong năm
+            Since last month
           </Typography>
         </div>
       </CardContent>

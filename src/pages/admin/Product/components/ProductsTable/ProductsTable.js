@@ -76,6 +76,7 @@ const schema = {
 
 const UsersTable = () => {
   const classes = useStyles();
+  const store = useSelector(state => state).adminInfo.token.user.groupid;
   const columns = [
     { title: 'Avatar', field: 'images', render: rowData => <img src={rowData.images} alt={rowData.name} style={{ width: 40, height: 40, borderRadius: '50%' }} /> },
     { title: 'Tên sản phẩm', field: 'name' },
@@ -208,15 +209,15 @@ const UsersTable = () => {
     setIsUpdating(true)
   };
 
-  const onEditorChange = ( evt ) => {
+  const onEditorChange = (evt) => {
     setFormState(formState => ({
       ...formState,
       values: {
         ...formState.values,
-       detaildescription:evt.editor.getData()
+        detaildescription: evt.editor.getData()
       }
     }));
-}
+  }
 
   const handleDeleteImage = (img) => {
     let imgArr = formState.values.img;
@@ -264,24 +265,36 @@ const UsersTable = () => {
         <div>Loading ...</div>
       ) : (
           <div>
-            <MaterialTable title="Sản Phẩm" columns={columns} data={data} icons={tableIcons}
-              actions={[
-                {
-                  icon: Edit,
-                  tooltip: 'Sửa',
-                  onClick: (event, rowData) => handleEdit(rowData)
-                },
-                {
-                  icon: DeleteOutline,
-                  tooltip: 'Xóa',
-                  onClick: (event, rowData) => handleDelete(rowData)
-                }
-              ]}
-              options={{
-                actionsColumnIndex: -1,
-                exportButton: true
-              }}
-            />
+            {store !== 'saler' ? (
+              <MaterialTable title="Sản Phẩm" columns={columns} data={data} icons={tableIcons}
+
+                actions={[
+
+                  {
+                    icon: Edit,
+                    tooltip: 'Sửa',
+                    onClick: (event, rowData) => handleEdit(rowData)
+                  },
+                  {
+                    icon: DeleteOutline,
+                    tooltip: 'Xóa',
+                    onClick: (event, rowData) => handleDelete(rowData)
+                  }
+                ]}
+                options={{
+                  actionsColumnIndex: -1,
+                  exportButton: true
+                }}
+              />
+            ) : (
+                <MaterialTable title="Sản Phẩm" columns={columns} data={data} icons={tableIcons}
+                  options={{
+                    actionsColumnIndex: -1,
+                    exportButton: true
+                  }}
+                />
+              )}
+
 
             <Dialog
               fullWidth={true}

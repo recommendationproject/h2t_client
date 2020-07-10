@@ -7,7 +7,8 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
 import PersonIcon from '@material-ui/icons/Person';
 import Fastfood from '@material-ui/icons/Fastfood';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { useSelector } from 'react-redux';
+// import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import { Profile, SidebarNav } from './components';
 
@@ -54,7 +55,16 @@ const Sidebar = props => {
       title: 'Quản lý sản phẩm',
       href: '/admin/product',
       icon: <Fastfood />
-    }, {
+    }
+    // , {
+    //   title: 'Đăng xuất',
+    //   href: '/admin/signout',
+    //   icon: <ExitToAppIcon />
+    // }
+  ];
+  const store2 = useSelector(state => state).adminInfo.token.user.groupid;
+  if (store2==='admin') {
+    pages.push({
       title: 'Khuyến mãi',
       href: '/admin/promotion',
       icon: <Fastfood />
@@ -62,13 +72,8 @@ const Sidebar = props => {
       title: 'Quản lý nhân sự',
       href: '/admin/employee',
       icon: <PeopleIcon />
-    }, {
-      title: 'Đăng xuất',
-      href: '/admin/signout',
-      icon: <ExitToAppIcon />
-    }
-  ];
-
+    })
+  }
   return (
     <Drawer
       anchor="left"
