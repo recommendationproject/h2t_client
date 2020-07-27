@@ -13,21 +13,21 @@ import {
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import map from 'lodash/map';
 const LeftListItem = (props) => {
-
+console.log(props);
   return (
     <CarouselProvider
       visibleSlides={2}
-      totalSlides={6}
+      totalSlides={props.data.length}
       orientation="vertical"
       naturalSlideWidth={400}
-      naturalSlideHeight={350}
+      naturalSlideHeight={500}
       step={2}
     >
 
       <Slider style={{ maxWidth: '100%' }}>
         {map(props.data, (product, i) => (
           <Slide index={0} key={i}>
-            <ItemRecommend key={i} product={product} style={{ width: '100%', height: '100%' }} />
+            <ItemRecommend key={i} product={product} style={{ width: '100%' }} />
           </Slide>
         ))}
 

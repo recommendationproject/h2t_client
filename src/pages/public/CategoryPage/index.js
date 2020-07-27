@@ -78,7 +78,6 @@ const CategoryPage = (props) => {
         fetchDataRecommend(userid);
         // eslint-disable-next-line
     }, [props]);
-
     const firstUpdate = useRef(true);
     useEffect(() => {
         if (firstUpdate.current) {
@@ -153,7 +152,7 @@ const CategoryPage = (props) => {
                             xs={3}
                         >
 
-                            {dataRecommend.recommend && dataRecommend.recommend.length > 0 ? (
+                            {dataRecommend.new && dataRecommend.new.length > 0 ? (
 
                                 // <React.Fragment>
                                 //     <div className="items-wrapper">
@@ -177,14 +176,6 @@ const CategoryPage = (props) => {
                                     </React.Fragment>
                             ) : (
                                     <React.Fragment>
-                                        <div className="items-wrapper">
-                                            <div className="items-title">
-                                                <h4>Mới nhất</h4>
-                                            </div>
-                                            <div>
-                                                <LeftListItem data={dataRecommend.new} />
-                                            </div>
-                                        </div>
                                     </React.Fragment>
                                 )}
 

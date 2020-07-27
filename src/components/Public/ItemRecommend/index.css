@@ -19,8 +19,8 @@ a {
 }
 
 .img-recommend {
-  height: 200px;
-  width: 200px;
+  height: 15vw;
+  width: 15vw;
 }
 
 .item-recommend {
@@ -62,6 +62,10 @@ a {
   color: grey;
   font-weight: lighter;
   margin: 0;
+
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #product-price {

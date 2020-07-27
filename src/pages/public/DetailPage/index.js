@@ -63,6 +63,7 @@ const responsive = {
 const DetailPage = (props) => {
     const [data, setData] = useState([]);
     const [dataRecommend, setDataRecommend] = useState([]);
+    const [dataRecommendCollaborative, setDataRecommendCollaborative] = useState([]);
     const [dataBySupp, setDataBySupp] = useState([]);
     const [dataByCategory, setDataByCategory] = useState([]);
     const [dataByPrice, setDataByPrice] = useState([]);
@@ -109,20 +110,30 @@ const DetailPage = (props) => {
         };
         fetchDataRecommend(productId);
 
-        const fetchDataHistory = async (arr) => {
-            const result = await callApiUnauth(`product/history`, 'POST', { lst: arr })
-            setDataHistory(result.data);
-        };
+        // const fetchDataHistory = async (arr) => {
+        //     const result = await callApiUnauth(`product/history`, 'POST', { lst: arr })
+        //     setDataHistory(result.data);
+        // };
 
         if ('itemHistory' in localStorage) {
-            let arrItemHistory = JSON.parse(localStorage.getItem('itemHistory'));
-            fetchDataHistory(arrItemHistory);
+            let arrItemHistory = setDataHistory(JSON.parse(localStorage.getItem('itemHistory')));
+            // fetchDataHistory(arrItemHistory);
         }
+        ///////////////////
+        let userid = null;
+        if (store.getState().userInfo) {
+            userid = store.getState().userInfo.token.user.id;
+        }
+
+        const fetchDataRecommendCollaborative = async (userid) => {
+            const result = await callApiUnauthWithHeader(`product`, 'GET', { userid: userid })
+            setDataRecommendCollaborative(result.data);
+        };
+        fetchDataRecommendCollaborative(userid);
     }, [productId, store]);
-    console.log(images);
 
     useEffect(() => {
-        if (data.id) {
+        if (data.id && images.length) {
             setIsLoading(false);
             let arrItemHistory = [];
             if ('itemHistory' in localStorage) {
@@ -132,16 +143,14 @@ const DetailPage = (props) => {
             if (arrItemHistory.length === 10) {
                 arrItemHistory.pop();
             }
-            let checkExist = 0;
             arrItemHistory.forEach(element => {
-                if (element === data.id)
-                    checkExist = 1
+                if (element.id === data.id)
+                arrItemHistory.splice(arrItemHistory.indexOf(element), 1);
             });
-            if (checkExist === 0)
-                arrItemHistory.unshift(data.id);
+                arrItemHistory.unshift({ id: data.id, name: data.name, price: data.price, images: images[0].original });
             localStorage.setItem('itemHistory', JSON.stringify(arrItemHistory));
         }
-    }, [data]);
+    }, [data, images]);
 
     const handleChange = event => {
         event.persist();
@@ -155,19 +164,19 @@ const DetailPage = (props) => {
 
     const handleChangeColor = event => {
         event.persist();
-            setColor(event.target.name);
+        setColor(event.target.name);
     };
 
     const handleChangeSize = event => {
         event.persist();
-            setSize(event.target.name);
+        setSize(event.target.name);
     };
 
     const classes = useStyles();
     const { addToast } = useToasts();
     const addToCart = async () => {
         if (store.getState().userInfo) {
-            await callApiUnauth(`addCart`, 'POST', { product_id: data.id, customer_id: store.getState().userInfo.token.user.id, amount: amount, size: size, color:color });
+            await callApiUnauth(`addCart`, 'POST', { product_id: data.id, customer_id: store.getState().userInfo.token.user.id, amount: amount, size: size, color: color });
             addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
         }
         else {
@@ -178,13 +187,13 @@ const DetailPage = (props) => {
 
             let checkExist = null;
             arrItemCart.forEach((e, i) => {
-                if (e.id === data.id && e.size=== size && e.color === color)
+                if (e.id === data.id && e.size === size && e.color === color)
                     checkExist = i
             });
             if (checkExist !== null)
                 arrItemCart[checkExist].amount = parseInt(arrItemCart[checkExist].amount) + parseInt(amount);
             else
-                arrItemCart.push({ id: data.id, name: data.name, price: data.price, amount: amount, images: images[0].original, size:size, color:color });
+                arrItemCart.push({ id: data.id, name: data.name, price: data.price, amount: amount, images: images[0].original, size: size, color: color });
             localStorage.setItem('itemCart', JSON.stringify(arrItemCart));
             addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
         }
@@ -192,7 +201,7 @@ const DetailPage = (props) => {
 
     const addAndGoToCart = async () => {
         if (store.getState().userInfo) {
-            await callApiUnauth(`addCart`, 'POST', { product_id: data.id, customer_id: store.getState().userInfo.token.user.id, amount: amount, size:size, color:color });
+            await callApiUnauth(`addCart`, 'POST', { product_id: data.id, customer_id: store.getState().userInfo.token.user.id, amount: amount, size: size, color: color });
             addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
         }
         else {
@@ -203,13 +212,13 @@ const DetailPage = (props) => {
 
             let checkExist = null;
             arrItemCart.forEach((e, i) => {
-                if (e.id === data.id && e.size=== size && e.color === color)
+                if (e.id === data.id && e.size === size && e.color === color)
                     checkExist = i
             });
             if (checkExist !== null)
                 arrItemCart[checkExist].amount = parseInt(arrItemCart[checkExist].amount) + 1;
             else
-                arrItemCart.push({ id: data.id, name: data.name, price: data.price, amount: 1, images: images[0].original, size:size, color:color });
+                arrItemCart.push({ id: data.id, name: data.name, price: data.price, amount: 1, images: images[0].original, size: size, color: color });
             localStorage.setItem('itemCart', JSON.stringify(arrItemCart));
             addToast('Thêm thành công', { autoDismiss: true, appearance: 'success' })
         }
@@ -226,11 +235,11 @@ const DetailPage = (props) => {
                         spacing={1}
                     >
                         <Grid container item
-                        lg={9}
-                        md={9}
-                        xl={9}
-                        xs={9}
-                           >
+                            lg={9}
+                            md={9}
+                            xl={9}
+                            xs={9}
+                        >
                             <Grid
                                 item
                                 lg={8}
@@ -261,24 +270,24 @@ const DetailPage = (props) => {
                                 <p style={{ marginTop: '40px' }}>Mô tả :</p>
                                 <p>{data.description}</p>
                                 <p>Màu sắc :
-                                    <Link className={color==='blue' ? `${classes.itemcolor} ${classes.itemselected}` : `${classes.itemcolor}`} 
-                                    style={{ backgroundColor: 'blue' }} name='blue' onClick={handleChangeColor}></Link>
-                                    <Link className={color==='white' ? `${classes.itemcolor} ${classes.itemselected}` : `${classes.itemcolor}`} 
-                                    style={{ backgroundColor: 'white' }} name='white' onClick={handleChangeColor}></Link>
-                                    <Link className={color==='red' ? `${classes.itemcolor} ${classes.itemselected}` : `${classes.itemcolor}`}
-                                    style={{ backgroundColor: 'red' }} name='red' onClick={handleChangeColor}></Link>
-                                    <Link className={color==='black' ? `${classes.itemcolor} ${classes.itemselected}` : `${classes.itemcolor}`}
-                                    style={{ backgroundColor: 'black' }} name='black' onClick={handleChangeColor}></Link>
+                                    <Link className={color === 'blue' ? `${classes.itemcolor} ${classes.itemselected}` : `${classes.itemcolor}`}
+                                        style={{ backgroundColor: 'blue' }} name='blue' onClick={handleChangeColor}></Link>
+                                    <Link className={color === 'white' ? `${classes.itemcolor} ${classes.itemselected}` : `${classes.itemcolor}`}
+                                        style={{ backgroundColor: 'white' }} name='white' onClick={handleChangeColor}></Link>
+                                    <Link className={color === 'red' ? `${classes.itemcolor} ${classes.itemselected}` : `${classes.itemcolor}`}
+                                        style={{ backgroundColor: 'red' }} name='red' onClick={handleChangeColor}></Link>
+                                    <Link className={color === 'black' ? `${classes.itemcolor} ${classes.itemselected}` : `${classes.itemcolor}`}
+                                        style={{ backgroundColor: 'black' }} name='black' onClick={handleChangeColor}></Link>
                                 </p>
                                 <p>Kích thước :
-                                    <Link className={size==='S' ? `${classes.itemsize} ${classes.itemselected}` : `${classes.itemsize}`} 
-                                     name='S' onClick={handleChangeSize}>S</Link>
-                                    <Link className={size==='M' ? `${classes.itemsize} ${classes.itemselected}` : `${classes.itemsize}`} 
-                                     name='M' onClick={handleChangeSize}>M</Link>
-                                    <Link className={size==='L' ? `${classes.itemsize} ${classes.itemselected}` : `${classes.itemsize}`}
-                                     name='L' onClick={handleChangeSize}>L</Link>
-                                    <Link className={size==='XL' ? `${classes.itemsize} ${classes.itemselected}` : `${classes.itemsize}`}
-                                     name='XL' onClick={handleChangeSize}>XL</Link>
+                                    <Link className={size === 'S' ? `${classes.itemsize} ${classes.itemselected}` : `${classes.itemsize}`}
+                                        name='S' onClick={handleChangeSize}>S</Link>
+                                    <Link className={size === 'M' ? `${classes.itemsize} ${classes.itemselected}` : `${classes.itemsize}`}
+                                        name='M' onClick={handleChangeSize}>M</Link>
+                                    <Link className={size === 'L' ? `${classes.itemsize} ${classes.itemselected}` : `${classes.itemsize}`}
+                                        name='L' onClick={handleChangeSize}>L</Link>
+                                    <Link className={size === 'XL' ? `${classes.itemsize} ${classes.itemselected}` : `${classes.itemsize}`}
+                                        name='XL' onClick={handleChangeSize}>XL</Link>
                                 </p>
                                 <p style={{ marginTop: '40px' }}>Số lượng trong kho : {data.amount}</p>
                                 <TextField
@@ -375,7 +384,7 @@ const DetailPage = (props) => {
                                 </Grid>
                             ) : (<React.Fragment></React.Fragment>)}
 
-                            {dataRecommend.recommend && dataRecommend.recommend.length > 0 ? (
+                            {dataRecommendCollaborative.recommend && dataRecommendCollaborative.recommend.length > 0 ? (
                                 <Grid
                                     item
                                     lg={12}
@@ -385,6 +394,41 @@ const DetailPage = (props) => {
                                 >
                                     <div className="items-title">
                                         <h3>GỢI Ý CHO BẠN</h3>
+                                    </div>
+                                    <Carousel
+                                        swipeable={false}
+                                        draggable={false}
+                                        showDots={true}
+                                        responsive={responsive}
+                                        ssr={true} // means to render carousel on server-side.
+                                        infinite={true}
+                                        autoPlaySpeed={1000}
+                                        keyBoardControl={true}
+                                        customTransition="all .5"
+                                        transitionDuration={500}
+                                        containerClass="carousel-container"
+                                        dotListClass="custom-dot-list-style"
+                                        itemClass="carousel-item-padding-40-px"
+                                    >
+                                        {map(dataRecommendCollaborative.recommend, (product, i) => (
+                                            <ItemRecommend key={i} product={product} />
+                                        ))}
+                                    </Carousel>
+                                </Grid>
+                            ) : (
+                                    <React.Fragment></React.Fragment>
+                                )}
+
+                            {dataRecommend.recommend && dataRecommend.recommend.length > 0 ? (
+                                <Grid
+                                    item
+                                    lg={12}
+                                    md={12}
+                                    xl={12}
+                                    xs={12}
+                                >
+                                    <div className="items-title">
+                                        <h3>SẢN PHẨM MUA CÙNG NHIỀU NHẤT</h3>
                                     </div>
                                     <Carousel
                                         swipeable={false}

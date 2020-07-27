@@ -7,6 +7,7 @@ import { useStore } from 'react-redux';
 import callApiUnauth from '../../../utils/apis/apiUnAuth';
 import {Button} from '@material-ui/core';
 import { useToasts } from 'react-toast-notifications';
+import Tooltip from '@material-ui/core/Tooltip';
 var CurrencyFormat = require('react-currency-format');
 const ItemRecommend = (props) => {
   const store = useStore();
@@ -42,7 +43,7 @@ const ItemRecommend = (props) => {
       </div>
       <div className="product-details">
         {/* <h1 id="product-name">{props.product.name}</h1> */}
-        <h4 id="product-description" style={{textAlign: 'center'}}>{props.product.name}</h4>
+        <Tooltip title={props.product.name}><h4 id="product-description" style={{textAlign: 'center'}}>{props.product.name}</h4></Tooltip>
       </div>
       </Link>
       <div className="price-add-recommend">

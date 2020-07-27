@@ -26,12 +26,12 @@ img {
   height: 250px;
 }
 .item {
-  width: 20%;
+  width: 25%;
   font-family: 'Quicksand', sans-serif;
   /* overflow: hidden; */
   display: flex;
   flex-direction: column;
-  margin: .5em;
+  /* margin: .5em; */
   padding: 1em;
   background-color: white;
   transition: transform 300ms bounce;
@@ -54,6 +54,10 @@ a {
   font-family: 'Lato', sans-serif;
   margin: .5em 0;
   text-transform: uppercase;
+
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #product-description {
@@ -62,6 +66,10 @@ a {
   color: grey;
   font-weight: lighter;
   margin: 0;
+
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #product-price {
