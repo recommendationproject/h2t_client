@@ -72,10 +72,13 @@ const UsersTable = () => {
             break;
         }
         if (2 <= rowData.status_id && rowData.status_id <= 4) {
-          return (<Button variant="outlined" color="primary" onClick={() => handleStatus(rowData.id, rowData.status_id)}>{content}</Button>)
+          return (<React.Fragment>
+            <Button variant="outlined" style={{marginRight:'10px'}} color="primary" onClick={() => handleStatus(rowData.id, rowData.status_id)}>{content}</Button>
+          <Button variant="outlined" color="secondary" onClick={() => handleDelete(rowData)}>Hủy</Button>
+          </React.Fragment>)
         }
       }
-    },
+    }
   ];
 
   const [data, setData] = useState([]);
@@ -183,11 +186,11 @@ const UsersTable = () => {
                   tooltip: 'Chi tiết',
                   onClick: (event, rowData) => handleEdit(rowData)
                 },
-                {
-                  icon: DeleteOutline,
-                  tooltip: 'Hủy',
-                  onClick: (event, rowData) => handleDelete(rowData)
-                }
+                // {
+                //   icon: DeleteOutline,
+                //   tooltip: 'Hủy',
+                //   onClick: (event, rowData) => handleDelete(rowData)
+                // }
               ]}
               options={{
                 actionsColumnIndex: -1,

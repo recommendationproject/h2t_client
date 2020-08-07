@@ -490,7 +490,7 @@ const DetailPage = (props) => {
                                 )}
 
 
-                            {dataHistory && dataHistory.length > 0 ? (
+                            {/* {dataHistory && dataHistory.length > 0 ? (
                                 <Grid
                                     item
                                     lg={12}
@@ -523,7 +523,7 @@ const DetailPage = (props) => {
                                 </Grid>
                             ) : (
                                     <React.Fragment></React.Fragment>
-                                )}
+                                )} */}
 
                         </Grid>
 

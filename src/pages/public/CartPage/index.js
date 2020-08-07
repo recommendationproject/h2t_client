@@ -83,8 +83,8 @@ const CartPage = () => {
         { title: 'Avatar', field: 'images', render: rowData => <img src={rowData.images} alt={rowData.name} style={{ width: 40, height: 40, borderRadius: '50%' }} />, editable: 'never' },
         { title: 'Tên sản phẩm', field: 'name', editable: 'never' },
         { title: 'Giá', field: 'price', editable: 'never' },
-        { title: 'Màu sắc', field: 'color', editable: 'never' },
-        { title: 'Kích thước', field: 'size', editable: 'never' },
+        { title: 'Màu sắc', field: 'color',  lookup: { white: 'Trắng', blue: 'Xanh', red:'Đỏ', black:'Đen' }, },
+        { title: 'Kích thước', field: 'size',  lookup: { S: 'S', M: 'M', L:'L', XL:'XL' }, },
         { title: 'Số lượng', field: 'amount', type: 'numeric' },
     ];
     const [formState, setFormState] = useState({
@@ -293,36 +293,51 @@ const CartPage = () => {
                                             editable={{
                                                 onRowUpdate: (newData, oldData) =>
                                                     new Promise((resolve, reject) => {
-                                                        const dataUpdate = [...data];
+                                                        let dataUpdate = [];
                                                         const index = oldData.tableData.id;
                                                         // eslint-disable-next-line
                                                         dataAmount.forEach(async (e, i) => {                                                                                                                  
                                                             if (e.id === newData.id) {
                                                                 console.log(newData);
-                                                                if (newData.amount > e.amount)
-                                                                    addToast('Trong kho hiện còn : ' + e.amount + ' sản phẩm !', { autoDismiss: true, appearance: 'info' })
-                                                                else if (newData.amount <= 0)
+                                                                // if (newData.amount > e.amount)
+                                                                //     addToast('Trong kho hiện còn : ' + e.amount + ' sản phẩm !', { autoDismiss: true, appearance: 'info' })
+                                                                // else 
+                                                                if (newData.amount <= 0)
                                                                     addToast('Số lượng sản phẩm phải lớn hơn 0 !', { autoDismiss: true, appearance: 'info' })
                                                                 else {
                                                                     if (store.getState().userInfo) {
-                                                                        await callApiUnauthWithBody(`amountProduct`, 'POST', { productid: newData.id, amount: newData.amount, customerid: store.getState().userInfo.token.user.id,size: newData.size, color: newData.color});
+                                                                        await callApiUnauthWithBody(`amountProduct`, 'PUT', { customerid: store.getState().userInfo.token.user.id,oldData: oldData, newData: newData });;
+                                                                        let rs = await callApiUnauthWithHeader(`cart`, 'GET', { customer_id: store.getState().userInfo.token.user.id })
+                                                                        dataUpdate = rs.data;
                                                                     } else {
                                                                         let arrItemCart = [];
                                                                         if ('itemCart' in localStorage) {
                                                                             arrItemCart = JSON.parse(localStorage.getItem('itemCart'));
                                                                         }
-                                                                        console.log(arrItemCart);
                                                                         
                                                                         let checkExist = null;
+                                                                        let checkNewExist = null;
                                                                         arrItemCart.forEach((e, i) => {                                                                            
-                                                                            if (e.id === newData.id && e.size === newData.size && e.color === newData.color)
+                                                                            if (e.id === newData.id && e.size === oldData.size && e.color === oldData.color)
                                                                                 checkExist = i
+                                                                            if (e.id === newData.id && e.size === newData.size && e.color === newData.color)
+                                                                                checkNewExist = i
                                                                         });
-                                                                        arrItemCart[checkExist].amount = parseInt(newData.amount);
+                                                                        if(checkNewExist!==null && oldData.size!==newData.size && oldData.color !== newData.color){
+                                                                            arrItemCart[checkNewExist].amount = parseInt(arrItemCart[checkNewExist].amount)+ parseInt(newData.amount);
+                                                                            arrItemCart.splice(checkExist, 1)
+                                                                        } else {
+                                                                            arrItemCart[checkExist].amount = parseInt(newData.amount);
+                                                                            arrItemCart[checkExist].size = newData.size;
+                                                                            arrItemCart[checkExist].color = newData.color;
+                                                                        }
+                                                                        
                                                                         localStorage.setItem('itemCart', JSON.stringify(arrItemCart));
+                                                                         dataUpdate = arrItemCart;
                                                                     }
-                                                                    dataUpdate[index] = newData;
-                                                                    setData([...dataUpdate]);
+                                                                    
+                                                                     setData([...dataUpdate]);
+                                                                    addToast('Cập nhật thành công', { autoDismiss: true, appearance: 'success' })
                                                                 }
                                                             }
                                                         })
