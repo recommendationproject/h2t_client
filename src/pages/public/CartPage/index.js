@@ -31,6 +31,7 @@ import { callApiUnauthWithHeader } from '../../../utils/apis/apiUnAuth';
 import callApiUnauthWithBody from '../../../utils/apis/apiUnAuth';
 import { useStore } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
+var CurrencyFormat = require('react-currency-format');
 
 const schema = {
     name: {
@@ -101,6 +102,8 @@ const CartPage = () => {
         errors: {}
     });
 
+   
+
     useEffect(() => {
         const errors = validate(formState.values, schema);
 
@@ -168,6 +171,16 @@ const CartPage = () => {
             }));
         }
     }, [store]);
+    const [total, setTotal] = useState(0);
+    useEffect(() => {
+        let t = 0;
+        if (data.length) {
+            data.forEach(e => {
+                t = t+ (e.price*e.amount)
+            });
+        }
+        setTotal(t);
+     }, [data]);
 
     useEffect(() => {
         if (firstUpdate.current) {
@@ -184,7 +197,6 @@ const CartPage = () => {
         fetchData()
         setIsLoading(false);
     }, [data]);
-    console.log(dataAmount);
     
     const tableIcons = {
         Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -347,6 +359,8 @@ const CartPage = () => {
                                             }}
                                         />
                                     </div>
+                                        <div style={{float: 'right', marginTop: '20px', marginRight: '20px'}}>Tổng tiền đơn hàng : <CurrencyFormat value={total} displayType={'text'} thousandSeparator={true} suffix={' VND'} renderText={value => <div style={{ color: 'red', float: 'right', fontSize: '20px', fontWeight:'bold' }}>{value}</div>} />
+                                        </div>
                                 </Grid>
                                 <Grid item
                                     lg={4}
